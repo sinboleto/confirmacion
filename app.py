@@ -34,6 +34,10 @@ def index():
 
     return render_template('index.html', infos=infos)
 
+@app.route('/view')
+def view():
+    infos = Information.query.all()
+    return render_template('view.html', infos=infos)
 
 @app.route('/export', methods=['POST'])
 def export():
