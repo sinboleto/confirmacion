@@ -43,11 +43,13 @@ class Information(db.Model):
         # self.email = email
 
 # Inicio conversación
-message = client.messages.create(
-  from_ = f'whatsapp:{twilio_phone_number}',
-  body = 'Hola',
-  to = 'whatsapp:+5215551078511'
-)
+@app.route('/start', methods=['GET'])
+def inicio_conversacion():
+    message = client.messages.create(
+    from_ = f'whatsapp:+12058391586',
+    body = 'Hola',
+    to = 'whatsapp:+5215551078511'
+    )
 
 @app.route('/', methods=['GET', 'POST'])
 def webhook():
