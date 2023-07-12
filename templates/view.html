@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Information</title>
+</head>
+<body>
+    <h1>View Information</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        {% for info in infos %}
+            <tr>
+                <td>{{ info.name }}</td>
+                <td>{{ info.email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
