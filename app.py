@@ -45,11 +45,10 @@ class Information(db.Model):
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    message = client.messages.create(
-    from_ = f'whatsapp:+12058391586',
-    body = 'Hola',
-    to = 'whatsapp:+5215551078511'
-    )
+    response = MessagingResponse()
+    response.message('Hola')
+    return str(response)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def webhook():
