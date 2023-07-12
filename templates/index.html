@@ -19,5 +19,8 @@
             <li>{{ info.name }} - {{ info.email }}</li>
         {% endfor %}
     </ul>
+    <form action="/export" method="POST">
+        <input type="submit" value="Export to CSV">
+    </form>
 </body>
 </html>
