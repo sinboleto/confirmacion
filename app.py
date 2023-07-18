@@ -57,83 +57,65 @@ def inicio_conversacion():
     
     message = client.messages.create(
         from_ = f'whatsapp:{twilio_phone_number}',
-        body = 'Hola',
+        body = 'Hello, we have a few questions for you to answer',
         to = 'whatsapp:+5215551078511'
         )
     
     return 'Inicio'
 
-
-# @app.route('/', methods=['GET', 'POST'])
-# def webhook():
-#     if request.method == 'POST':
-        
-#         incoming_message = request.values
-#         incoming_message_body = request.values.get('Body', '').lower()
-
-#         response = MessagingResponse()
-#         texto_respuesta = f'Tu mensaje: "{incoming_message_body}"'
-#         response.message(texto_respuesta)
-
-#         new_info = Information(str(incoming_message))
-#         db.session.add(new_info)
-#         db.session.commit()
-
-#         print(str(incoming_message))
-
-#         return str(response)
-    
-#     else:
-
-#         return 'Inicio exitoso'
-
 @app.route('/', methods=['POST'])
 def webhook():
-    incoming_message = request.values
+
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
-    # Retrieve the current question index from the session
-    current_question_index = session.get('current_question_index', -1)
+    # Retrieve the conversation state for the current phone number
+    conversation_state = session.get('conversation_states', {})
 
     response = MessagingResponse()
 
-    if current_question_index == -1:
-        # First response, initialize the sequence of questions
-        session['questions'] = [
-            "What is your name?",
-            "What is your age?",
-            "What is your favorite color?"
-        ]
-        current_question_index = 0
-        session['current_question_index'] = current_question_index
+    if incoming_phone_number not in conversation_state:
+        # First response for this phone number, initialize the conversation state
+        conversation_state[incoming_phone_number] = {
+            'questions': [
+                "What is your name?",
+                "What is your age?",
+                "What is your favorite color?"
+            ],
+            'current_question_index': 0
+        }
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
 
-    if current_question_index >= len(session['questions']):
+    current_question_index = conversation_state[incoming_phone_number]['current_question_index']
+    questions = conversation_state[incoming_phone_number]['questions']
+
+    if current_question_index >= len(questions):
         # No more questions, end the conversation
         response.message("Thank you for answering all the questions.")
     else:
         # Save the question and answer in the database
-        current_question = session['questions'][current_question_index]
+        current_question = questions[current_question_index]
         new_info = Information(incoming_phone_number, current_question, user_answer)
         db.session.add(new_info)
         db.session.commit()
 
         # Send the next question
-        current_question_index += 1
-        session['current_question_index'] = current_question_index
+        conversation_state[incoming_phone_number]['current_question_index'] += 1
+        current_question_index = conversation_state[incoming_phone_number]['current_question_index']
 
-        if current_question_index < len(session['questions']):
-            next_question = session['questions'][current_question_index]
+        if current_question_index < len(questions):
+            next_question = questions[current_question_index]
             response.message(next_question)
         else:
             # No more questions, end the conversation
             response.message("Thank you for answering all the questions.")
 
-    return str(response)
+    # Save the updated conversation state back to the session
+    session['conversation_states'] = conversation_state
 
+    return str(response)
 
 @app.route('/view')
 def view():
