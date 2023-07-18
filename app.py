@@ -23,9 +23,13 @@ migrate = Migrate(app, db)
 load_dotenv()
 
 # Twilio credentials
-account_sid = os.environ.get('ACCOUNT_SID')
-auth_token = os.environ.get('AUTH_TOKEN')
-twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+# account_sid = os.environ.get('ACCOUNT_SID')
+# auth_token = os.environ.get('AUTH_TOKEN')
+# twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+
+account_sid = 'ACf01ddcd618830097852506cba7b428ef'
+auth_token = '0ad7af249477ccdf9467eb54b49a4ced'
+twilio_phone_number = '+12058391586'
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
@@ -58,8 +62,16 @@ def webhook():
 
         incoming_message = request.values
         incoming_message_body = request.values.get('Body', '').lower()
+
         response = MessagingResponse()
-        response.message(f'Tu mensaje: "{incoming_message_body}"')
+        texto_respuesta = f'Tu mensaje: "{incoming_message_body}"'
+        response.message(texto_respuesta)
+
+        message = client.messages.create(
+        from_ = f'whatsapp:{twilio_phone_number}',
+        body = texto_respuesta,
+        to = 'whatsapp:+5215551078511'
+        )
 
         new_info = Information(id, incoming_message)
         db.session.add(new_info)
