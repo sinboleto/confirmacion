@@ -67,12 +67,6 @@ def webhook():
         texto_respuesta = f'Tu mensaje: "{incoming_message_body}"'
         response.message(texto_respuesta)
 
-        # message = client.messages.create(
-        # from_ = f'whatsapp:{twilio_phone_number}',
-        # body = texto_respuesta,
-        # to = 'whatsapp:+5215551078511'
-        # )
-
         new_info = Information(id, str(incoming_message))
         db.session.add(new_info)
         db.session.commit()
@@ -85,45 +79,32 @@ def webhook():
 
         return 'Inicio exitoso'
 
-# @app.route('/input', methods=['GET', 'POST'])
-# def index():
-#     if request.method == 'POST':
-#         name = request.form['name']
-#         email = request.form['email']
-
-#         new_info = Information(id, name, email)
-#         db.session.add(new_info)
-#         db.session.commit()
-
-#     infos = Information.query.all()
-
-#     return render_template('index.html', infos=infos)
-
 @app.route('/view')
 def view():
     infos = Information.query.all()
     return render_template('view.html', infos=infos)
 
-# @app.route('/export', methods=['POST'])
-# def export():
-#     infos = Information.query.all()
+@app.route('/export', methods=['POST'])
+def export():
+    infos = Information.query.all()
 
-#     # Create the CSV file
-#     with open('data.csv', 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile)
-#         writer.writerow(['ID','Name', 'Email'])
-#         for info in infos:
-#             writer.writerow([info.id, info.name, info.email])
+    # Create the CSV file
+    with open('data.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['ID', 'Information']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-#     # Send the CSV file as a response for download
-#     with open('data.csv', 'r') as f:
-#         csv_data = f.read()
+        writer.writeheader()
+        for info in infos:
+            writer.writerow({'ID': info.id, 'Information': info.info})
 
-#     response = Response(csv_data, mimetype='text/csv')
-#     response.headers.set('Content-Disposition', 'attachment', filename='data.csv')
-    
-#     return response
+    # Send the CSV file as a response for download
+    with open('data.csv', 'r', encoding='utf-8') as f:
+        csv_data = f.read()
 
+    response = Response(csv_data, mimetype='text/csv')
+    response.headers.set('Content-Disposition', 'attachment', filename='data.csv')
+
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
