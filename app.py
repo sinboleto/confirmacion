@@ -45,9 +45,16 @@ class Information(db.Model):
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    response = MessagingResponse()
-    response.message('Hola')
-    return str(response)
+    # response = MessagingResponse()
+    # response.message('Hola')
+    
+    message = client.messages.create(
+        from_ = f'whatsapp:{twilio_phone_number}',
+        body = 'Hola',
+        to = 'whatsapp:+5215551078511'
+        )
+    
+    return str(message)
 
 
 @app.route('/', methods=['GET', 'POST'])
