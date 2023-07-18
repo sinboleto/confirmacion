@@ -8,14 +8,12 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
+            <th>Info</th>
         </tr>
-        {% for info in infos %}
+        {% for i in infos %}
             <tr>
-                <td>{{ info.id }}</td>
-                <td>{{ info.name }}</td>
-                <td>{{ info.email }}</td>
+                <td>{{ i.id }}</td>
+                <td>{{ i.info }}</td>
             </tr>
         {% endfor %}
     </table>
