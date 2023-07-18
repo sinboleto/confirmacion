@@ -67,11 +67,11 @@ def webhook():
         texto_respuesta = f'Tu mensaje: "{incoming_message_body}"'
         response.message(texto_respuesta)
 
-        message = client.messages.create(
-        from_ = f'whatsapp:{twilio_phone_number}',
-        body = texto_respuesta,
-        to = 'whatsapp:+5215551078511'
-        )
+        # message = client.messages.create(
+        # from_ = f'whatsapp:{twilio_phone_number}',
+        # body = texto_respuesta,
+        # to = 'whatsapp:+5215551078511'
+        # )
 
         new_info = Information(id, incoming_message)
         db.session.add(new_info)
