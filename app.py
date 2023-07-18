@@ -54,7 +54,7 @@ def inicio_conversacion():
         to = 'whatsapp:+5215551078511'
         )
     
-    return str(message)
+    return 'Inicio'
 
 
 @app.route('/', methods=['GET', 'POST'])
