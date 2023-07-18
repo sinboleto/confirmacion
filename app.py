@@ -37,7 +37,7 @@ client = Client(account_sid, auth_token)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    info = db.Column(db.String(500))
+    info = db.Column(db.String(500), nullable=False)
 
     def __init__(self, id, info):
         self.id = id
@@ -73,11 +73,11 @@ def webhook():
         # to = 'whatsapp:+5215551078511'
         # )
 
-        new_info = Information(id, incoming_message)
+        new_info = Information(id, str(incoming_message))
         db.session.add(new_info)
         db.session.commit()
 
-        print(incoming_message)
+        print(str(incoming_message))
 
         return str(response)
     
