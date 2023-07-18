@@ -67,9 +67,9 @@ def inicio_conversacion():
 def webhook():
 
     questions = [
-                "What is your name?",
-                "What is your age?",
-                "What is your favorite color?"
+                'What is your name?',
+                'What is your age?',
+                'What is your favorite color?'
                 ]
 
     incoming_message_body = request.values.get('Body', '').lower()
@@ -81,17 +81,12 @@ def webhook():
     response = MessagingResponse()
 
     # Creates new first sessions
-    # if incoming_phone_number not in conversation_state:
-    #     # First response for this phone number, initialize the conversation state
-    #     conversation_state[incoming_phone_number] = {
-    #         'questions': questions,
-    #         'current_question_index': -1  # -1 indicates that we haven't asked the first question yet
-    #     }
-
-    conversation_state[incoming_phone_number] = {
+    if incoming_phone_number not in conversation_state:
+        # First response for this phone number, initialize the conversation state
+        conversation_state[incoming_phone_number] = {
             'questions': questions,
             'current_question_index': -1  # -1 indicates that we haven't asked the first question yet
-            }
+        }
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
@@ -107,7 +102,7 @@ def webhook():
 
     if current_question_index >= len(questions) - 1:
         # No more questions, end the conversation
-        response.message("Thank you for answering all the questions.")
+        response.message('Thank you for answering all the questions')
     else:
         # Ask the next question
         current_question_index += 1
@@ -159,7 +154,7 @@ def delete_information():
     # Commit the changes to the database
     session.commit()
 
-    return "Database information has been deleted successfully."
+    return 'Database information has been deleted successfully'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
