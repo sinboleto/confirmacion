@@ -66,6 +66,12 @@ def inicio_conversacion():
 @app.route('/', methods=['POST'])
 def webhook():
 
+    questions = [
+                "What is your name?",
+                "What is your age?",
+                "What is your favorite color?"
+                ]
+
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
@@ -74,14 +80,11 @@ def webhook():
 
     response = MessagingResponse()
 
+    # Creates new first sessions
     if incoming_phone_number not in conversation_state:
         # First response for this phone number, initialize the conversation state
         conversation_state[incoming_phone_number] = {
-            'questions': [
-                "What is your name?",
-                "What is your age?",
-                "What is your favorite color?"
-            ],
+            'questions': questions,
             'current_question_index': -1  # -1 indicates that we haven't asked the first question yet
         }
 
@@ -89,9 +92,8 @@ def webhook():
     user_answer = str(incoming_message_body)
 
     current_question_index = conversation_state[incoming_phone_number]['current_question_index']
-    questions = conversation_state[incoming_phone_number]['questions']
 
-    if current_question_index >= 0:
+    if current_question_index >= 0 and current_question_index <= len(questions) - 1:
         # We have asked a question, save the answer in the database
         current_question = questions[current_question_index]
         new_info = Information(incoming_phone_number, current_question, user_answer)
