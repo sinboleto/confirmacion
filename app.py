@@ -27,10 +27,13 @@ load_dotenv()
 # account_sid = os.environ.get('ACCOUNT_SID')
 # auth_token = os.environ.get('AUTH_TOKEN')
 # twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+# app.secret_key = os.environ.get('SECRET_KEY')
 
+# Credentials
 account_sid = 'ACf01ddcd618830097852506cba7b428ef'
 auth_token = '1b36553f5486a232a6edfa04db76cc66'
 twilio_phone_number = '+12058391586'
+app.secret_key = 'SB_2022'
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
