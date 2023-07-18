@@ -39,8 +39,7 @@ class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     info = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, id, info):
-        self.id = id
+    def __init__(self, info):
         self.info = info
 
 # Inicio conversación
@@ -67,7 +66,7 @@ def webhook():
         texto_respuesta = f'Tu mensaje: "{incoming_message_body}"'
         response.message(texto_respuesta)
 
-        new_info = Information(id, str(incoming_message))
+        new_info = Information(str(incoming_message))
         db.session.add(new_info)
         db.session.commit()
 
