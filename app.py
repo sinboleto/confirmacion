@@ -65,7 +65,7 @@ def inicio_conversacion():
 
 @app.route('/', methods=['POST'])
 def webhook():
-
+    incoming_message = request.values
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
@@ -82,7 +82,7 @@ def webhook():
                 "What is your age?",
                 "What is your favorite color?"
             ],
-            'current_question_index': 0
+            'current_question_index': -1  # -1 indicates that we haven't asked the first question yet
         }
 
     # Get the user's answer
@@ -91,31 +91,29 @@ def webhook():
     current_question_index = conversation_state[incoming_phone_number]['current_question_index']
     questions = conversation_state[incoming_phone_number]['questions']
 
-    if current_question_index >= len(questions):
-        # No more questions, end the conversation
-        response.message("Thank you for answering all the questions.")
-    else:
-        # Save the question and answer in the database
+    if current_question_index >= 0:
+        # We have asked a question, save the answer in the database
         current_question = questions[current_question_index]
         new_info = Information(incoming_phone_number, current_question, user_answer)
         db.session.add(new_info)
         db.session.commit()
 
-        # Send the next question
+    if current_question_index >= len(questions) - 1:
+        # No more questions, end the conversation
+        response.message("Thank you for answering all the questions.")
+    else:
+        # Ask the next question
         conversation_state[incoming_phone_number]['current_question_index'] += 1
         current_question_index = conversation_state[incoming_phone_number]['current_question_index']
 
-        if current_question_index < len(questions):
-            next_question = questions[current_question_index]
-            response.message(next_question)
-        else:
-            # No more questions, end the conversation
-            response.message("Thank you for answering all the questions.")
+        next_question = questions[current_question_index]
+        response.message(next_question)
 
     # Save the updated conversation state back to the session
     session['conversation_states'] = conversation_state
 
     return str(response)
+
 
 @app.route('/view')
 def view():
