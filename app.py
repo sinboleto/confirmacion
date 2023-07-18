@@ -33,20 +33,15 @@ client = Client(account_sid, auth_token)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(50))
-    # email = db.Column(db.String(50))
     info = db.Column(db.String(500))
 
     def __init__(self, id, info):
         self.id = id
         self.info = info
-        # self.email = email
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    # response = MessagingResponse()
-    # response.message('Hola')
     
     message = client.messages.create(
         from_ = f'whatsapp:{twilio_phone_number}',
@@ -61,13 +56,16 @@ def inicio_conversacion():
 def webhook():
     if request.method == 'POST':
 
-        # incoming_message = request.values.get('Body', '').lower()
         incoming_message = request.values
+        incoming_message_body = request.values.get('Body', '').lower()
         response = MessagingResponse()
+        response.message(f'Tu mensaje: "{incoming_message_body}"')
 
         new_info = Information(id, incoming_message)
         db.session.add(new_info)
         db.session.commit()
+
+        print(incoming_message)
 
         return str(response)
     
