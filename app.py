@@ -143,5 +143,18 @@ def export():
 
     return response
 
+@app.route('/delete_information', methods=['POST'])
+def delete_information():
+    # Open a new SQLAlchemy session
+    session = db.session
+
+    # Delete all records from the Information table
+    session.query(Information).delete()
+
+    # Commit the changes to the database
+    session.commit()
+
+    return "Database information has been deleted successfully."
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
