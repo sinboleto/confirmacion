@@ -65,7 +65,7 @@ def inicio_conversacion():
 
 @app.route('/', methods=['POST'])
 def webhook():
-    incoming_message = request.values
+
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
@@ -103,8 +103,8 @@ def webhook():
         response.message("Thank you for answering all the questions.")
     else:
         # Ask the next question
-        conversation_state[incoming_phone_number]['current_question_index'] += 1
-        current_question_index = conversation_state[incoming_phone_number]['current_question_index']
+        current_question_index += 1
+        conversation_state[incoming_phone_number]['current_question_index'] = current_question_index
 
         next_question = questions[current_question_index]
         response.message(next_question)
@@ -113,7 +113,6 @@ def webhook():
     session['conversation_states'] = conversation_state
 
     return str(response)
-
 
 @app.route('/view')
 def view():
