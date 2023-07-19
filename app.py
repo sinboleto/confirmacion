@@ -27,7 +27,7 @@ load_dotenv()
 
 # Twilio credentials
 account_sid = 'ACf01ddcd618830097852506cba7b428ef'
-auth_token = '1b36553f5486a232a6edfa04db76cc66'
+auth_token = '7f230b676162e028e89ed793031b57c5'
 conversations_sid = 'IS7cbf4cf2c36147d698624d2be03a2f7d'
 twilio_phone_number = '+12058391586'
 app.secret_key = 'SB_2022'
