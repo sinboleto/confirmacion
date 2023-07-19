@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import os
 
 import time
+import json
 
 app = Flask(__name__)
 
@@ -87,18 +88,12 @@ def inicio_conversacion():
 @app.route('/', methods=['POST'])
 def webhook():
 
+    # Log the incoming request payload
+    app.logger.info('Request Payload: {}'.format(json.dumps(request.values)))
+
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
     conversation_sid = request.values.get('ConversationSid', '')
-
-    # Get last index value
-    # index_values = db.session.query(Information.conversation_index).distinct().all()
-    # index_values = [int(value[0]) for value in index_values]
-
-    # if len(index_values) > 0:
-    #     new_index = str(max(index_values) + 1)
-    # else:
-    #     new_index = '0'
 
     # Retrieve the conversation state for the current phone number
     conversation_state = session.get('conversation_states', {})
@@ -120,7 +115,10 @@ def webhook():
 
     current_question_index = conversation_state[conversation_sid]['current_question_index']
       
-    if current_question_index < len(questions):
+    if current_question_index == 0:
+        time.sleep(2)
+    
+    elif current_question_index < len(questions):
     # Ask the next question
         
         next_question = questions[current_question_index]
