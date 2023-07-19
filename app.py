@@ -1,8 +1,7 @@
 import csv
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask import session
 
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
@@ -153,6 +152,11 @@ def delete_information():
 
     # Commit the changes to the database
     session.commit()
+
+    # Reset the conversation_state for all phone numbers
+    conversation_state = session.get('conversation_states', {})
+    conversation_state.clear()
+    session['conversation_states'] = conversation_state
 
     return 'Database information has been deleted successfully'
 
