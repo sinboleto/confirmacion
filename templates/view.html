@@ -8,16 +8,20 @@
     <table>
         <tr>
             <th>ID</th>
+            <th>Sesion</th>
             <th>Telefono</th>
-            <th>Pregunta</th>
-            <th>Respuesta</th>
+            <th>Respuesta_1</th>
+            <th>Respuesta_2</th>
+            <th>Respuesta_3</th>
         </tr>
         {% for info in infos %}
             <tr>
                 <td>{{ info.id }}</td>
+                <td>{{ info.conversation_index }}</td>
                 <td>{{ info.phone_number }}</td>
-                <td>{{ info.question }}</td>
-                <td>{{ info.answer }}</td>
+                <td>{{ info.answer_1 }}</td>
+                <td>{{ info.answer_2 }}</td>
+                <td>{{ info.answer_3 }}</td>
             </tr>
             {% endfor %}
     </table>
