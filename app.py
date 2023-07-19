@@ -62,39 +62,44 @@ questions = [
     'What is your favorite color?'
 ]
 
-recepient_phone_numbers = ['+5215551078511',
-                           '+5215585308944',
-                           '+5215585487594',
-                           '+5215554186584',
-                           '+5215537139718']
+# recepient_phone_numbers = ['+5215551078511',
+#                            '+5215585308944',
+#                            '+5215585487594',
+#                            '+5215554186584',
+#                            '+5215537139718']
+
+recepient_phone_numbers = ['+5215551078511']
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    # conversation = conversations_client.conversations.create()
-    # message = client.conversations.v1.conversations(conversations_sid).messages.create(to=recepient_phone_number, body='Ahoy there!')
+    conversation = conversations_client.conversations.create()
     
     for recepient_phone_number in recepient_phone_numbers:
-        message = client.messages.create(
-            from_=f'whatsapp:{twilio_phone_number}',
-            body='Hello, we have a few questions for you to answer',
-            to=f'whatsapp:{recepient_phone_number}',
-        )
+        message = client.conversations.v1.conversations(conversations_sid).messages.create(from_=f'whatsapp:{twilio_phone_number}',
+                                                                                           body='Ahoy there!',
+                                                                                           to=f'whatsapp:{recepient_phone_number}',
+                                                                                           )
+    #     message = client.messages.create(
+    #         from_=f'whatsapp:{twilio_phone_number}',
+    #         body='Hello, we have a few questions for you to answer',
+    #         to=f'whatsapp:{recepient_phone_number}',
+    #     )
 
-        time.sleep(2)
+    #     time.sleep(2)
 
-        message = client.messages.create(
-            from_=f'whatsapp:{twilio_phone_number}',
-            body=f'{questions[0]}',
-            to=f'whatsapp:{recepient_phone_number}',
-        )
+    #     message = client.messages.create(
+    #         from_=f'whatsapp:{twilio_phone_number}',
+    #         body=f'{questions[0]}',
+    #         to=f'whatsapp:{recepient_phone_number}',
+    #     )
 
     return 'Inicio'
 
 @app.route('/', methods=['POST'])
 def webhook():
     # Log the incoming request payload
-    app.logger.info('Request Payload: {}'.format(request.values))
+    # app.logger.info('Request Payload: {}'.format(request.values))
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
@@ -102,6 +107,7 @@ def webhook():
 
     # Retrieve the conversation state for the current conversation_sid
     conversation = conversations_client.conversations(conversation_sid).fetch()
+    app.logger.info('Conversation: {}'.format(conversation))
 
     if not conversation:
         app.logger.info('Invalid conversation_sid')
