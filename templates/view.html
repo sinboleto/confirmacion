@@ -8,7 +8,7 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Sesion</th>
+            <th>Conversation_SID</th>
             <th>Telefono</th>
             <th>Respuesta_1</th>
             <th>Respuesta_2</th>
@@ -17,7 +17,7 @@
         {% for info in infos %}
             <tr>
                 <td>{{ info.id }}</td>
-                <td>{{ info.conversation_index }}</td>
+                <td>{{ info.conversation_sid }}</td>
                 <td>{{ info.phone_number }}</td>
                 <td>{{ info.answer_1 }}</td>
                 <td>{{ info.answer_2 }}</td>
