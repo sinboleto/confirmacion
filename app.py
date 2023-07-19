@@ -117,7 +117,7 @@ def webhook():
     if new_conversation_sid not in conversation_state:
         # First response for this phone number, initialize the conversation state
         conversation_state[new_conversation_sid] = {
-            'current_question_index': 0,
+            'current_question_index': 1,
             'answers':[],
         }
 
