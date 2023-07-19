@@ -61,32 +61,39 @@ class Information(db.Model):
 
 # Model inputs
 global questions
+global recepient_phone_numbers
 questions = [
     'What is your name?',
     'What is your age?',
     'What is your favorite color?'
 ]
 
+recepient_phone_numbers = ['+5215551078511',
+                           '+5215585308944',
+                           '+5215585487594',
+                           '+5215554186584',
+                           '+5215537139718']
+
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    conversation = conversations_client.conversations.create()
+    # conversation = conversations_client.conversations.create()
+    # message = client.conversations.v1.conversations(conversations_sid).messages.create(to=recepient_phone_number, body='Ahoy there!')
+    
+    for recepient_phone_number in recepient_phone_numbers:
+        message = client.messages.create(
+            from_=f'whatsapp:{twilio_phone_number}',
+            body='Hello, we have a few questions for you to answer',
+            to=f'whatsapp:{recepient_phone_number}',
+        )
 
-    message = client.messages.create(
-        from_=f'whatsapp:{twilio_phone_number}',
-        body='Hello, we have a few questions for you to answer',
-        to='whatsapp:+5215551078511',
-        conversation_sid=conversation.sid
-    )
+        time.sleep(2)
 
-    time.sleep(2)
-
-    message = client.messages.create(
-        from_=f'whatsapp:{twilio_phone_number}',
-        body=f'{questions[0]}',
-        to='whatsapp:+5215551078511',
-        conversation_sid=conversation.sid
-    )
+        message = client.messages.create(
+            from_=f'whatsapp:{twilio_phone_number}',
+            body=f'{questions[0]}',
+            to=f'whatsapp:{recepient_phone_number}',
+        )
 
     return 'Inicio'
 
@@ -103,10 +110,11 @@ def webhook():
     conversation = conversations_client.conversations(conversation_sid).fetch()
 
     if not conversation:
-        return "Invalid conversation_sid."
+        app.logger.info('Invalid conversation_sid')
+        return 'Invalid conversation_sid'
 
-    attributes = conversation.get('attributes', '{}')
-    conversation_state = json.loads(attributes)
+    attributes = json.loads(conversation.attributes)
+    conversation_state = attributes if isinstance(attributes, dict) else {}
 
     response = MessagingResponse()
 
@@ -134,7 +142,6 @@ def webhook():
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
-
     elif current_question_index == len(questions):
         # No more questions, end the conversation
         response.message('Thank you for answering all the questions')
