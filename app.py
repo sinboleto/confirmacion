@@ -1,5 +1,5 @@
 import csv
-from flask import Flask, render_template, request, Response, session
+from flask import Flask, render_template, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -26,20 +26,23 @@ migrate = Migrate(app, db)
 load_dotenv()
 
 # Twilio credentials
-# account_sid = os.environ.get('ACCOUNT_SID')
-# auth_token = os.environ.get('AUTH_TOKEN')
-# twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
-# app.secret_key = os.environ.get('SECRET_KEY')
-
-# Credentials
 account_sid = 'ACf01ddcd618830097852506cba7b428ef'
 auth_token = '1b36553f5486a232a6edfa04db76cc66'
+conversations_sid = 'IS7cbf4cf2c36147d698624d2be03a2f7d'
 twilio_phone_number = '+12058391586'
 app.secret_key = 'SB_2022'
+
+# account_sid = 'YOUR_TWILIO_ACCOUNT_SID'
+# auth_token = 'YOUR_TWILIO_AUTH_TOKEN'
+# conversations_sid = 'YOUR_TWILIO_CONVERSATIONS_SERVICE_SID'
+# twilio_phone_number = 'YOUR_TWILIO_PHONE_NUMBER'
+# app.secret_key = 'YOUR_APP_SECRET_KEY'
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
 
+# Twilio Conversations API client
+conversations_client = client.conversations.v1.services(conversations_sid)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,48 +61,52 @@ class Information(db.Model):
 
 # Model inputs
 global questions
-global conversation_sid
 questions = [
-            'What is your name?',
-            'What is your age?',
-            'What is your favorite color?'
-            ]
-
+    'What is your name?',
+    'What is your age?',
+    'What is your favorite color?'
+]
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    
+    conversation = conversations_client.conversations.create()
+
     message = client.messages.create(
-        from_ = f'whatsapp:{twilio_phone_number}',
-        body = 'Hello, we have a few questions for you to answer',
-        to = 'whatsapp:+5215551078511'
-        )
-    
+        from_=f'whatsapp:{twilio_phone_number}',
+        body='Hello, we have a few questions for you to answer',
+        to='whatsapp:+5215551078511',
+        conversation_sid=conversation.sid
+    )
+
     time.sleep(2)
 
     message = client.messages.create(
-        from_ = f'whatsapp:{twilio_phone_number}',
-        body = f'{questions[0]}',
-        to = 'whatsapp:+5215551078511'
-        )
-    
-    conversation_sid = message.conversation_sid
+        from_=f'whatsapp:{twilio_phone_number}',
+        body=f'{questions[0]}',
+        to='whatsapp:+5215551078511',
+        conversation_sid=conversation.sid
+    )
 
     return 'Inicio'
 
 @app.route('/', methods=['POST'])
 def webhook():
-
     # Log the incoming request payload
     app.logger.info('Request Payload: {}'.format(request.values))
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
-    # conversation_sid = request.values.get('ConversationSid', '')
+    conversation_sid = request.values.get('ConversationSid', '')
 
-    # Retrieve the conversation state for the current phone number
-    conversation_state = session.get('conversation_states', {})
+    # Retrieve the conversation state for the current conversation_sid
+    conversation = conversations_client.conversations(conversation_sid).fetch()
+
+    if not conversation:
+        return "Invalid conversation_sid."
+
+    attributes = conversation.get('attributes', '{}')
+    conversation_state = json.loads(attributes)
 
     response = MessagingResponse()
 
@@ -107,49 +114,48 @@ def webhook():
     user_answer = str(incoming_message_body)
 
     # Creates new first sessions
-    if conversation_sid not in conversation_state:
+    if 'current_question_index' not in conversation_state:
         # First response for this phone number, initialize the conversation state
-        conversation_state[conversation_sid] = {
-            'current_question_index': 0,
-            'answers':[],
-        }
+        conversation_state['current_question_index'] = 0
+        conversation_state['answers'] = []
 
-    conversation_state[conversation_sid]['answers'].append(user_answer)
+    conversation_state['answers'].append(user_answer)
 
-    current_question_index = conversation_state[conversation_sid]['current_question_index']
-      
+    current_question_index = conversation_state['current_question_index']
+
     if current_question_index == 0:
         time.sleep(2)
-    
     elif current_question_index < len(questions):
-    # Ask the next question
-        
+        # Ask the next question
+
         next_question = questions[current_question_index]
         time.sleep(2)
         response.message(next_question)
 
         current_question_index += 1
-        conversation_state[conversation_sid]['current_question_index'] = current_question_index
-    
+        conversation_state['current_question_index'] = current_question_index
+
     elif current_question_index == len(questions):
         # No more questions, end the conversation
         response.message('Thank you for answering all the questions')
-        
-        answers = [str(answer) for answer in conversation_state[conversation_sid]['answers']]
-        
-        # We have asked all the question, save the answer in the database
+
+        answers = [str(answer) for answer in conversation_state['answers']]
+
+        # We have asked all the questions, save the answer in the database
         new_info = Information(conversation_sid, incoming_phone_number, answers[0], answers[1], answers[2])
         db.session.add(new_info)
         db.session.commit()
 
         current_question_index += 1
-        conversation_state[conversation_sid]['current_question_index'] = current_question_index
+        conversation_state['current_question_index'] = current_question_index
 
     else:
         response.message('Thank you for answering all the questions')
 
-    # Save the updated conversation state back to the session
-    session['conversation_states'] = conversation_state
+    # Update the conversation state in Twilio Conversations
+    conversations_client.conversations(conversation_sid).update(
+        attributes=json.dumps(conversation_state)
+    )
 
     return str(response)
 
@@ -190,11 +196,6 @@ def delete_information():
 
     # Commit the changes to the database
     session_db.commit()
-
-    # Reset the conversation_state for all phone numbers
-    conversation_state = session.get('conversation_states', {})
-    conversation_state.clear()
-    session['conversation_states'] = conversation_state
 
     return 'Database information has been deleted successfully'
 
