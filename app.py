@@ -69,7 +69,8 @@ questions = [
 #                            '+5215554186584',
 #                            '+5215537139718']
 
-recepient_phone_numbers = ['+5215551078511']
+recepient_phone_numbers = ['+5215551078511',
+                           '+5215585308944']
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
