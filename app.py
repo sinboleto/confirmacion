@@ -26,17 +26,11 @@ migrate = Migrate(app, db)
 load_dotenv()
 
 # Twilio credentials
-account_sid = 'ACf01ddcd618830097852506cba7b428ef'
-auth_token = '7f230b676162e028e89ed793031b57c5'
-conversations_sid = 'IS7cbf4cf2c36147d698624d2be03a2f7d'
-twilio_phone_number = '+12058391586'
-app.secret_key = 'SB_2022'
-
-# account_sid = 'YOUR_TWILIO_ACCOUNT_SID'
-# auth_token = 'YOUR_TWILIO_AUTH_TOKEN'
-# conversations_sid = 'YOUR_TWILIO_CONVERSATIONS_SERVICE_SID'
-# twilio_phone_number = 'YOUR_TWILIO_PHONE_NUMBER'
-# app.secret_key = 'YOUR_APP_SECRET_KEY'
+account_sid = os.environ.get('ACCOUNT_SID')
+auth_token = os.environ.get('AUTH_TOKEN')
+conversations_sid = os.environ.get('CONVERSATIONS_SERVICE_SID')
+twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
+app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
