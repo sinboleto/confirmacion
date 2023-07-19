@@ -95,9 +95,9 @@ def webhook():
     index_values = [int(value[0]) for value in index_values]
 
     if len(index_values) > 0:
-        new_index = max(index_values) + 1
+        new_index = str(max(index_values) + 1)
     else:
-        new_index = 0
+        new_index = '0'
 
     # Retrieve the conversation state for the current phone number
     conversation_state = session.get('conversation_states', {})
