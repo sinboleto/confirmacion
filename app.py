@@ -145,13 +145,13 @@ def export():
 @app.route('/delete_information', methods=['POST'])
 def delete_information():
     # Open a new SQLAlchemy session
-    session = db.session
+    session_db = db.session
 
     # Delete all records from the Information table
-    session.query(Information).delete()
+    session_db.query(Information).delete()
 
     # Commit the changes to the database
-    session.commit()
+    session_db.commit()
 
     # Reset the conversation_state for all phone numbers
     conversation_state = session.get('conversation_states', {})
