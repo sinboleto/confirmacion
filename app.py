@@ -126,11 +126,7 @@ def webhook():
     current_question_index = conversation_state[new_conversation_sid]['current_question_index']
     app.logger.info(f'current_question_index:{current_question_index}')
       
-    if current_question_index == 0:
-        current_question_index += 1
-        time.sleep(2)
-    
-    elif current_question_index < len(questions):
+    if current_question_index < len(questions):
     # Ask the next question
         next_question = questions[current_question_index]
         time.sleep(2)
