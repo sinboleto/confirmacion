@@ -56,6 +56,8 @@ class Information(db.Model):
 # Model inputs
 global questions
 global recepient_phone_numbers
+global new_conversation_sid
+
 questions = [
     'What is your name?',
     'What is your age?',
@@ -74,39 +76,35 @@ recepient_phone_numbers = ['+5215551078511']
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     conversation = conversations_client.conversations.create()
-    
+    new_conversation_sid = conversation.sid
+    app.logger.info(conversation.sid)
+
     for recepient_phone_number in recepient_phone_numbers:
-        message = client.conversations.v1.conversations(conversations_sid).messages.create(from_=f'whatsapp:{twilio_phone_number}',
-                                                                                           body='Ahoy there!',
-                                                                                           to=f'whatsapp:{recepient_phone_number}',
-                                                                                           )
-    #     message = client.messages.create(
-    #         from_=f'whatsapp:{twilio_phone_number}',
-    #         body='Hello, we have a few questions for you to answer',
-    #         to=f'whatsapp:{recepient_phone_number}',
-    #     )
 
-    #     time.sleep(2)
+        message = client.messages.create(
+            from_=f'whatsapp:{twilio_phone_number}',
+            body='Hello, we have a few questions for you to answer',
+            to=f'whatsapp:{recepient_phone_number}',
+        )
 
-    #     message = client.messages.create(
-    #         from_=f'whatsapp:{twilio_phone_number}',
-    #         body=f'{questions[0]}',
-    #         to=f'whatsapp:{recepient_phone_number}',
-    #     )
+        time.sleep(2)
+
+        message = client.messages.create(
+            from_=f'whatsapp:{twilio_phone_number}',
+            body=f'{questions[0]}',
+            to=f'whatsapp:{recepient_phone_number}',
+        )
 
     return 'Inicio'
 
 @app.route('/', methods=['POST'])
 def webhook():
-    # Log the incoming request payload
-    # app.logger.info('Request Payload: {}'.format(request.values))
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
-    conversation_sid = request.values.get('ConversationSid', '')
 
     # Retrieve the conversation state for the current conversation_sid
-    conversation = conversations_client.conversations(conversation_sid).fetch()
+    conversation = conversations_client.conversations(new_conversation_sid).fetch()
     app.logger.info('Conversation: {}'.format(conversation))
 
     if not conversation:
@@ -149,7 +147,7 @@ def webhook():
         answers = [str(answer) for answer in conversation_state['answers']]
 
         # We have asked all the questions, save the answer in the database
-        new_info = Information(conversation_sid, incoming_phone_number, answers[0], answers[1], answers[2])
+        new_info = Information(new_conversation_sid, incoming_phone_number, answers[0], answers[1], answers[2])
         db.session.add(new_info)
         db.session.commit()
 
@@ -160,7 +158,7 @@ def webhook():
         response.message('Thank you for answering all the questions')
 
     # Update the conversation state in Twilio Conversations
-    conversations_client.conversations(conversation_sid).update(
+    conversations_client.conversations(new_conversation_sid).update(
         attributes=json.dumps(conversation_state)
     )
 
