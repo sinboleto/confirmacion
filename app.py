@@ -149,8 +149,6 @@ def webhook():
         current_question_index += 1
         conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
 
-        session.clear()
-
     else:
         response.message('Thank you for answering all the questions')
 
