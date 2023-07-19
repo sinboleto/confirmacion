@@ -9,6 +9,8 @@ from twilio.rest import Client
 from dotenv import load_dotenv
 import os
 
+import time
+
 app = Flask(__name__)
 
 port = int(os.environ.get('PORT', 5000))
@@ -40,14 +42,26 @@ client = Client(account_sid, auth_token)
 
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    conversation_index = db.Column(db.Integer, nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
-    question = db.Column(db.String(500), nullable=False)
-    answer = db.Column(db.String(500), nullable=False)
+    answer_1 = db.Column(db.String(500), nullable=False)
+    answer_2 = db.Column(db.String(500), nullable=False)
+    answer_3 = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, phone_number, question, answer):
+    def __init__(self, conversation_index, phone_number, answer_1, answer_2, answer_3):
+        self.conversation_index = conversation_index
         self.phone_number = phone_number
-        self.question = question
-        self.answer = answer
+        self.answer_1 = answer_1
+        self.answer_2 = answer_2
+        self.answer_3 = answer_3
+
+# Model inputs
+global questions
+questions = [
+            'What is your name?',
+            'What is your age?',
+            'What is your favorite color?'
+            ]
 
 
 # Inicio conversación
@@ -60,52 +74,68 @@ def inicio_conversacion():
         to = 'whatsapp:+5215551078511'
         )
     
+    time.sleep(2)
+
+    message = client.messages.create(
+        from_ = f'whatsapp:{twilio_phone_number}',
+        body = f'{questions[0]}',
+        to = 'whatsapp:+5215551078511'
+        )
+
     return 'Inicio'
 
 @app.route('/', methods=['POST'])
 def webhook():
 
-    questions = [
-                'What is your name?',
-                'What is your age?',
-                'What is your favorite color?'
-                ]
-
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
+
+    # Get last index value
+    index_values = db.session.query(Information.conversation_index).distinct().all()
+    index_values = [int(value[0]) for value in index_values]
+
+    if len(index_values) > 0:
+        new_index = max(index_values) + 1
+    else:
+        new_index = 0
 
     # Retrieve the conversation state for the current phone number
     conversation_state = session.get('conversation_states', {})
 
     response = MessagingResponse()
 
-    # Creates new first sessions
-    if incoming_phone_number not in conversation_state:
-        # First response for this phone number, initialize the conversation state
-        conversation_state[incoming_phone_number] = {
-            'questions': questions,
-            'current_question_index': -1  # -1 indicates that we haven't asked the first question yet
-        }
-
     # Get the user's answer
     user_answer = str(incoming_message_body)
 
-    current_question_index = conversation_state[incoming_phone_number]['current_question_index']
+    # Creates new first sessions
+    if new_index not in conversation_state:
+        # First response for this phone number, initialize the conversation state
+        conversation_state[new_index] = {
+            'current_question_index': 0,
+            'answers':[],
+        }
 
-    if current_question_index >= 0 and current_question_index <= len(questions) - 1:
-        # We have asked a question, save the answer in the database
-        current_question = questions[current_question_index]
-        new_info = Information(incoming_phone_number, current_question, user_answer)
-        db.session.add(new_info)
-        db.session.commit()
+    conversation_state[new_index]['answers'].append(user_answer)
 
+    current_question_index = conversation_state[new_index]['current_question_index']
+      
     if current_question_index >= len(questions) - 1:
         # No more questions, end the conversation
         response.message('Thank you for answering all the questions')
+
+        answers = [str(answer) for answer in conversation_state[new_index]['answers']]
+        
+        # We have asked all the question, save the answer in the database
+        new_info = Information(new_index, incoming_phone_number, answers[0], answers[1], answers[2])
+        db.session.add(new_info)
+        db.session.commit()
+
     else:
         # Ask the next question
         current_question_index += 1
-        conversation_state[incoming_phone_number]['current_question_index'] = current_question_index
+        conversation_state[new_index]['current_question_index'] = current_question_index
+
+        time.sleep(2)
 
         next_question = questions[current_question_index]
         response.message(next_question)
