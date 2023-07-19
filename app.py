@@ -89,7 +89,7 @@ def inicio_conversacion():
 def webhook():
 
     # Log the incoming request payload
-    app.logger.info('Request Payload: {}'.format(json.dumps(request.values)))
+    app.logger.info('Request Payload: {}'.format(request.values))
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
