@@ -119,19 +119,8 @@ def webhook():
 
     current_question_index = conversation_state[new_index]['current_question_index']
       
-    if current_question_index >= len(questions) - 1:
-        # No more questions, end the conversation
-        response.message('Thank you for answering all the questions')
-
-        answers = [str(answer) for answer in conversation_state[new_index]['answers']]
-        
-        # We have asked all the question, save the answer in the database
-        new_info = Information(new_index, incoming_phone_number, answers[0], answers[1], answers[2])
-        db.session.add(new_info)
-        db.session.commit()
-
-    else:
-        # Ask the next question
+    if current_question_index < len(questions):
+    # Ask the next question
         current_question_index += 1
         conversation_state[new_index]['current_question_index'] = current_question_index
 
@@ -139,6 +128,23 @@ def webhook():
 
         next_question = questions[current_question_index]
         response.message(next_question)
+    
+    elif current_question_index == len(questions):
+        # No more questions, end the conversation
+        response.message('Thank you for answering all the questions')
+        
+        answers = [str(answer) for answer in conversation_state[new_index]['answers']]
+        
+        # We have asked all the question, save the answer in the database
+        new_info = Information(new_index, incoming_phone_number, answers[0], answers[1], answers[2])
+        db.session.add(new_info)
+        db.session.commit()
+
+        current_question_index += 1
+        conversation_state[new_index]['current_question_index'] = current_question_index
+
+    else:
+        response.message('Thank you for answering all the questions')
 
     # Save the updated conversation state back to the session
     session['conversation_states'] = conversation_state
