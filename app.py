@@ -121,13 +121,13 @@ def webhook():
       
     if current_question_index < len(questions):
     # Ask the next question
+        
+        next_question = questions[current_question_index]
+        time.sleep(2)
+        response.message(next_question)
+
         current_question_index += 1
         conversation_state[new_index]['current_question_index'] = current_question_index
-
-        time.sleep(2)
-
-        next_question = questions[current_question_index]
-        response.message(next_question)
     
     elif current_question_index == len(questions):
         # No more questions, end the conversation
