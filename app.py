@@ -56,7 +56,6 @@ class Information(db.Model):
 # Model inputs
 global questions
 global recepient_phone_numbers
-global new_conversation_sid
 
 questions = [
     'What is your name?',
@@ -76,6 +75,7 @@ recepient_phone_numbers = ['+5215551078511']
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     conversation = conversations_client.conversations.create()
+    global new_conversation_sid
     new_conversation_sid = conversation.sid
     app.logger.info(conversation.sid)
 
