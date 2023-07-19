@@ -105,14 +105,6 @@ def webhook():
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
-    # Retrieve the conversation state for the current conversation_sid
-    conversation = conversations_client.conversations(new_conversation_sid).fetch()
-    app.logger.info('Conversation: {}'.format(conversation))
-
-    if not conversation:
-        app.logger.info('Invalid conversation_sid')
-        return 'Invalid conversation_sid'
-
     # Retrieve the conversation state for the current phone number
     conversation_state = session.get('conversation_states', {})
 
@@ -132,6 +124,7 @@ def webhook():
     conversation_state[new_conversation_sid]['answers'].append(user_answer)
 
     current_question_index = conversation_state[new_conversation_sid]['current_question_index']
+    app.logger.info(f'current_question_index:{current_question_index}')
       
     if current_question_index == 0:
         time.sleep(2)
@@ -158,6 +151,8 @@ def webhook():
 
         current_question_index += 1
         conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
+
+        session.clear()
 
     else:
         response.message('Thank you for answering all the questions')
