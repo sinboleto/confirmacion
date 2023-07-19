@@ -1,5 +1,5 @@
 import csv
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -75,8 +75,10 @@ recepient_phone_numbers = ['+5215551078511']
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     conversation = conversations_client.conversations.create()
+    
     global new_conversation_sid
     new_conversation_sid = conversation.sid
+    
     app.logger.info(conversation.sid)
 
     for recepient_phone_number in recepient_phone_numbers:
@@ -111,8 +113,8 @@ def webhook():
         app.logger.info('Invalid conversation_sid')
         return 'Invalid conversation_sid'
 
-    attributes = json.loads(conversation.attributes)
-    conversation_state = attributes if isinstance(attributes, dict) else {}
+    # Retrieve the conversation state for the current phone number
+    conversation_state = session.get('conversation_states', {})
 
     response = MessagingResponse()
 
@@ -120,47 +122,48 @@ def webhook():
     user_answer = str(incoming_message_body)
 
     # Creates new first sessions
-    if 'current_question_index' not in conversation_state:
+    if new_conversation_sid not in conversation_state:
         # First response for this phone number, initialize the conversation state
-        conversation_state['current_question_index'] = 0
-        conversation_state['answers'] = []
+        conversation_state[new_conversation_sid] = {
+            'current_question_index': 0,
+            'answers':[],
+        }
 
-    conversation_state['answers'].append(user_answer)
+    conversation_state[new_conversation_sid]['answers'].append(user_answer)
 
-    current_question_index = conversation_state['current_question_index']
-
+    current_question_index = conversation_state[new_conversation_sid]['current_question_index']
+      
     if current_question_index == 0:
         time.sleep(2)
+    
     elif current_question_index < len(questions):
-        # Ask the next question
-
+    # Ask the next question
         next_question = questions[current_question_index]
         time.sleep(2)
         response.message(next_question)
 
         current_question_index += 1
-        conversation_state['current_question_index'] = current_question_index
+        conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
+    
     elif current_question_index == len(questions):
         # No more questions, end the conversation
         response.message('Thank you for answering all the questions')
-
-        answers = [str(answer) for answer in conversation_state['answers']]
-
-        # We have asked all the questions, save the answer in the database
+        
+        answers = [str(answer) for answer in conversation_state[new_conversation_sid]['answers']]
+        
+        # We have asked all the question, save the answer in the database
         new_info = Information(new_conversation_sid, incoming_phone_number, answers[0], answers[1], answers[2])
         db.session.add(new_info)
         db.session.commit()
 
         current_question_index += 1
-        conversation_state['current_question_index'] = current_question_index
+        conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
 
     else:
         response.message('Thank you for answering all the questions')
 
-    # Update the conversation state in Twilio Conversations
-    conversations_client.conversations(new_conversation_sid).update(
-        attributes=json.dumps(conversation_state)
-    )
+    # Save the updated conversation state back to the session
+    session['conversation_states'] = conversation_state
 
     return str(response)
 
