@@ -58,6 +58,7 @@ class Information(db.Model):
 
 # Model inputs
 global questions
+global conversation_sid
 questions = [
             'What is your name?',
             'What is your age?',
@@ -82,6 +83,8 @@ def inicio_conversacion():
         body = f'{questions[0]}',
         to = 'whatsapp:+5215551078511'
         )
+    
+    conversation_sid = message.conversation_sid
 
     return 'Inicio'
 
@@ -93,7 +96,7 @@ def webhook():
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
-    conversation_sid = request.values.get('ConversationSid', '')
+    # conversation_sid = request.values.get('ConversationSid', '')
 
     # Retrieve the conversation state for the current phone number
     conversation_state = session.get('conversation_states', {})
