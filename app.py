@@ -127,6 +127,7 @@ def webhook():
     app.logger.info(f'current_question_index:{current_question_index}')
       
     if current_question_index == 0:
+        current_question_index += 1
         time.sleep(2)
     
     elif current_question_index < len(questions):
