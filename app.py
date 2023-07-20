@@ -106,7 +106,7 @@ def inicio_conversacion():
             'answers': [],
         }
 
-        app.logger.info(conversation_states)
+    app.logger.info(conversation_states)
 
     return 'Inicio'
 
@@ -115,6 +115,8 @@ def webhook():
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
+
+    app.logger.info(incoming_phone_number)
 
     # Get the conversation state for the current recipient
     conversation_state = conversation_states.get(incoming_phone_number, None)
