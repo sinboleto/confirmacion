@@ -115,6 +115,7 @@ def webhook():
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
+    incoming_phone_number = incoming_phone_number.replace('whatsapp:', '')
 
     app.logger.info(incoming_phone_number)
 
