@@ -1,5 +1,5 @@
 import csv
-from flask import Flask, render_template, request, Response, session
+from flask import Flask, render_template, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 import os
 
 import time
-import json
 
 app = Flask(__name__)
 
@@ -57,6 +56,8 @@ class Information(db.Model):
 # Model inputs
 global questions
 global recepient_phone_numbers
+global conversation_states
+conversation_states = {}
 
 questions = [
     'What is your name?',
@@ -76,20 +77,17 @@ recepient_phone_numbers = ['+5215551078511',
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
-    conversation = conversations_client.conversations.create()
+    global conversation_states
     
-    global new_conversation_sid
-    new_conversation_sid = conversation.sid
-    
-    app.logger.info(conversation.sid)
-
-    for recepient_phone_number in recepient_phone_numbers:
+    for recipient_phone_number in recepient_phone_numbers:
+        conversation = conversations_client.conversations.create()
+        app.logger.info(conversation.sid)
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
             body='Hello, we have a few questions for you to answer',
-            to=f'whatsapp:{recepient_phone_number}',
+            to=f'whatsapp:{recipient_phone_number}',
         )
 
         time.sleep(2)
@@ -98,8 +96,15 @@ def inicio_conversacion():
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
             body=f'{questions[0]}',
-            to=f'whatsapp:{recepient_phone_number}',
+            to=f'whatsapp:{recipient_phone_number}',
         )
+
+        # Store the conversation SID and initial state for each recipient
+        conversation_states[recipient_phone_number] = {
+            'conversation_sid': conversation.sid,
+            'current_question_index': 0,
+            'answers': [],
+        }
 
     return 'Inicio'
 
@@ -109,25 +114,24 @@ def webhook():
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
 
-    # Retrieve the conversation state for the current phone number
-    conversation_state = session.get('conversation_states', {})
+    # Get the conversation state for the current recipient
+    conversation_state = conversation_states.get(incoming_phone_number, None)
+
+    if not conversation_state:
+        return "Invalid recipient phone number."
 
     response = MessagingResponse()
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
 
-    # Creates new first sessions
-    if new_conversation_sid not in conversation_state:
-        # First response for this phone number, initialize the conversation state
-        conversation_state[new_conversation_sid] = {
-            'current_question_index': 1,
-            'answers':[],
-        }
+    # Get the conversation SID
+    conversation_sid = conversation_state['conversation_sid']
 
-    conversation_state[new_conversation_sid]['answers'].append(user_answer)
+    # Append the answer to the conversation state
+    conversation_state['answers'].append(user_answer)
 
-    current_question_index = conversation_state[new_conversation_sid]['current_question_index']
+    current_question_index = conversation_state['current_question_index']
     app.logger.info(f'current_question_index:{current_question_index}')
       
     if current_question_index < len(questions):
@@ -137,27 +141,31 @@ def webhook():
         response.message(next_question)
 
         current_question_index += 1
-        conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
+        conversation_state['current_question_index'] = current_question_index
     
     elif current_question_index == len(questions):
         # No more questions, end the conversation
         response.message('Thank you for answering all the questions')
         
-        answers = [str(answer) for answer in conversation_state[new_conversation_sid]['answers']]
+        answers = [str(answer) for answer in conversation_state['answers']]
         
         # We have asked all the question, save the answer in the database
-        new_info = Information(new_conversation_sid, incoming_phone_number, answers[0], answers[1], answers[2])
+        new_info = Information(conversation_sid,
+                               incoming_phone_number,
+                               answers[0],
+                               answers[1],
+                               answers[2])
         db.session.add(new_info)
         db.session.commit()
 
         current_question_index += 1
-        conversation_state[new_conversation_sid]['current_question_index'] = current_question_index
+        conversation_state['current_question_index'] = current_question_index
 
     else:
         response.message('Thank you for answering all the questions')
 
-    # Save the updated conversation state back to the session
-    session['conversation_states'] = conversation_state
+    # Update the conversation state in the global dictionary
+    conversation_states[incoming_phone_number] = conversation_state
 
     return str(response)
 
@@ -172,12 +180,18 @@ def export():
 
     # Create the CSV file
     with open('data.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['ID', 'Information']
+        fieldnames = ['ID','Conversation_SID','Telefono','Respuesta_1','Respuesta_2','Respuesta_3']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for info in infos:
-            writer.writerow({'ID': info.id, 'Information': info.info})
+            writer.writerow({'ID':info.id,
+                             'Conversation_SID':info.conversation_sid,
+                             'Telefono':info.phone_number
+                             ,'Respuesta_1':info.answer_1
+                             ,'Respuesta_2':info.answer_2
+                             ,'Respuesta_3':info.answer_3
+                             })
 
     # Send the CSV file as a response for download
     with open('data.csv', 'r', encoding='utf-8') as f:
