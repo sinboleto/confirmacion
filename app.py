@@ -31,6 +31,7 @@ auth_token = os.environ.get('AUTH_TOKEN')
 conversations_sid = os.environ.get('CONVERSATIONS_SERVICE_SID')
 twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
 app.secret_key = os.environ.get('APP_SECRET_KEY')
+messaging_service_sid = os.environ.get('MESSAGING_SERVICE_SID')
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
@@ -85,6 +86,7 @@ def inicio_conversacion():
     for recepient_phone_number in recepient_phone_numbers:
 
         message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
             body='Hello, we have a few questions for you to answer',
             to=f'whatsapp:{recepient_phone_number}',
@@ -93,6 +95,7 @@ def inicio_conversacion():
         time.sleep(2)
 
         message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
             body=f'{questions[0]}',
             to=f'whatsapp:{recepient_phone_number}',
