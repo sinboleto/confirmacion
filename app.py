@@ -102,7 +102,7 @@ def inicio_conversacion():
         # Store the conversation SID and initial state for each recipient
         conversation_states[recipient_phone_number] = {
             'conversation_sid': conversation.sid,
-            'current_question_index': 0,
+            'current_question_index': 1,
             'answers': [],
         }
 
