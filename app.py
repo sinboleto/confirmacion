@@ -106,6 +106,8 @@ def inicio_conversacion():
             'answers': [],
         }
 
+        app.logger.info(conversation_states)
+
     return 'Inicio'
 
 @app.route('/', methods=['POST'])
@@ -118,7 +120,8 @@ def webhook():
     conversation_state = conversation_states.get(incoming_phone_number, None)
 
     if not conversation_state:
-        return "Invalid recipient phone number."
+        app.logger.info('Invalid recipient phone number')
+        return 'Invalid recipient phone number'
 
     response = MessagingResponse()
 
