@@ -197,9 +197,10 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == -1:
-        # We have asked all the question, save the answer in the database
+        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        
         answers = [str(answer) for answer in conversation_state['answers']]
-
+        # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
                                dict_info_recipients[incoming_phone_number]["recipient_name"],
                                incoming_phone_number,
