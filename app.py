@@ -244,7 +244,46 @@ def webhook():
 @app.route('/view')
 def view():
     infos = Information.query.all()
-    return render_template('view.html', infos=infos)
+
+    # Extract distinct answer_1 values and their counts from the database
+    answer_1_values = [info.answer_1 for info in infos]
+    unique_values, value_counts = np.unique(answer_1_values, return_counts=True)
+
+    # Create a bar plot for Answer 1 using Matplotlib
+    plt.figure()
+    plt.bar(unique_values, value_counts)
+    plt.xlabel('Answer 1 Value')
+    plt.ylabel('Count')
+    plt.title('Answer 1 Value Counts')
+    plt.xticks(rotation=45)
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # Extract distinct answer_2 values and their sums from the database
+    answer_2_values = [info.answer_2 for info in infos]
+    unique_values2, value_sums = np.unique(answer_2_values, return_counts=True)
+
+    # Create a bar plot for Answer 2 using Matplotlib
+    plt.figure()
+    plt.bar(unique_values2, value_sums)
+    plt.xlabel('Answer 2 Value')
+    plt.ylabel('Sum')
+    plt.title('Answer 2 Value Sums')
+    plt.xticks(rotation=45)
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer2 = io.BytesIO()
+    plt.savefig(buffer2, format='png')
+    buffer2.seek(0)
+    plt.close()
+    plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
+
+    return render_template('view.html', infos=infos, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
 
 @app.route('/export', methods=['POST'])
 def export():
@@ -285,53 +324,6 @@ def delete_information():
     session_db.commit()
 
     return 'Database information has been deleted successfully'
-
-@app.route('/plot', methods=['GET'])
-def plot():
-    # Extract distinct answer_1 values and their counts from the database
-    answer_1_values = [info.answer_1 for info in Information.query.all()]
-    unique_values, value_counts = np.unique(answer_1_values, return_counts=True)
-
-    # Create a bar plot for Answer 1 using Matplotlib
-    plt.figure(figsize=(8, 6))
-    plt.bar(unique_values, value_counts)
-    plt.xlabel('Answer 1 Value')
-    plt.ylabel('Count')
-    plt.title('Answer 1 Value Counts')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Save the Answer 1 plot to a bytes buffer
-    buffer1 = io.BytesIO()
-    plt.savefig(buffer1, format='png')
-    buffer1.seek(0)
-    plt.close()
-
-    # Extract distinct answer_2 values and their sums from the database
-    answer_2_values = [info.answer_2 for info in Information.query.all()]
-    unique_values2, value_sums = np.unique(answer_2_values, return_counts=False)
-
-    # Create a bar plot for Answer 2 using Matplotlib
-    plt.figure(figsize=(8, 6))
-    plt.bar(unique_values2, value_sums)
-    plt.xlabel('Answer 2 Value')
-    plt.ylabel('Sum')
-    plt.title('Answer 2 Value Sums')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Save the Answer 2 plot to a bytes buffer
-    buffer2 = io.BytesIO()
-    plt.savefig(buffer2, format='png')
-    buffer2.seek(0)
-    plt.close()
-
-    # Convert plots to base64 encoded strings
-    plot1_base64 = base64.b64encode(buffer1.read()).decode()
-    plot2_base64 = base64.b64encode(buffer2.read()).decode()
-
-    # Return the plots as base64-encoded images
-    return render_template('plot.html', plot1_base64=plot1_base64, plot2_base64=plot2_base64)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
