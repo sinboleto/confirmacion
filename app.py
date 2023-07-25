@@ -97,7 +97,7 @@ def inicio_conversacion():
         app.logger.info(conversation.sid)
 
         intro = intro.format(
-            dict_info_recepients[recipient_phone_number]['name'],
+            dict_info_recepients[recipient_phone_number]['recipient_name'],
             list_info_event[0],
             list_info_event[1],
             list_info_event[2],
@@ -177,7 +177,7 @@ def webhook():
     
     elif current_question_index == len(messages):
         # No more questions, end the conversation
-        response.message(f'{dict_info_recepients[incoming_phone_number]["name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
         
@@ -193,7 +193,7 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     else:
-        response.message(f'{dict_info_recepients[incoming_phone_number]["name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
