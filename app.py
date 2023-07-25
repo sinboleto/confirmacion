@@ -306,14 +306,13 @@ def plot():
 
     # Extract distinct answer_2 values and their sums from the database
     answer_2_values = [info.answer_2 for info in Information.query.all()]
-    unique_values_2, value_sums = np.unique(answer_2_values, return_counts=True)
 
     # Create a bar plot for answer_2 using Matplotlib
-    plt.bar(unique_values_2, value_sums)
+    plt.bar(0, sum(answer_2_values))
     plt.xlabel('Answer 2 Value')
     plt.ylabel('Sum')
     plt.title('Answer 2 Value Sums')
-    plt.xticks(rotation=45)
+    # plt.xticks(rotation=45)
 
     # Save the second plot to a bytes buffer
     buffer2 = io.BytesIO()
