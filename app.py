@@ -67,12 +67,12 @@ list_info_event = ['Santiago',
                    2021,
                    'Xochitepec, Morelos']
 
-dict_info_recepients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
-                        # '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
-                        # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
-                        # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
-                        # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
-                        # '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
+dict_info_recepients = {'+5215551078511':{'recepient_name':'Santiago', 'tickets':2},
+                        # '+5215585308944':{'recepient_name':'Gerardo', 'tickets':2},
+                        # '+5215585487594':{'recepient_name':'Fernanda', 'tickets':2},
+                        # '+5215554186584':{'recepient_name':'Maru', 'tickets':2},
+                        # '+5215537139718':{'recepient_name':'Pablo', 'tickets':2},
+                        # '+5215544907299':{'recepient_name':'Andrea', 'tickets':2}
                         }
 
 conversation_states = {}
@@ -97,7 +97,7 @@ def inicio_conversacion():
         app.logger.info(conversation.sid)
 
         intro = intro.format(
-            dict_info_recepients[recipient_phone_number]['recipient_name'],
+            dict_info_recepients[recipient_phone_number]['recepient_name'],
             list_info_event[0],
             list_info_event[1],
             list_info_event[2],
@@ -177,7 +177,7 @@ def webhook():
     
     elif current_question_index == len(messages):
         # No more questions, end the conversation
-        response.message(f'{dict_info_recepients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["recepient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
         
@@ -193,7 +193,7 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     else:
-        response.message(f'{dict_info_recepients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["recepient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
