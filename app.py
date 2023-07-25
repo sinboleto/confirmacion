@@ -157,8 +157,8 @@ def webhook():
     if current_question_index == 0 and user_answer == 'No':
         current_question_index = -1
         conversation_state['answers'].append(0)
-    else:
-        app.logger.info(f'current_question_index:{current_question_index}')
+    
+    app.logger.info(f'current_question_index:{current_question_index}')
       
     if current_question_index < len(messages):
     # Ask the next question
