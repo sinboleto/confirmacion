@@ -320,13 +320,17 @@ def plot():
     plt.savefig(buffer2, format='png')
     plt.close()
 
-    # Return the plots as image responses
+    # Convert the plot images to base64-encoded strings
+    plot1_base64 = base64.b64encode(buffer1.getvalue()).decode()
+    plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
+
+    # Return the plots as an HTML page
     return f'''
     <h1>Answer 1 Value Counts</h1>
-    <img src="data:image/png;base64,{base64.b64encode(buffer1.getvalue()).decode()}">
+    <img src="data:image/png;base64,{plot1_base64}">
 
     <h1>Answer 2 Value Sums</h1>
-    <img src="data:image/png;base64,{base64.b64encode(buffer2.getvalue()).decode()}">
+    <img src="data:image/png;base64,{plot2_base64}">
     '''
 
 if __name__ == '__main__':
