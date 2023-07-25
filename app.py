@@ -160,7 +160,7 @@ def webhook():
     
     app.logger.info(f'current_question_index:{current_question_index}')
       
-    if current_question_index < len(messages):
+    if current_question_index >= 0 and current_question_index < len(messages):
     # Ask the next question
         next_message = messages[current_question_index]
 
