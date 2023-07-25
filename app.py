@@ -54,9 +54,9 @@ class Information(db.Model):
 # Model inputs
 global intro
 global messages
-global recepient_phone_numbers
+global recipient_phone_numbers
 global list_info_event
-global dict_info_recepients
+global dict_info_recipients
 global conversation_states
 
 
@@ -67,12 +67,12 @@ list_info_event = ['Santiago',
                    2021,
                    'Xochitepec, Morelos']
 
-dict_info_recepients = {'+5215551078511':{'recepient_name':'Santiago', 'tickets':2},
-                        # '+5215585308944':{'recepient_name':'Gerardo', 'tickets':2},
-                        # '+5215585487594':{'recepient_name':'Fernanda', 'tickets':2},
-                        # '+5215554186584':{'recepient_name':'Maru', 'tickets':2},
-                        # '+5215537139718':{'recepient_name':'Pablo', 'tickets':2},
-                        # '+5215544907299':{'recepient_name':'Andrea', 'tickets':2}
+dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
+                        # '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
+                        # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
+                        # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
+                        # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
+                        # '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
                         }
 
 conversation_states = {}
@@ -91,19 +91,19 @@ def inicio_conversacion():
     global intro
     global conversation_states
     
-    for recipient_phone_number in dict_info_recepients:
+    for recipient_phone_number in dict_info_recipients:
 
         conversation = conversations_client.conversations.create()
         app.logger.info(conversation.sid)
 
         intro = intro.format(
-            dict_info_recepients[recipient_phone_number]['recepient_name'],
-            list_info_event[0],
-            list_info_event[1],
-            list_info_event[2],
-            list_info_event[3],
-            list_info_event[4],
-            list_info_event[5])
+            recipient_name= dict_info_recipients[recipient_phone_number]['recipient_name'],
+            bride=list_info_event[0],
+            groom=list_info_event[1],
+            day=list_info_event[2],
+            month=list_info_event[3],
+            year=list_info_event[4],
+            place=list_info_event[5])
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
@@ -163,11 +163,11 @@ def webhook():
 
         # Autocomplete messages with personalized information
         if current_question_index == 0:
-            if dict_info_recepients[incoming_phone_number]['tickets'] > 1:
+            if dict_info_recipients[incoming_phone_number]['tickets'] > 1:
                 str_tickets = 'boletos'
             else:
                 str_tickets = 'boleto'
-            next_message = next_message.format(tickets=dict_info_recepients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+            next_message = next_message.format(tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
 
         time.sleep(2)
         response.message(next_message)
@@ -177,7 +177,7 @@ def webhook():
     
     elif current_question_index == len(messages):
         # No more questions, end the conversation
-        response.message(f'{dict_info_recepients[incoming_phone_number]["recepient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
         
@@ -193,7 +193,7 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     else:
-        response.message(f'{dict_info_recepients[incoming_phone_number]["recepient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
