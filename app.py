@@ -91,7 +91,7 @@ dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets'
                         # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
                         # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
                         # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
-                        '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
+                        # '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
                         }
 
 conversation_states = {}
@@ -105,7 +105,6 @@ messages = [
     ]
 
 # Inicio conversación
-@app.route('/start', methods=['GET'])
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     global intro
@@ -293,23 +292,42 @@ def plot():
     answer_1_values = [info.answer_1 for info in Information.query.all()]
     unique_values, value_counts = np.unique(answer_1_values, return_counts=True)
 
-    # Create a bar plot using Matplotlib
+    # Create a bar plot for answer_1 using Matplotlib
     plt.bar(unique_values, value_counts)
     plt.xlabel('Answer 1 Value')
     plt.ylabel('Count')
     plt.title('Answer 1 Value Counts')
-
-    # Rotate X-axis labels for better visibility
     plt.xticks(rotation=45)
 
     # Save the plot to a bytes buffer
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
+    buffer1 = io.BytesIO()
+    plt.savefig(buffer1, format='png')
     plt.close()
 
-    # Return the plot as an image response
-    return send_file(buffer, mimetype='image/png')
+    # Extract distinct answer_2 values and their sums from the database
+    answer_2_values = [info.answer_2 for info in Information.query.all()]
+    unique_values_2, value_sums = np.unique(answer_2_values, return_counts=True)
+
+    # Create a bar plot for answer_2 using Matplotlib
+    plt.bar(unique_values_2, value_sums)
+    plt.xlabel('Answer 2 Value')
+    plt.ylabel('Sum')
+    plt.title('Answer 2 Value Sums')
+    plt.xticks(rotation=45)
+
+    # Save the second plot to a bytes buffer
+    buffer2 = io.BytesIO()
+    plt.savefig(buffer2, format='png')
+    plt.close()
+
+    # Return the plots as image responses
+    return f'''
+    <h1>Answer 1 Value Counts</h1>
+    <img src="data:image/png;base64,{base64.b64encode(buffer1.getvalue()).decode()}">
+
+    <h1>Answer 2 Value Sums</h1>
+    <img src="data:image/png;base64,{base64.b64encode(buffer2.getvalue()).decode()}">
+    '''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
