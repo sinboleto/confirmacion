@@ -154,7 +154,7 @@ def webhook():
 
     current_question_index = conversation_state['current_question_index']
 
-    if current_question_index == 0 and user_answer == 'No':
+    if current_question_index == 0 and user_answer == 'no':
         current_question_index = -1
         conversation_state['answers'].append(0)
     
