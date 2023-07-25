@@ -42,11 +42,13 @@ class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_sid = db.Column(db.String(50), nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
     answer_1 = db.Column(db.String(500), nullable=False)
     answer_2 = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, conversation_sid, phone_number, answer_1, answer_2):
+    def __init__(self, conversation_sid, name, phone_number, answer_1, answer_2):
         self.conversation_sid = conversation_sid
+        self.name = name
         self.phone_number = phone_number
         self.answer_1 = answer_1
         self.answer_2 = answer_2
@@ -150,7 +152,7 @@ def webhook():
     # Append the answer to the conversation state
     conversation_state['answers'].append(user_answer)
 
-    if conversation_state == 0 and user_answer == 'No':
+    if conversation_state['current_question_index'] == 0 and user_answer == 'No':
         current_question_index = -1
         conversation_state['answers'].append('No')
     else:
@@ -183,6 +185,7 @@ def webhook():
         
         # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
+                               dict_info_recipients[incoming_phone_number]["recipient_name"],
                                incoming_phone_number,
                                answers[0],
                                answers[1])

@@ -9,14 +9,16 @@
         <tr>
             <th>ID</th>
             <th>Conversation_SID</th>
-            <th>Telefono</th>
-            <th>Respuesta_1</th>
-            <th>Respuesta_2</th>
+            <th>Name</th>
+            <th>Phone number</th>
+            <th>Answer_1</th>
+            <th>Answer_2</th>
         </tr>
         {% for info in infos %}
             <tr>
                 <td>{{ info.id }}</td>
                 <td>{{ info.conversation_sid }}</td>
+                <td>{{ info.name }}</td>
                 <td>{{ info.phone_number }}</td>
                 <td>{{ info.answer_1 }}</td>
                 <td>{{ info.answer_2 }}</td>
