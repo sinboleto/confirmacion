@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, send_file
 
 # Database
 import csv
@@ -87,10 +87,10 @@ list_info_event = ['Andrea', # bride
                    ]
 
 dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
-                        '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
-                        '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
-                        '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
-                        '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
+                        # '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
+                        # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
+                        # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
+                        # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
                         '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
                         }
 
@@ -106,6 +106,7 @@ messages = [
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
+@app.route('/start', methods=['GET'])
 def inicio_conversacion():
     global intro
     global conversation_states
@@ -115,11 +116,11 @@ def inicio_conversacion():
         conversation = conversations_client.conversations.create()
         app.logger.info(conversation.sid)
 
+        # Get the recipient_name dynamically for each recipient_phone_number
         recipient_name = dict_info_recipients[recipient_phone_number]['recipient_name']
-        app.logger.info(recipient_name)
 
-        intro = intro.format(
-            recipient_name= recipient_name,
+        intro_formatted = intro.format(
+            recipient_name=recipient_name,
             bride=list_info_event[0],
             groom=list_info_event[1],
             day=list_info_event[2],
@@ -130,7 +131,7 @@ def inicio_conversacion():
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
-            body=intro,
+            body=intro_formatted,
             to=f'whatsapp:{recipient_phone_number}'
             )
 
@@ -144,6 +145,7 @@ def inicio_conversacion():
     app.logger.info(conversation_states)
 
     return 'Inicio'
+
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -300,16 +302,14 @@ def plot():
     # Rotate X-axis labels for better visibility
     plt.xticks(rotation=45)
 
-    # Convert the plot to bytes and encode it in base64
+    # Save the plot to a bytes buffer
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
     plt.close()
 
-    plot_base64 = base64.b64encode(buffer.read()).decode()
-
-    # Return the plot as base64-encoded image
-    return f'<img src="data:image/png;base64,{plot_base64}">'
+    # Return the plot as an image response
+    return send_file(buffer, mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
