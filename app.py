@@ -305,7 +305,7 @@ def plot():
     plt.close()
 
     # Extract distinct answer_2 values and their sums from the database
-    answer_2_values = [info.answer_2 for info in Information.query.all()]
+    answer_2_values = [int(info.answer_2) for info in Information.query.all()]
 
     # Create a bar plot for answer_2 using Matplotlib
     plt.bar(0, sum(answer_2_values))
