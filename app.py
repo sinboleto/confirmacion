@@ -1,16 +1,31 @@
-import csv
+# Libraries
+
+# Flask app
 from flask import Flask, render_template, request, Response
+
+# Database
+import csv
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+# Twilio
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 
+# System
 from dotenv import load_dotenv
 import os
 
+# Delay
 import time
 
+# Graph
+import matplotlib.pyplot as plt
+import io
+import numpy as np
+
+
+# Main script
 app = Flask(__name__)
 
 port = int(os.environ.get('PORT', 5000))
@@ -62,12 +77,13 @@ global dict_info_recipients
 global conversation_states
 
 
-list_info_event = ['Santiago',
-                   'Andrea',
-                   12,
-                   'junio',
-                   2021,
-                   'Xochitepec, Morelos']
+list_info_event = ['Andrea', # bride
+                   'Santiago', # groom
+                   12, # day
+                   'junio', # month
+                   2021, # year
+                   'Xochitepec, Morelos' # place
+                   ]
 
 dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
                         '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
@@ -180,6 +196,7 @@ def webhook():
     
     elif current_question_index == len(messages):
         # No more questions, end the conversation
+        time.sleep(2)
         response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
@@ -197,6 +214,7 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == -1:
+        time.sleep(2)
         response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
@@ -210,6 +228,7 @@ def webhook():
         db.session.commit()
 
     else:
+        time.sleep(2)
         response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
     # Update the conversation state in the global dictionary
@@ -261,6 +280,32 @@ def delete_information():
     session_db.commit()
 
     return 'Database information has been deleted successfully'
+
+@app.route('/plot')
+def plot():
+    # Extract distinct answer_1 values and their counts from the database
+    answer_1_values = [info.answer_1 for info in Information.query.all()]
+    unique_values, value_counts = np.unique(answer_1_values, return_counts=True)
+
+    # Create a bar plot using Matplotlib
+    plt.bar(unique_values, value_counts)
+    plt.xlabel('Answer 1 Value')
+    plt.ylabel('Count')
+    plt.title('Answer 1 Value Counts')
+
+    # Rotate X-axis labels for better visibility
+    plt.xticks(rotation=45)
+
+    # Convert the plot to bytes
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+
+    # Return the plot as an image
+    return Response(buffer.getvalue(), mimetype='image/png')
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
