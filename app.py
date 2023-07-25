@@ -299,37 +299,34 @@ def plot():
     plt.title('Answer 1 Value Counts')
     plt.xticks(rotation=45)
 
-    # Save the plot to a bytes buffer
-    buffer1 = io.BytesIO()
-    plt.savefig(buffer1, format='png')
+    # Save the plot image to a file
+    plot1_path = 'plot1.png'
+    plt.savefig(plot1_path, format='png')
     plt.close()
 
     # Extract distinct answer_2 values and their sums from the database
-    answer_2_values = [int(info.answer_2) for info in Information.query.all()]
+    answer_2_values = [info.answer_2 for info in Information.query.all()]
+    unique_values_2, value_sums = np.unique(answer_2_values, return_counts=True)
 
     # Create a bar plot for answer_2 using Matplotlib
-    plt.bar(0, sum(answer_2_values))
+    plt.bar(unique_values_2, value_sums)
     plt.xlabel('Answer 2 Value')
     plt.ylabel('Sum')
     plt.title('Answer 2 Value Sums')
-    # plt.xticks(rotation=45)
+    plt.xticks(rotation=45)
 
-    # Save the second plot to a bytes buffer
-    buffer2 = io.BytesIO()
-    plt.savefig(buffer2, format='png')
+    # Save the second plot image to a file
+    plot2_path = 'plot2.png'
+    plt.savefig(plot2_path, format='png')
     plt.close()
 
-    # Convert the plot images to base64-encoded strings
-    plot1_base64 = base64.b64encode(buffer1.getvalue()).decode()
-    plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
-
-    # Return the plots as an HTML page
+    # Return the plots as an HTML page with image paths
     return f'''
     <h1>Answer 1 Value Counts</h1>
-    <img src="data:image/png;base64,{plot1_base64}">
+    <img src="/{plot1_path}" alt="Plot 1">
 
     <h1>Answer 2 Value Sums</h1>
-    <img src="data:image/png;base64,{plot2_base64}">
+    <img src="/{plot2_path}" alt="Plot 2">
     '''
 
 if __name__ == '__main__':
