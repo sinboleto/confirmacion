@@ -152,11 +152,12 @@ def webhook():
     # Append the answer to the conversation state
     conversation_state['answers'].append(user_answer)
 
-    if conversation_state['current_question_index'] == 0 and user_answer == 'No':
+    current_question_index = conversation_state['current_question_index']
+
+    if current_question_index == 0 and user_answer == 'No':
         current_question_index = -1
-        conversation_state['answers'].append('No')
+        conversation_state['answers'].append(0)
     else:
-        current_question_index = conversation_state['current_question_index']
         app.logger.info(f'current_question_index:{current_question_index}')
       
     if current_question_index < len(messages):
