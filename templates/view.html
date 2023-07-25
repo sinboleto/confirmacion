@@ -2,43 +2,50 @@
 <html>
 <head>
     <title>View information</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>View information</h1>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Conversation_SID</th>
-            <th>Name</th>
-            <th>Phone number</th>
-            <th>Answer_1</th>
-            <th>Answer_2</th>
-        </tr>
-        {% for info in infos %}
-            <tr>
-                <td>{{ info.id }}</td>
-                <td>{{ info.conversation_sid }}</td>
-                <td>{{ info.name }}</td>
-                <td>{{ info.phone_number }}</td>
-                <td>{{ info.answer_1 }}</td>
-                <td>{{ info.answer_2 }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-
-    <!-- Display Answer 1 plot -->
-    <h2>Answer 1 Value Counts</h2>
-    <img src="data:image/png;base64,{{ plot1_base64 }}" alt="Answer 1 Plot" />
-
-    <!-- Display Answer 2 plot -->
-    <h2>Answer 2 Value Sums</h2>
-    <img src="data:image/png;base64,{{ plot2_base64 }}" alt="Answer 2 Plot" />
-
-    <form action="/export" method="POST">
-        <input type="submit" value="Export to CSV">
-    </form>
-    <form action="/delete_information" method="POST">
-        <input type="submit" value="Delete DB information">
-    </form>
+    <div class="container">
+        <h1>View information</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Conversation_SID</th>
+                            <th>Name</th>
+                            <th>Phone number</th>
+                            <th>Answer_1</th>
+                            <th>Answer_2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for info in infos %}
+                        <tr>
+                            <td>{{ info.id }}</td>
+                            <td>{{ info.conversation_sid }}</td>
+                            <td>{{ info.name }}</td>
+                            <td>{{ info.phone_number }}</td>
+                            <td>{{ info.answer_1 }}</td>
+                            <td>{{ info.answer_2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot1_base64 }}" class="img-fluid" alt="Answer 1 Value Counts">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Add any additional content here -->
+            </div>
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

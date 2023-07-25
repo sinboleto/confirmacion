@@ -265,12 +265,11 @@ def view():
     plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
 
     # Extract distinct answer_2 values and their sums from the database
-    answer_2_values = [info.answer_2 for info in infos]
-    unique_values2, value_sums = np.unique(answer_2_values, return_counts=True)
-
+    answer_2_values = [int(info.answer_2) for info in infos]
+    value_sums = sum(answer_2_values)
     # Create a bar plot for Answer 2 using Matplotlib
     plt.figure()
-    plt.bar(unique_values2, value_sums)
+    plt.bar(0, value_sums)
     plt.xlabel('Answer 2 Value')
     plt.ylabel('Sum')
     plt.title('Answer 2 Value Sums')
