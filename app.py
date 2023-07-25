@@ -252,10 +252,10 @@ def view():
     # Create a bar plot for Answer 1 using Matplotlib
     plt.figure()
     plt.bar(unique_values, value_counts)
-    plt.xlabel('Answer 1 Value')
+    plt.xlabel('Value')
     plt.ylabel('Count')
-    plt.title('Answer 1 Value Counts')
-    plt.xticks(rotation=45)
+    plt.title('Confirmation distribution')
+    plt.xticks()
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
@@ -270,10 +270,9 @@ def view():
     # Create a bar plot for Answer 2 using Matplotlib
     plt.figure()
     plt.bar(0, value_sums)
-    plt.xlabel('Answer 2 Value')
+    plt.xlabel('Value')
     plt.ylabel('Sum')
-    plt.title('Answer 2 Value Sums')
-    plt.xticks(rotation=45)
+    plt.title('Total confirmations')
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer2 = io.BytesIO()
