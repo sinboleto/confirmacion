@@ -113,10 +113,12 @@ def inicio_conversacion():
 
         conversation = conversations_client.conversations.create()
         app.logger.info(conversation.sid)
-        app.logger.info(dict_info_recipients[recipient_phone_number]['recipient_name'])
+
+        recipient_name = dict_info_recipients[recipient_phone_number]['recipient_name']
+        app.logger.info(recipient_name)
 
         intro = intro.format(
-            recipient_name= dict_info_recipients[recipient_phone_number]['recipient_name'],
+            recipient_name= recipient_name,
             bride=list_info_event[0],
             groom=list_info_event[1],
             day=list_info_event[2],
