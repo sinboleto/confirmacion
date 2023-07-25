@@ -23,6 +23,7 @@ import time
 import matplotlib.pyplot as plt
 import io
 import numpy as np
+import base64
 
 
 # Main script
@@ -299,16 +300,16 @@ def plot():
     # Rotate X-axis labels for better visibility
     plt.xticks(rotation=45)
 
-    # Convert the plot to bytes
+    # Convert the plot to bytes and encode it in base64
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
     plt.close()
 
-    # Return the plot as an image
-    return Response(buffer.getvalue(), mimetype='image/png')
+    plot_base64 = base64.b64encode(buffer.read()).decode()
 
-
+    # Return the plot as base64-encoded image
+    return f'<img src="data:image/png;base64,{plot_base64}">'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)

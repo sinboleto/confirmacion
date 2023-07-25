@@ -31,7 +31,12 @@
     <form action="/delete_information" method="POST">
         <input type="submit" value="Delete DB information">
     </form>
-    <!-- Add a link to the plot -->
-    <a href="/plot" target="_blank">View Answer 1 Value Counts Plot</a>
+    <!-- Display the embedded plot -->
+    <div>
+        <h2>Answer 1 Value Counts Plot</h2>
+        <div>
+            <!-- Replace the src attribute with the plot route -->
+            <img src="/plot">
+        </div>
 </body>
 </html>
