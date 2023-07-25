@@ -44,65 +44,77 @@ class Information(db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     answer_1 = db.Column(db.String(500), nullable=False)
     answer_2 = db.Column(db.String(500), nullable=False)
-    answer_3 = db.Column(db.String(500), nullable=False)
 
-    def __init__(self, conversation_sid, phone_number, answer_1, answer_2, answer_3):
+    def __init__(self, conversation_sid, phone_number, answer_1, answer_2):
         self.conversation_sid = conversation_sid
         self.phone_number = phone_number
         self.answer_1 = answer_1
         self.answer_2 = answer_2
-        self.answer_3 = answer_3
 
 # Model inputs
-global questions
+global intro
+global messages
 global recepient_phone_numbers
+global list_info_event
+global dict_info_recepients
 global conversation_states
+
+
+list_info_event = ['Santiago',
+                   'Andrea',
+                   12,
+                   'junio',
+                   2021,
+                   'Xochitepec, Morelos']
+
+dict_info_recepients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
+                        # '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
+                        # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
+                        # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
+                        # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
+                        # '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
+                        }
+
 conversation_states = {}
 
-questions = [
-    'What is your name?',
-    'What is your age?',
-    'What is your favorite color?'
-]
+intro = """Hola {recipient_name}:
 
-# recepient_phone_numbers = ['+5215551078511',
-#                            '+5215585308944',
-#                            '+5215585487594',
-#                            '+5215554186584',
-#                            '+5215537139718']
+De parte de {bride} y {groom} te extendemos la invitación para su boda que se celebrará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
-recepient_phone_numbers = ['+5215551078511',
-                           '+5215585308944']
+messages = [
+    'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda'
+    ]
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     global conversation_states
     
-    for recipient_phone_number in recepient_phone_numbers:
+    for recipient_phone_number in dict_info_recepients:
+
         conversation = conversations_client.conversations.create()
         app.logger.info(conversation.sid)
 
+        intro = intro.format(
+            dict_info_recepients[recipient_phone_number]['name'],
+            list_info_event[0],
+            list_info_event[1],
+            list_info_event[2],
+            list_info_event[3],
+            list_info_event[4],
+            list_info_event[5])
+
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
-            body='Hello, we have a few questions for you to answer',
-            to=f'whatsapp:{recipient_phone_number}',
-        )
-
-        time.sleep(2)
-
-        message = client.messages.create(
-            messaging_service_sid=messaging_service_sid,
-            from_=f'whatsapp:{twilio_phone_number}',
-            body=f'{questions[0]}',
-            to=f'whatsapp:{recipient_phone_number}',
-        )
+            body=intro,
+            to=f'whatsapp:{recipient_phone_number}'
+            )
 
         # Store the conversation SID and initial state for each recipient
         conversation_states[recipient_phone_number] = {
             'conversation_sid': conversation.sid,
-            'current_question_index': 1,
+            'current_question_index': 0,
             'answers': [],
         }
 
@@ -137,21 +149,34 @@ def webhook():
     # Append the answer to the conversation state
     conversation_state['answers'].append(user_answer)
 
-    current_question_index = conversation_state['current_question_index']
-    app.logger.info(f'current_question_index:{current_question_index}')
+    if conversation_state == 0 and user_answer == 'No':
+        current_question_index = -1
+        conversation_state['answers'].append('No')
+    else:
+        current_question_index = conversation_state['current_question_index']
+        app.logger.info(f'current_question_index:{current_question_index}')
       
-    if current_question_index < len(questions):
+    if current_question_index < len(messages):
     # Ask the next question
-        next_question = questions[current_question_index]
+        next_message = messages[current_question_index]
+
+        # Autocomplete messages with personalized information
+        if current_question_index == 0:
+            if dict_info_recepients[incoming_phone_number]['tickets'] > 1:
+                str_tickets = 'boletos'
+            else:
+                str_tickets = 'boleto'
+            next_message = next_message.format(tickets=dict_info_recepients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+
         time.sleep(2)
-        response.message(next_question)
+        response.message(next_message)
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
     
-    elif current_question_index == len(questions):
+    elif current_question_index == len(messages):
         # No more questions, end the conversation
-        response.message('Thank you for answering all the questions')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
         
         answers = [str(answer) for answer in conversation_state['answers']]
         
@@ -159,8 +184,7 @@ def webhook():
         new_info = Information(conversation_sid,
                                incoming_phone_number,
                                answers[0],
-                               answers[1],
-                               answers[2])
+                               answers[1])
         db.session.add(new_info)
         db.session.commit()
 
@@ -168,7 +192,7 @@ def webhook():
         conversation_state['current_question_index'] = current_question_index
 
     else:
-        response.message('Thank you for answering all the questions')
+        response.message(f'{dict_info_recepients[incoming_phone_number]["name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
@@ -186,17 +210,16 @@ def export():
 
     # Create the CSV file
     with open('data.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['ID','Conversation_SID','Telefono','Respuesta_1','Respuesta_2','Respuesta_3']
+        fieldnames = ['ID','Conversation_SID','Telefono','Respuesta_1','Respuesta_2']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for info in infos:
             writer.writerow({'ID':info.id,
                              'Conversation_SID':info.conversation_sid,
-                             'Telefono':info.phone_number
-                             ,'Respuesta_1':info.answer_1
-                             ,'Respuesta_2':info.answer_2
-                             ,'Respuesta_3':info.answer_3
+                             'Telefono':info.phone_number,
+                             'Respuesta_1':info.answer_1,
+                             'Respuesta_2':info.answer_2,
                              })
 
     # Send the CSV file as a response for download
