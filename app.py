@@ -88,6 +88,7 @@ messages = [
 # Inicio conversación
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
+    global intro
     global conversation_states
     
     for recipient_phone_number in dict_info_recepients:
