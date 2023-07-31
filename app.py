@@ -54,6 +54,7 @@ client = Client(account_sid, auth_token)
 # Twilio Conversations API client
 conversations_client = client.conversations.v1.services(conversations_sid)
 
+
 class Information(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_sid = db.Column(db.String(50), nullable=False)
@@ -69,6 +70,7 @@ class Information(db.Model):
         self.answer_1 = answer_1
         self.answer_2 = answer_2
 
+
 # Model inputs
 global intro
 global messages
@@ -78,15 +80,28 @@ global dict_info_recipients
 global conversation_states
 
 
-list_info_event = ['Andrea', # bride
-                   'Santiago', # groom
-                   12, # day
-                   'junio', # month
-                   2021, # year
-                   'Xochitepec, Morelos' # place
+# list_info_event = ['Andrea',  # bride
+#                    'Santiago',  # groom
+#                    12,  # day
+#                    'junio',  # month
+#                    2021,  # year
+#                    'Xochitepec, Morelos'  # place
+#                    ]
+
+list_info_event = ['Sin Boleto',  # organizer
+                   'Presentación Sin Boleto',  # event_name
+                   31,  # day
+                   'julio',  # month
+                   2023,  # year
+                   'Ambrosía',  # place
+                   '4:00 pm',  # time
+                   'Ambrosía',  # venue
+                   'Periferico Sur 3395, Rincón del Pedregal, Tlalpan, 14120 Ciudad de México, CDMX',  # address
+                   'https://g.co/kgs/WxioUL',  # address_link
+                   'https://wa.link/c4ju15'  # contact_link
                    ]
 
-dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets':2},
+dict_info_recipients = {'+5215551078511': {'recipient_name': 'Santiago', 'tickets': 2},
                         # '+5215585308944':{'recipient_name':'Gerardo', 'tickets':2},
                         # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
                         # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
@@ -96,20 +111,27 @@ dict_info_recipients = {'+5215551078511':{'recipient_name':'Santiago', 'tickets'
 
 conversation_states = {}
 
+# intro = """Hola {recipient_name}:
+
+# De parte de {bride} y {groom} te extendemos la invitación para su boda que se celebrará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+
 intro = """Hola {recipient_name}:
 
-De parte de {bride} y {groom} te extendemos la invitación para su boda que se celebrará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+De parte de {organizer} te extendemos la invitación para el evento {event_name} que se realizará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
 messages = [
-    'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda'
-    ]
+    # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda',
+    'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que asistirán al evento'
+]
 
 # Inicio conversación
+
+
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     global intro
     global conversation_states
-    
+
     for recipient_phone_number in dict_info_recipients:
 
         conversation = conversations_client.conversations.create()
@@ -117,6 +139,15 @@ def inicio_conversacion():
 
         # Get the recipient_name dynamically for each recipient_phone_number
         recipient_name = dict_info_recipients[recipient_phone_number]['recipient_name']
+
+        # intro_formatted = intro.format(
+        #     recipient_name=recipient_name,
+        #     bride=list_info_event[0],
+        #     groom=list_info_event[1],
+        #     day=list_info_event[2],
+        #     month=list_info_event[3],
+        #     year=list_info_event[4],
+        #     place=list_info_event[5])
 
         intro_formatted = intro.format(
             recipient_name=recipient_name,
@@ -132,7 +163,7 @@ def inicio_conversacion():
             from_=f'whatsapp:{twilio_phone_number}',
             body=intro_formatted,
             to=f'whatsapp:{recipient_phone_number}'
-            )
+        )
 
         # Store the conversation SID and initial state for each recipient
         conversation_states[recipient_phone_number] = {
@@ -178,11 +209,11 @@ def webhook():
     if current_question_index == 0 and user_answer == 'no':
         current_question_index = -1
         conversation_state['answers'].append(0)
-    
+
     app.logger.info(f'current_question_index:{current_question_index}')
-      
+
     if current_question_index >= 0 and current_question_index < len(messages):
-    # Ask the next question
+        # Ask the next question
         next_message = messages[current_question_index]
 
         # Autocomplete messages with personalized information
@@ -191,21 +222,30 @@ def webhook():
                 str_tickets = 'boletos'
             else:
                 str_tickets = 'boleto'
-            next_message = next_message.format(tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+            next_message = next_message.format(
+                tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
 
         time.sleep(2)
         response.message(next_message)
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
-    
+
     elif current_question_index == len(messages):
         # No more questions, end the conversation
         time.sleep(2)
-        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
-        
+        response.message(
+            f"""Finalmente, te compartimos la información general del evento:
+Fecha y hora de inicio: {list_info_event[0]} a las {list_info_event[0]}
+Lugar: {list_info_event[0]}
+Dirección: {list_info_event[0]} - {list_info_event[0]}""")
+
+        time.sleep(2)
+        response.message(
+            f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+
         answers = [str(answer) for answer in conversation_state['answers']]
-        
+
         # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
                                dict_info_recipients[incoming_phone_number]["recipient_name"],
@@ -220,8 +260,9 @@ def webhook():
 
     elif current_question_index == -1:
         time.sleep(2)
-        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
-        
+        response.message(
+            f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+
         answers = [str(answer) for answer in conversation_state['answers']]
         # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
@@ -234,20 +275,23 @@ def webhook():
 
     else:
         time.sleep(2)
-        response.message(f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+        response.message(
+            f'Hola, soy un chatbot y estoy programado para hacer confirmaciones y brindar información general del evento. Cualquier otra duda, favor de comunicarse a este teléfono: {list_info_event[10]}. Gracias')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
 
     return str(response)
 
-@app.route('/view')
+
+@app.route('/dashboard')
 def view():
     infos = Information.query.all()
 
     # Extract distinct answer_1 values and their counts from the database
     answer_1_values = [info.answer_1 for info in infos]
-    unique_values, value_counts = np.unique(answer_1_values, return_counts=True)
+    unique_values, value_counts = np.unique(
+        answer_1_values, return_counts=True)
 
     # Create a bar plot for Answer 1 using Matplotlib
     plt.figure()
@@ -283,22 +327,24 @@ def view():
 
     return render_template('view.html', infos=infos, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
 
+
 @app.route('/export', methods=['POST'])
 def export():
     infos = Information.query.all()
 
     # Create the CSV file
     with open('data.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['ID','Conversation_SID','Telefono','Respuesta_1','Respuesta_2']
+        fieldnames = ['ID', 'Conversation_SID',
+                      'Telefono', 'Respuesta_1', 'Respuesta_2']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for info in infos:
-            writer.writerow({'ID':info.id,
-                             'Conversation_SID':info.conversation_sid,
-                             'Telefono':info.phone_number,
-                             'Respuesta_1':info.answer_1,
-                             'Respuesta_2':info.answer_2,
+            writer.writerow({'ID': info.id,
+                             'Conversation_SID': info.conversation_sid,
+                             'Telefono': info.phone_number,
+                             'Respuesta_1': info.answer_1,
+                             'Respuesta_2': info.answer_2,
                              })
 
     # Send the CSV file as a response for download
@@ -306,9 +352,11 @@ def export():
         csv_data = f.read()
 
     response = Response(csv_data, mimetype='text/csv')
-    response.headers.set('Content-Disposition', 'attachment', filename='data.csv')
+    response.headers.set('Content-Disposition',
+                         'attachment', filename='data.csv')
 
     return response
+
 
 @app.route('/delete_information', methods=['POST'])
 def delete_information():
@@ -322,6 +370,7 @@ def delete_information():
     session_db.commit()
 
     return 'Database information has been deleted successfully'
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
