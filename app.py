@@ -308,7 +308,8 @@ def view():
     plt.ylabel('Count')
     plt.title('Confirmation distribution')
     plt.xticks()
-    plt.yticks(np.arange(int(min(value_counts)), int(max(value_counts)) + 1))
+    plt.yticks(np.arange(int(min(value_counts)),
+               int(max(value_counts)) + 1, 1))
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Save the plot to a bytes buffer and encode it in base64
@@ -333,7 +334,7 @@ def view():
     plt.ylabel('Sum')
     plt.title('Total confirmations')
     plt.xticks([])
-    plt.yticks(np.arange(int(min(value_sums)), int(max(value_sums)) + 1))
+    plt.yticks(np.arange(int(min(value_sums)), int(max(value_sums)) + 1, 1))
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Save the plot to a bytes buffer and encode it in base64
