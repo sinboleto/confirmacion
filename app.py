@@ -304,7 +304,7 @@ def view():
     plt.ylabel('Count')
     plt.title('Confirmation distribution')
     plt.xticks()
-    plt.yticks(range(int(min(value_counts)), int(max(value_counts)) + 1))
+    plt.yticks(np.arange(int(min(value_counts)), int(max(value_counts)) + 1))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
@@ -323,7 +323,7 @@ def view():
     plt.ylabel('Sum')
     plt.title('Total confirmations')
     plt.xticks([])
-    plt.yticks(range(int(min(value_sums)), int(max(value_sums)) + 1))
+    plt.yticks(np.arange(int(min(value_sums)), int(max(value_sums)) + 1))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer2 = io.BytesIO()
