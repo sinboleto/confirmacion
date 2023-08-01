@@ -21,6 +21,7 @@ import time
 
 # Graph
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import io
 import numpy as np
 import base64
@@ -295,6 +296,9 @@ def view():
     unique_values, value_counts = np.unique(
         answer_1_values, return_counts=True)
 
+    if len(answer_1_values) < 1:
+        value_counts = 0
+
     # Create a bar plot for Answer 1 using Matplotlib
     colors = ['green' if value == 'si' else 'red' for value in unique_values]
 
@@ -305,6 +309,7 @@ def view():
     plt.title('Confirmation distribution')
     plt.xticks()
     plt.yticks(np.arange(int(min(value_counts)), int(max(value_counts)) + 1))
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
@@ -315,7 +320,12 @@ def view():
 
     # Extract distinct answer_2 values and their sums from the database
     answer_2_values = [int(info.answer_2) for info in infos]
-    value_sums = sum(answer_2_values)
+
+    if len(answer_2_values) > 0:
+        value_sums = sum(answer_2_values)
+    else:
+        value_sums = 0
+
     # Create a bar plot for Answer 2 using Matplotlib
     plt.figure()
     plt.bar(0, value_sums)
@@ -324,6 +334,7 @@ def view():
     plt.title('Total confirmations')
     plt.xticks([])
     plt.yticks(np.arange(int(min(value_sums)), int(max(value_sums)) + 1))
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer2 = io.BytesIO()
