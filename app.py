@@ -151,8 +151,8 @@ def inicio_conversacion():
 
         intro_formatted = intro.format(
             recipient_name=recipient_name,
-            bride=list_info_event[0],
-            groom=list_info_event[1],
+            organizer=list_info_event[0],
+            event_name=list_info_event[1],
             day=list_info_event[2],
             month=list_info_event[3],
             year=list_info_event[4],
