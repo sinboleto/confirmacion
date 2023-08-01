@@ -233,12 +233,14 @@ def webhook():
 
     elif current_question_index == len(messages):
         # No more questions, end the conversation
+        date = f'{list_info_event[2]} de {list_info_event[3]} de {list_info_event[4]}'
+
         time.sleep(2)
         response.message(
             f"""Finalmente, te compartimos la información general del evento:
-Fecha y hora de inicio: {list_info_event[0]} a las {list_info_event[0]}
-Lugar: {list_info_event[0]}
-Dirección: {list_info_event[0]} - {list_info_event[0]}""")
+Fecha y hora de inicio: {date} a las {list_info_event[6]}
+Lugar: {list_info_event[7]}
+Dirección: {list_info_event[8]} - {list_info_event[9]}""")
 
         time.sleep(2)
         response.message(
