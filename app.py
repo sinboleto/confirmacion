@@ -102,7 +102,7 @@ list_info_event = ['Sin Boleto',  # organizer
                    ]
 
 dict_info_recipients = {'+5215551078511': {'recipient_name': 'Santiago', 'tickets': 2},
-                        '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
+                        # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
                         # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
                         # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
                         # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
@@ -296,12 +296,15 @@ def view():
         answer_1_values, return_counts=True)
 
     # Create a bar plot for Answer 1 using Matplotlib
+    colors = ['green' if value == 'si' else 'red' for value in unique_values]
+
     plt.figure()
-    plt.bar(unique_values, value_counts)
+    plt.bar(unique_values, value_counts, color=colors)
     plt.xlabel('Value')
     plt.ylabel('Count')
     plt.title('Confirmation distribution')
     plt.xticks()
+    plt.yticks(range(int(min(value_counts)), int(max(value_counts)) + 1))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
@@ -319,6 +322,8 @@ def view():
     plt.xlabel('Value')
     plt.ylabel('Sum')
     plt.title('Total confirmations')
+    plt.xticks([])
+    plt.yticks(range(int(min(value_sums)), int(max(value_sums)) + 1))
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer2 = io.BytesIO()
