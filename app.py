@@ -243,6 +243,8 @@ def webhook():
             to=f'whatsapp:{incoming_phone_number}'
         )
 
+        time.sleep(2)
+
         content_SID = 'HXfd44cf82c32f0bd4ee0b96fc249fc1fb'  # Revisar
 
         content_variables = json.dumps({'1': recepient_ID})
@@ -257,6 +259,14 @@ def webhook():
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 1 and user_answer == 'no':
+        message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            from_=f'whatsapp:{twilio_phone_number}',
+            body='En un momento te reenviaremos el boleto por este medio',
+            to=f'whatsapp:{incoming_phone_number}'
+        )
 
     elif current_question_index == len(messages):
         # No more questions, end the conversation
