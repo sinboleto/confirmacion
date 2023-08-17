@@ -240,7 +240,7 @@ def webhook():
 
         content_SID = 'HXfd44cf82c32f0bd4ee0b96fc249fc1fb'  # Revisar
 
-        content_variables = json.dumps({'1': recepient_ID})
+        content_variables = json.dumps({'2': recepient_ID})
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
