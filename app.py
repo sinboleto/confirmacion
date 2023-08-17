@@ -216,7 +216,8 @@ def webhook():
 
     if current_question_index == 0 and user_answer == 'no':
         current_question_index = -1
-        conversation_state['answers'].append(0)
+        conversation_state['answers'].append('No')
+        # conversation_state['answers'].append(0)
 
     app.logger.info(f'current_question_index:{current_question_index}')
 
@@ -247,15 +248,16 @@ def webhook():
             content_variables=content_variables,
             to=f'whatsapp:{incoming_phone_number}',
         )
-        
+
+        time.sleep(0.25)
+
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
-            body=next_message,
+            body='¿Lo recibiste?',
             to=f'whatsapp:{incoming_phone_number}'
         )
 
-        # time.sleep(0.25)
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
 
@@ -266,6 +268,9 @@ def webhook():
             body='En un momento te reenviaremos el boleto por este medio',
             to=f'whatsapp:{incoming_phone_number}'
         )
+
+        current_question_index += 1
+        conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == len(messages):
         # No more questions, end the conversation
