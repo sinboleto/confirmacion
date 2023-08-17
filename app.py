@@ -125,7 +125,7 @@ De parte de {organizer} te extendemos la invitación para el evento {event_name}
 messages = [
     # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda',
     # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que asistirán al evento'
-    'De acuerdo. Te compartimos tu boleto con código QR de acceso, el cual les permitirá ingresar de manera ágil y segura al evento. Les solicitamos amablemente que tengan el código QR listo en su dispositivo móvil el día del evento, para facilitar el proceso de ingreso'
+    'De acuerdo. Te compartimos tu boleto con código QR de acceso, el cual les permitirá ingresar de manera ágil y segura al evento. Les solicitamos amablemente que tengan el código QR listo en su dispositivo móvil el día del evento, para facilitar el proceso de ingreso. ¿Lo recibiste?'
 ]
 
 # Inicio conversación
@@ -222,7 +222,7 @@ def webhook():
 
     if current_question_index >= 0 and current_question_index < len(messages):
         # Ask the next question
-        # next_message = messages[current_question_index]
+        next_message = messages[current_question_index]
 
         # Autocomplete messages with personalized information
         # if current_question_index == 0:
@@ -232,6 +232,16 @@ def webhook():
         #         str_tickets = 'boleto'
         #     next_message = next_message.format(
         #         tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+
+        time.sleep(2)
+        # response.message(next_message)
+        
+        message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            from_=f'whatsapp:{twilio_phone_number}',
+            body=next_message,
+            to=f'whatsapp:{incoming_phone_number}'
+        )
 
         content_SID = 'HXfd44cf82c32f0bd4ee0b96fc249fc1fb'  # Revisar
 
@@ -244,10 +254,6 @@ def webhook():
             content_variables=content_variables,
             to=f'whatsapp:{incoming_phone_number}',
         )
-
-        time.sleep(2)
-        # response.message(message)
-        response = 'Boleto enviado'
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
