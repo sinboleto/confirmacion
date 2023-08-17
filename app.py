@@ -235,15 +235,6 @@ def webhook():
 
         time.sleep(2)
         # response.message(next_message)
-        
-        message = client.messages.create(
-            messaging_service_sid=messaging_service_sid,
-            from_=f'whatsapp:{twilio_phone_number}',
-            body=next_message,
-            to=f'whatsapp:{incoming_phone_number}'
-        )
-
-        time.sleep(2)
 
         content_SID = 'HXfd44cf82c32f0bd4ee0b96fc249fc1fb'  # Revisar
 
@@ -255,6 +246,15 @@ def webhook():
             content_sid=content_SID,
             content_variables=content_variables,
             to=f'whatsapp:{incoming_phone_number}',
+        )
+
+        time.sleep(0.25)
+
+        message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            from_=f'whatsapp:{twilio_phone_number}',
+            body=next_message,
+            to=f'whatsapp:{incoming_phone_number}'
         )
 
         current_question_index += 1
@@ -356,31 +356,32 @@ def view():
     plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
 
     # Extract distinct answer_2 values and their sums from the database
-    answer_2_values = [int(info.answer_2) for info in infos]
+    # answer_2_values = [int(info.answer_2) for info in infos]
 
-    if len(answer_2_values) > 0:
-        value_sums = sum(answer_2_values)
-    else:
-        value_sums = 0
+    # if len(answer_2_values) > 0:
+    #     value_sums = sum(answer_2_values)
+    # else:
+    #     value_sums = 0
 
-    # Create a bar plot for Answer 2 using Matplotlib
-    plt.figure()
-    plt.bar(0, value_sums)
-    plt.xlabel('Value')
-    plt.ylabel('Sum')
-    plt.title('Total confirmations')
-    plt.xticks([])
-    # plt.yticks(np.arange(0, int(max(value_sums)) + 1, 1))
-    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+    # # Create a bar plot for Answer 2 using Matplotlib
+    # plt.figure()
+    # plt.bar(0, value_sums)
+    # plt.xlabel('Value')
+    # plt.ylabel('Sum')
+    # plt.title('Total confirmations')
+    # plt.xticks([])
+    # # plt.yticks(np.arange(0, int(max(value_sums)) + 1, 1))
+    # plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
-    # Save the plot to a bytes buffer and encode it in base64
-    buffer2 = io.BytesIO()
-    plt.savefig(buffer2, format='png')
-    buffer2.seek(0)
-    plt.close()
-    plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
+    # # Save the plot to a bytes buffer and encode it in base64
+    # buffer2 = io.BytesIO()
+    # plt.savefig(buffer2, format='png')
+    # buffer2.seek(0)
+    # plt.close()
+    # plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
 
-    return render_template('view.html', infos=infos, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
+    # return render_template('view.html', infos=infos, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
+    return render_template('view.html', infos=infos, plot1_base64=plot1_base64)
 
 
 @app.route('/export', methods=['POST'])
