@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, Response, send_file
+from flask import Flask, render_template, request, Response
 
 # Database
 import csv
@@ -25,6 +25,8 @@ import matplotlib.ticker as ticker
 import io
 import numpy as np
 import base64
+
+import json
 
 
 # Main script
@@ -91,18 +93,18 @@ global conversation_states
 
 list_info_event = ['Sin Boleto',  # organizer
                    'Presentación Sin Boleto',  # event_name
-                   31,  # day
-                   'julio',  # month
+                   17,  # day
+                   'agosto',  # month
                    2023,  # year
-                   'Ambrosía',  # place
-                   '4:00 pm',  # time
+                   'Salón Francés, Ambrosía',  # place
+                   '4:30 pm',  # time
                    'Ambrosía',  # venue
                    'Periferico Sur 3395, Rincón del Pedregal, Tlalpan, 14120 Ciudad de México, CDMX',  # address
                    'https://g.co/kgs/WxioUL',  # address_link
                    'https://wa.link/c4ju15'  # contact_link
                    ]
 
-dict_info_recipients = {'+5215551078511': {'recipient_name': 'Santiago', 'tickets': 2},
+dict_info_recipients = {'+5215551078511': {'recipient_ID':'AMB_170823_004', 'recipient_name': 'Santiago'},
                         # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
                         # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
                         # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
@@ -122,7 +124,8 @@ De parte de {organizer} te extendemos la invitación para el evento {event_name}
 
 messages = [
     # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda',
-    'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que asistirán al evento'
+    # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que asistirán al evento'
+    'De acuerdo. Te compartimos tu boleto con código QR de acceso, el cual les permitirá ingresar de manera ágil y segura al evento. Les solicitamos amablemente que tengan el código QR listo en su dispositivo móvil el día del evento, para facilitar el proceso de ingreso'
 ]
 
 # Inicio conversación
@@ -169,6 +172,7 @@ def inicio_conversacion():
         # Store the conversation SID and initial state for each recipient
         conversation_states[recipient_phone_number] = {
             'conversation_sid': conversation.sid,
+            'recipient_ID': dict_info_recipients[recipient_phone_number]['recipient_ID'], 
             'current_question_index': 0,
             'answers': [],
         }
@@ -202,6 +206,9 @@ def webhook():
     # Get the conversation SID
     conversation_sid = conversation_state['conversation_sid']
 
+    # Get recepient_ID
+    recepient_ID = conversation_state['recipient_ID']
+
     # Append the answer to the conversation state
     conversation_state['answers'].append(user_answer)
 
@@ -215,19 +222,30 @@ def webhook():
 
     if current_question_index >= 0 and current_question_index < len(messages):
         # Ask the next question
-        next_message = messages[current_question_index]
+        # next_message = messages[current_question_index]
 
         # Autocomplete messages with personalized information
-        if current_question_index == 0:
-            if dict_info_recipients[incoming_phone_number]['tickets'] > 1:
-                str_tickets = 'boletos'
-            else:
-                str_tickets = 'boleto'
-            next_message = next_message.format(
-                tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+        # if current_question_index == 0:
+        #     if dict_info_recipients[incoming_phone_number]['tickets'] > 1:
+        #         str_tickets = 'boletos'
+        #     else:
+        #         str_tickets = 'boleto'
+        #     next_message = next_message.format(
+        #         tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
+
+        content_SID = 'HXf62a0cc6ae4e6b29adc44d531220a73f'  # Revisar
+
+        content_variables = json.dumps({'1': recepient_ID})
+
+        message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            from_=f'whatsapp:{twilio_phone_number}',
+            content_sid=content_SID,
+            content_variables=content_variables,
+        )
 
         time.sleep(2)
-        response.message(next_message)
+        response.message(message)
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
