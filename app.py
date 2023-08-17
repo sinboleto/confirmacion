@@ -242,6 +242,7 @@ def webhook():
             from_=f'whatsapp:{twilio_phone_number}',
             content_sid=content_SID,
             content_variables=content_variables,
+            to=f'whatsapp:{incoming_phone_number}',
         )
 
         time.sleep(2)
