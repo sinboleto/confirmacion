@@ -233,7 +233,7 @@ def webhook():
         #     next_message = next_message.format(
         #         tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
 
-        content_SID = 'HXf62a0cc6ae4e6b29adc44d531220a73f'  # Revisar
+        content_SID = 'HXfd44cf82c32f0bd4ee0b96fc249fc1fb'  # Revisar
 
         content_variables = json.dumps({'1': recepient_ID})
 
