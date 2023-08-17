@@ -243,20 +243,19 @@ def webhook():
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
+            body=next_message,
+            to=f'whatsapp:{incoming_phone_number}'
+        )
+
+        message = client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            from_=f'whatsapp:{twilio_phone_number}',
             content_sid=content_SID,
             content_variables=content_variables,
             to=f'whatsapp:{incoming_phone_number}',
         )
 
-        time.sleep(0.25)
-
-        message = client.messages.create(
-            messaging_service_sid=messaging_service_sid,
-            from_=f'whatsapp:{twilio_phone_number}',
-            body=next_message,
-            to=f'whatsapp:{incoming_phone_number}'
-        )
-
+        # time.sleep(0.25)
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
 
