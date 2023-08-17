@@ -269,7 +269,7 @@ def webhook():
             to=f'whatsapp:{incoming_phone_number}'
         )
 
-        current_question_index = 1
+        current_question_index = -2
         conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == len(messages):
@@ -302,6 +302,31 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""")
         conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == -1:
+        time.sleep(2)
+        response.message(
+            f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
+
+        answers = [str(answer) for answer in conversation_state['answers']]
+        # We have asked all the question, save the answer in the database
+        new_info = Information(conversation_sid,
+                               dict_info_recipients[incoming_phone_number]["recipient_name"],
+                               incoming_phone_number,
+                               answers[0],
+                               answers[1])
+        db.session.add(new_info)
+        db.session.commit()
+
+    elif current_question_index == -2:
+        # No more questions, end the conversation
+        date = f'{list_info_event[2]} de {list_info_event[3]} de {list_info_event[4]}'
+
+        time.sleep(2)
+        response.message(
+            f"""Finalmente, te compartimos la información general del evento:
+Fecha y hora de inicio: {date} a las {list_info_event[6]}
+Lugar: {list_info_event[7]}
+Dirección: {list_info_event[8]} - {list_info_event[9]}""")
+        
         time.sleep(2)
         response.message(
             f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
