@@ -246,7 +246,8 @@ def webhook():
         )
 
         time.sleep(2)
-        response.message(message)
+        # response.message(message)
+        response = 'Boleto enviado'
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
