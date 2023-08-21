@@ -105,9 +105,9 @@ list_info_event = ['Sin Boleto',  # organizer
                    ]
 
 dict_info_recipients = {'+5215551078511': {'recipient_ID':'AMB_170823_004', 'recipient_name': 'Santiago'},
-                        '+5215585308944': {'recipient_ID':'AMB_170823_003', 'recipient_name': 'Gerardo'},
-                        '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
-                        '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
+                        # '+5215585308944': {'recipient_ID':'AMB_170823_003', 'recipient_name': 'Gerardo'},
+                        # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
+                        # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
                         # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
                         # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
                         # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
