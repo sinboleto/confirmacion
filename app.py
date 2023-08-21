@@ -484,6 +484,10 @@ def export():
 
     return response
 
+@app.route('/event_info_form', methods=['GET'])
+def event_info_form():
+    return render_template('event_info_form.html')
+
 @app.route('/store_event_info', methods=['POST'])
 def store_event_info():
     # Get form data from request
