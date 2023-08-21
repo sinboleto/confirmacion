@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, redirect, url_for
 
 # Database
 import csv
@@ -484,19 +484,35 @@ def export():
 
     return response
 
+@app.route('/store_event_info', methods=['POST'])
+def store_event_info():
+    # Get form data from request
+    organizer = request.form.get('organizer')
+    event_name = request.form.get('event_name')
+    # Get values for other form fields
 
-@app.route('/delete_information', methods=['POST'])
-def delete_information():
-    # Open a new SQLAlchemy session
-    session_db = db.session
+    # Create a dictionary to hold the data
+    data = {
+        'organizer': organizer,
+        'event_name': event_name,
+        # Add more data fields as needed
+    }
 
-    # Delete all records from the Information table
-    session_db.query(Information).delete()
+    # Define the CSV file path (adjust as needed)
+    csv_file_path = 'event_data.csv'
 
-    # Commit the changes to the database
-    session_db.commit()
+    # Write data to the CSV file
+    with open(csv_file_path, 'a', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['organizer', 'event_name']  # Add other field names
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-    return 'Database information has been deleted successfully'
+        # Write header if the file is empty
+        if csvfile.tell() == 0:
+            writer.writeheader()
+
+        writer.writerow(data)
+
+    return redirect(url_for('view'))
 
 
 if __name__ == '__main__':
