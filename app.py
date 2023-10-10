@@ -104,7 +104,7 @@ list_info_event = ['Sin Boleto',  # organizer
                    'https://wa.link/c4ju15'  # contact_link
                    ]
 
-dict_info_recipients = {'+5215551078511': {'recipient_ID':'AMB_170823_004', 'recipient_name': 'Santiago'},
+dict_info_recipients = {'+5215551078511': {'recipient_ID': 'AMB_170823_004', 'recipient_name': 'Santiago'},
                         # '+5215585308944': {'recipient_ID':'AMB_170823_003', 'recipient_name': 'Gerardo'},
                         # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
                         # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
@@ -175,7 +175,7 @@ def inicio_conversacion():
         # Store the conversation SID and initial state for each recipient
         conversation_states[recipient_phone_number] = {
             'conversation_sid': conversation.sid,
-            'recipient_ID': dict_info_recipients[recipient_phone_number]['recipient_ID'], 
+            'recipient_ID': dict_info_recipients[recipient_phone_number]['recipient_ID'],
             'current_question_index': 0,
             'answers': [],
         }
@@ -286,7 +286,7 @@ Lugar: {list_info_event[7]}
 Dirección: {list_info_event[8]} - {list_info_event[9]}""",
             to=f'whatsapp:{incoming_phone_number}'
         )
-        
+
         time.sleep(2)
 
         message = client.messages.create(
@@ -297,7 +297,7 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""",
         )
 
         answers = [str(answer) for answer in conversation_state['answers']]
-        
+
         # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
                                dict_info_recipients[incoming_phone_number]["recipient_name"],
@@ -345,7 +345,7 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""")
             f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
         answers = [str(answer) for answer in conversation_state['answers']]
-        
+
         # We have asked all the question, save the answer in the database
         new_info = Information(conversation_sid,
                                dict_info_recipients[incoming_phone_number]["recipient_name"],
@@ -484,9 +484,11 @@ def export():
 
     return response
 
+
 @app.route('/event_info_form', methods=['GET'])
 def event_info_form():
     return render_template('event_info_form.html')
+
 
 @app.route('/store_event_info', methods=['POST'])
 def store_event_info():
