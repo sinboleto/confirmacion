@@ -3,11 +3,6 @@
 # Flask app
 from flask import Flask, render_template, request, Response, redirect, url_for
 
-# Database
-import csv
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
 # Twilio
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
@@ -19,13 +14,6 @@ import os
 # Delay
 import time
 
-# Graph
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-import io
-import numpy as np
-import base64
-
 import json
 
 
@@ -33,12 +21,6 @@ import json
 app = Flask(__name__)
 
 port = int(os.environ.get('PORT', 5000))
-
-# Variables base de datos
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -57,23 +39,6 @@ client = Client(account_sid, auth_token)
 # Twilio Conversations API client
 conversations_client = client.conversations.v1.services(conversations_sid)
 
-
-class Information(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    conversation_sid = db.Column(db.String(50), nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
-    name = db.Column(db.String(20), nullable=False)
-    answer_1 = db.Column(db.String(500), nullable=False)
-    answer_2 = db.Column(db.String(500), nullable=False)
-
-    def __init__(self, conversation_sid, name, phone_number, answer_1, answer_2):
-        self.conversation_sid = conversation_sid
-        self.name = name
-        self.phone_number = phone_number
-        self.answer_1 = answer_1
-        self.answer_2 = answer_2
-
-
 # Model inputs
 global intro
 global messages
@@ -82,29 +47,7 @@ global list_info_event
 global dict_info_recipients
 global conversation_states
 
-
-# list_info_event = ['Andrea',  # bride
-#                    'Santiago',  # groom
-#                    12,  # day
-#                    'junio',  # month
-#                    2021,  # year
-#                    'Xochitepec, Morelos'  # place
-#                    ]
-
-list_info_event = ['Sin Boleto',  # organizer
-                   'Presentación Sin Boleto',  # event_name
-                   17,  # day
-                   'agosto',  # month
-                   2023,  # year
-                   'Salón Francés, Ambrosía',  # place
-                   '4:30 pm',  # time
-                   'Ambrosía',  # venue
-                   'Periferico Sur 3395, Rincón del Pedregal, Tlalpan, 14120 Ciudad de México, CDMX',  # address
-                   'https://g.co/kgs/WxioUL',  # address_link
-                   'https://wa.link/c4ju15'  # contact_link
-                   ]
-
-dict_info_recipients = {'+5215551078511': {'recipient_ID': 'AMB_170823_004', 'recipient_name': 'Santiago'},
+dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago', 'num_boletos': 2},
                         # '+5215585308944': {'recipient_ID':'AMB_170823_003', 'recipient_name': 'Gerardo'},
                         # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
                         # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
@@ -117,67 +60,36 @@ dict_info_recipients = {'+5215551078511': {'recipient_ID': 'AMB_170823_004', 're
 
 conversation_states = {}
 
-# intro = """Hola {recipient_name}:
-
-# De parte de {bride} y {groom} te extendemos la invitación para su boda que se celebrará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
-
-intro = """Hola {recipient_name}:
-
-De parte de {organizer} te extendemos la invitación para el evento {event_name} que se realizará el día {day} de {month} de {year} en {place}. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
-
-messages = [
-    # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que estarían asistiendo a la boda',
-    # 'De acuerdo. Vemos que cuentas con {tickets} {str_tickets}. Te agradeceríamos que nos confirmaras el número de invitados que asistirán al evento'
-    'De acuerdo. Te compartimos tu boleto con código QR de acceso, el cual les permitirá ingresar de manera ágil y segura al evento. Les solicitamos amablemente que tengan el código QR listo en su dispositivo móvil el día del evento, para facilitar el proceso de ingreso. ¿Lo recibiste?'
-]
 
 # Inicio conversación
-
-
 @app.route('/start', methods=['GET'])
 def inicio_conversacion():
     global intro
     global conversation_states
 
-    for recipient_phone_number in dict_info_recipients:
+    for telefono_invitado in dict_info_invitados:
 
         conversation = conversations_client.conversations.create()
         app.logger.info(conversation.sid)
 
         # Get the recipient_name dynamically for each recipient_phone_number
-        recipient_name = dict_info_recipients[recipient_phone_number]['recipient_name']
+        nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
-        # intro_formatted = intro.format(
-        #     recipient_name=recipient_name,
-        #     bride=list_info_event[0],
-        #     groom=list_info_event[1],
-        #     day=list_info_event[2],
-        #     month=list_info_event[3],
-        #     year=list_info_event[4],
-        #     place=list_info_event[5])
-
-        intro_formatted = intro.format(
-            recipient_name=recipient_name,
-            organizer=list_info_event[0],
-            event_name=list_info_event[1],
-            day=list_info_event[2],
-            month=list_info_event[3],
-            year=list_info_event[4],
-            place=list_info_event[5])
+        intro = f"""Hola {nom_invitado}
+Te extendemos la invitación para la boda de Amaya y José Manuel que se celebrará el 9 de diciembre del 2023. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
             from_=f'whatsapp:{twilio_phone_number}',
-            body=intro_formatted,
-            to=f'whatsapp:{recipient_phone_number}'
+            body=intro,
+            to=f'whatsapp:{telefono_invitado}'
         )
 
         # Store the conversation SID and initial state for each recipient
-        conversation_states[recipient_phone_number] = {
+        conversation_states[telefono_invitado] = {
             'conversation_sid': conversation.sid,
-            'recipient_ID': dict_info_recipients[recipient_phone_number]['recipient_ID'],
+            'num_boletos': dict_info_recipients[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
-            'answers': [],
         }
 
     app.logger.info(conversation_states)
@@ -209,33 +121,79 @@ def webhook():
     # Get the conversation SID
     conversation_sid = conversation_state['conversation_sid']
 
-    # Get recepient_ID
-    recepient_ID = conversation_state['recipient_ID']
-
-    # Append the answer to the conversation state
-    conversation_state['answers'].append(user_answer)
-
     current_question_index = conversation_state['current_question_index']
+
+    if current_question_index == 0:
+        if user_answer == 'si':
+            time.sleep(2)
+            response.message(f"Gracias. Te recuerdo que tu invitación es para {dict_info_invitados[incoming_phone_number]['num_boletos']}. Te agradecería si me pudieras confirmar cuantas personas asistirán (con número)")
+            
+            current_question_index += 1
+            conversation_state['current_question_index'] = current_question_index
+
+        if user_answer == 'no':
+            time.sleep(2)
+            response.message(f"{dict_info_invitados[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
+
+            current_question_index = -1
+            conversation_state['current_question_index'] = current_question_index
+    
+    elif current_question_index == 1:
+        time.sleep(2)
+        response.message(f"De acuerdo. ¿Algún invitado tiene alguna restricción alimentaria? Por favor, señala cuantas personas y que restricciones (vegetariano, vegano, alérgico, etc.) en el mismo mensaje")
+
+        current_question_index += 1
+        conversation_state['current_question_index'] = current_question_index   
+
+    elif current_question_index == 2:
+        
+        msg = """Te compartimos información adicional del evento:
+- La ceremonia religiosa se llevará a cabo en punto de las 13:30 hrs. en el Jardín de Eventos Amatus, después de la ceremonia lo esperamos en la recepción que se realizará en el mismo lugar
+
+- El código de vestimenta es formal (Vestido largo o corto de día / traje sin corbata)
+
+- Encuentra más información sobre la mesa de regalos, hoteles y salones de belleza en la página: www.amayayjosemanuel.com
+
+Soy un chatbot. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/rthr9k y mandanos un mensaje. ¡Muchas gracias y saludos!"""
+        
+        time.sleep(2)
+        response.message(msg)
+
+        current_question_index += 1
+        conversation_state['current_question_index'] = current_question_index
+
+    else:
+        time.sleep(2)
+        response.message(f'Hola, soy un chatbot y estoy programado para hacer confirmaciones y brindar información general de eventos. Cualquier otra duda, haz click en el siguiente enlace: https://wa.link/rthr9k y mandanos un mensaje. Gracias')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     if current_question_index == 0 and user_answer == 'no':
         current_question_index = -1
-        conversation_state['answers'].append('no')
-        # conversation_state['answers'].append(0)
 
     app.logger.info(f'current_question_index:{current_question_index}')
 
     if current_question_index >= 0 and current_question_index < len(messages):
         # Ask the next question
         next_message = messages[current_question_index]
-
-        # Autocomplete messages with personalized information
-        # if current_question_index == 0:
-        #     if dict_info_recipients[incoming_phone_number]['tickets'] > 1:
-        #         str_tickets = 'boletos'
-        #     else:
-        #         str_tickets = 'boleto'
-        #     next_message = next_message.format(
-        #         tickets=dict_info_recipients[incoming_phone_number]['tickets'], str_tickets=str_tickets)
 
         time.sleep(2)
         # response.message(next_message)
@@ -296,17 +254,6 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""",
             to=f'whatsapp:{incoming_phone_number}'
         )
 
-        answers = [str(answer) for answer in conversation_state['answers']]
-
-        # We have asked all the question, save the answer in the database
-        new_info = Information(conversation_sid,
-                               dict_info_recipients[incoming_phone_number]["recipient_name"],
-                               incoming_phone_number,
-                               answers[0],
-                               answers[1])
-        db.session.add(new_info)
-        db.session.commit()
-
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
 
@@ -325,17 +272,6 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""")
         response.message(
             f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
 
-        answers = [str(answer) for answer in conversation_state['answers']]
-
-        # We have asked all the question, save the answer in the database
-        new_info = Information(conversation_sid,
-                               dict_info_recipients[incoming_phone_number]["recipient_name"],
-                               incoming_phone_number,
-                               answers[0],
-                               answers[1])
-        db.session.add(new_info)
-        db.session.commit()
-
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
 
@@ -343,17 +279,6 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""")
         time.sleep(2)
         response.message(
             f'{dict_info_recipients[incoming_phone_number]["recipient_name"]}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día')
-
-        answers = [str(answer) for answer in conversation_state['answers']]
-
-        # We have asked all the question, save the answer in the database
-        new_info = Information(conversation_sid,
-                               dict_info_recipients[incoming_phone_number]["recipient_name"],
-                               incoming_phone_number,
-                               answers[0],
-                               answers[1])
-        db.session.add(new_info)
-        db.session.commit()
 
     else:
         time.sleep(2)
@@ -364,161 +289,6 @@ Dirección: {list_info_event[8]} - {list_info_event[9]}""")
     conversation_states[incoming_phone_number] = conversation_state
 
     return str(response)
-
-
-@app.route('/dashboard')
-def view():
-    infos = Information.query.all()
-
-    # Extract distinct answer_1 values and their counts from the database
-    answer_1_values = [info.answer_1 for info in infos]
-    unique_values, value_counts = np.unique(
-        answer_1_values, return_counts=True)
-
-    if len(answer_1_values) < 1:
-        value_counts = 0
-
-    # Create a bar plot for Answer 1 using Matplotlib
-    colors = ['green' if value == 'si' else 'red' for value in unique_values]
-
-    plt.figure()
-    plt.bar(unique_values, value_counts, color=colors)
-    plt.xlabel('Value')
-    plt.ylabel('Count')
-    plt.title('Confirmation distribution')
-    plt.xticks()
-    # plt.yticks(np.arange(0,
-    #            int(max(value_counts)) + 1, 1))
-    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
-
-    # Save the plot to a bytes buffer and encode it in base64
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    plt.close()
-    plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-    # Extract distinct answer_2 values and their counts from the database
-    answer_2_values = [info.answer_2 for info in infos]
-    unique_values, value_counts = np.unique(
-        answer_2_values, return_counts=True)
-
-    if len(answer_2_values) < 1:
-        value_counts = 0
-
-    # Create a bar plot for Answer 1 using Matplotlib
-    colors = ['green' if value == 'si' else 'red' for value in unique_values]
-
-    plt.figure()
-    plt.bar(unique_values, value_counts, color=colors)
-    plt.xlabel('Value')
-    plt.ylabel('Count')
-    plt.title('Ticket reception distribution')
-    plt.xticks()
-    # plt.yticks(np.arange(0,
-    #            int(max(value_counts)) + 1, 1))
-    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
-
-    # Save the plot to a bytes buffer and encode it in base64
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    plt.close()
-    plot2_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-    # Extract distinct answer_2 values and their sums from the database
-    # answer_2_values = [int(info.answer_2) for info in infos]
-
-    # if len(answer_2_values) > 0:
-    #     value_sums = sum(answer_2_values)
-    # else:
-    #     value_sums = 0
-
-    # # Create a bar plot for Answer 2 using Matplotlib
-    # plt.figure()
-    # plt.bar(0, value_sums)
-    # plt.xlabel('Value')
-    # plt.ylabel('Sum')
-    # plt.title('Total confirmations')
-    # plt.xticks([])
-    # # plt.yticks(np.arange(0, int(max(value_sums)) + 1, 1))
-    # plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
-
-    # # Save the plot to a bytes buffer and encode it in base64
-    # buffer2 = io.BytesIO()
-    # plt.savefig(buffer2, format='png')
-    # buffer2.seek(0)
-    # plt.close()
-    # plot2_base64 = base64.b64encode(buffer2.getvalue()).decode()
-
-    return render_template('view.html', infos=infos, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
-    # return render_template('view.html', infos=infos, plot1_base64=plot1_base64)
-
-
-@app.route('/export', methods=['POST'])
-def export():
-    infos = Information.query.all()
-
-    # Create the CSV file
-    with open('data.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['ID', 'Conversation_SID',
-                      'Telefono', 'Respuesta_1', 'Respuesta_2']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        writer.writeheader()
-        for info in infos:
-            writer.writerow({'ID': info.id,
-                             'Conversation_SID': info.conversation_sid,
-                             'Telefono': info.phone_number,
-                             'Respuesta_1': info.answer_1,
-                             'Respuesta_2': info.answer_2,
-                             })
-
-    # Send the CSV file as a response for download
-    with open('data.csv', 'r', encoding='utf-8') as f:
-        csv_data = f.read()
-
-    response = Response(csv_data, mimetype='text/csv')
-    response.headers.set('Content-Disposition',
-                         'attachment', filename='data.csv')
-
-    return response
-
-
-@app.route('/event_info_form', methods=['GET'])
-def event_info_form():
-    return render_template('event_info_form.html')
-
-
-@app.route('/store_event_info', methods=['POST'])
-def store_event_info():
-    # Get form data from request
-    organizer = request.form.get('organizer')
-    event_name = request.form.get('event_name')
-    # Get values for other form fields
-
-    # Create a dictionary to hold the data
-    data = {
-        'organizer': organizer,
-        'event_name': event_name,
-        # Add more data fields as needed
-    }
-
-    # Define the CSV file path (adjust as needed)
-    csv_file_path = 'event_data.csv'
-
-    # Write data to the CSV file
-    with open(csv_file_path, 'a', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['organizer', 'event_name']  # Add other field names
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        # Write header if the file is empty
-        if csvfile.tell() == 0:
-            writer.writeheader()
-
-        writer.writerow(data)
-
-    return redirect(url_for('view'))
 
 
 if __name__ == '__main__':
