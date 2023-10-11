@@ -76,7 +76,7 @@ def inicio_conversacion():
         nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
         intro = f"""Hola *{nom_invitado}*,
-Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre del 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
