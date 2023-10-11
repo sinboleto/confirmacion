@@ -44,7 +44,7 @@ global intro
 global messages
 global recipient_phone_numbers
 global list_info_event
-global dict_info_recipients
+global dict_info_invitados
 global conversation_states
 
 dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago', 'num_boletos': 2},
@@ -88,7 +88,7 @@ Te extendemos la invitación para la boda de Amaya y José Manuel que se celebra
         # Store the conversation SID and initial state for each recipient
         conversation_states[telefono_invitado] = {
             'conversation_sid': conversation.sid,
-            'num_boletos': dict_info_recipients[telefono_invitado]['num_boletos'],
+            'num_boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
         }
 
