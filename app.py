@@ -75,8 +75,8 @@ def inicio_conversacion():
         # Get the recipient_name dynamically for each recipient_phone_number
         nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
-        intro = f"""Hola {nom_invitado}
-Te extendemos la invitación para **la boda de Amaya y José Manuel** que se celebrará el **9 de diciembre del 2023**. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+        intro = f"""Hola *{nom_invitado}*
+Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre del 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
@@ -124,13 +124,13 @@ def webhook():
     current_question_index = conversation_state['current_question_index']
 
     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La **ceremonia religiosa** se llevará a cabo **en punto de las 13:30 hrs. en el Jardín de Eventos Amatus**, después de la ceremonia lo esperamos en la recepción que se realizará en el mismo lugar
+- La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
 
-- El **código de vestimenta es formal** (Vestido largo o corto de día / traje sin corbata)
+- El *código de vestimenta es formal* (Vestido largo o corto de día / traje sin corbata)
 
-- Encuentra más información sobre **la mesa de regalos, hoteles y salones de belleza** en la página: www.amayayjosemanuel.com
+- Encuentra más información sobre *la mesa de regalos, hoteles y salones de belleza* en la página: www.amayayjosemanuel.com
 
-**Soy un chatbot** 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje.
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje.
 
 ¡Muchas gracias y saludos!"""
 
@@ -151,7 +151,7 @@ def webhook():
     
     elif current_question_index == 1:
         time.sleep(2)
-        response.message(f"De acuerdo. ¿Algún invitado tiene alguna **restricción alimentaria**?")
+        response.message(f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria*?")
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
@@ -159,7 +159,7 @@ def webhook():
     elif current_question_index == 2:
         if user_answer == 'si':
             time.sleep(2)
-            response.message(f"Por favor, señala **cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)** en el mismo mensaje")
+            response.message(f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -180,7 +180,7 @@ def webhook():
 
     else:
         time.sleep(2)
-        response.message(f'**Hola, soy un chatbot** 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. **Cualquier otra duda**, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
+        response.message(f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
