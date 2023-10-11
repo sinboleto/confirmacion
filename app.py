@@ -47,7 +47,7 @@ global list_info_event
 global dict_info_invitados
 global conversation_states
 
-dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago Chavez', 'num_boletos': 2},
+dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Bego�a Medrano', 'num_boletos': 2},
                     #    '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
                     #    '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
                     #    '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
