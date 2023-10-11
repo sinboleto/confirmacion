@@ -48,16 +48,9 @@ global dict_info_invitados
 global conversation_states
 
 dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago Chavez', 'num_boletos': 2},
-                       '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
-                       '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
-                       '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
-                        # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
-                        # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
-                        # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
-                        # '+5215585487594':{'recipient_name':'Fernanda', 'tickets':2},
-                        # '+5215554186584':{'recipient_name':'Maru', 'tickets':2},
-                        # '+5215537139718':{'recipient_name':'Pablo', 'tickets':2},
-                        # '+5215544907299':{'recipient_name':'Andrea', 'tickets':2}
+                    #    '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
+                    #    '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
+                    #    '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
                         }
 
 conversation_states = {}
@@ -132,7 +125,7 @@ def webhook():
 
 - Encuentra más información sobre *la mesa de regalos, hoteles y salones de belleza* en la página: www.amayayjosemanuel.com
 
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje.
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje.
 
 ¡Muchas gracias y saludos!"""
 
@@ -182,7 +175,7 @@ def webhook():
 
     else:
         time.sleep(2)
-        response.message(f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
+        response.message(f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje. Gracias')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
