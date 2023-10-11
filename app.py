@@ -75,7 +75,7 @@ def inicio_conversacion():
         # Get the recipient_name dynamically for each recipient_phone_number
         nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
-        intro = f"""Hola *{nom_invitado}*
+        intro = f"""Hola *{nom_invitado}*,
 Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre del 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
         message = client.messages.create(
@@ -135,7 +135,7 @@ def webhook():
 ¡Muchas gracias y saludos!"""
 
     if current_question_index == 0:
-        if user_answer == 'si':
+        if user_answer == 'si, confirmo':
             time.sleep(2)
             response.message(f"Gracias. Te recuerdo que tu invitación es para **{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s**. Te agradecería si me pudieras confirmar cuantas personas asistirán **(con número)**")
             
