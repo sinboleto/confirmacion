@@ -48,7 +48,7 @@ global dict_info_invitados
 global conversation_states
 
 dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago', 'num_boletos': 2},
-                    #    '+5215585308944': {'nom_invitado': 'Gerardo', 'num_boletos': 2},
+                       '+5215585308944': {'nom_invitado': 'Gerardo', 'num_boletos': 2},
                         # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
                         # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
                         # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
@@ -159,7 +159,7 @@ def webhook():
     elif current_question_index == 2:
         if user_answer == 'si':
             time.sleep(2)
-            response.message(f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje")
+            response.message(f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos)*")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
