@@ -47,8 +47,10 @@ global list_info_event
 global dict_info_invitados
 global conversation_states
 
-dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago', 'num_boletos': 2},
-                       '+5215585308944': {'nom_invitado': 'Gerardo', 'num_boletos': 2},
+dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago Chavez', 'num_boletos': 2},
+                       '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
+                       '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
+                       '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
                         # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
                         # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
                         # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
