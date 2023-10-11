@@ -137,7 +137,7 @@ def webhook():
     if current_question_index == 0:
         if user_answer == 'si, confirmo':
             time.sleep(2)
-            response.message(f"Gracias. Te recuerdo que tu invitación es para **{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s**. Te agradecería si me pudieras confirmar cuantas personas asistirán **(con número)**")
+            response.message(f"Gracias. Te recuerdo que tu invitación es para *{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
             
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
