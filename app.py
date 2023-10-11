@@ -126,7 +126,7 @@ def webhook():
     if current_question_index == 0:
         if user_answer == 'si':
             time.sleep(2)
-            response.message(f"Gracias. Te recuerdo que tu invitación es para {dict_info_invitados[incoming_phone_number]['num_boletos']}. Te agradecería si me pudieras confirmar cuantas personas asistirán (con número)")
+            response.message(f"Gracias. Te recuerdo que tu invitación es para {dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s. Te agradecería si me pudieras confirmar cuantas personas asistirán (con número)")
             
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -154,7 +154,7 @@ def webhook():
 
 - Encuentra más información sobre la mesa de regalos, hoteles y salones de belleza en la página: www.amayayjosemanuel.com
 
-Soy un chatbot. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/rthr9k y mandanos un mensaje. ¡Muchas gracias y saludos!"""
+Soy un chatbot. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. ¡Muchas gracias y saludos!"""
         
         time.sleep(2)
         response.message(msg)
@@ -164,7 +164,7 @@ Soy un chatbot. Si necesitas más información, haz click en el siguiente enlace
 
     else:
         time.sleep(2)
-        response.message(f'Hola, soy un chatbot y estoy programado para hacer confirmaciones y brindar información general de eventos. Cualquier otra duda, haz click en el siguiente enlace: https://wa.link/rthr9k y mandanos un mensaje. Gracias')
+        response.message(f'Hola, soy un chatbot y estoy programado para hacer confirmaciones y brindar información general de eventos. Cualquier otra duda, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
