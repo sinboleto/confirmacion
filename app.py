@@ -42,16 +42,16 @@ conversations_client = client.conversations.v1.services(conversations_sid)
 # Model inputs
 global intro
 global messages
-global recipient_phone_numbers
-global list_info_event
 global dict_info_invitados
 global conversation_states
 
-dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Bego�a Medrano', 'num_boletos': 2},
-                    #    '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
-                    #    '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
-                    #    '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
-                        }
+dict_info_invitados = {}
+
+# dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Bego�a Medrano', 'num_boletos': 2},
+#                     #    '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
+#                     #    '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
+#                     #    '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
+#                         }
 
 conversation_states = {}
 
@@ -181,6 +181,30 @@ def webhook():
     conversation_states[incoming_phone_number] = conversation_state
 
     return str(response)
+
+# Add a new route to render the HTML form
+@app.route('/upload', methods=['GET'])
+def upload_form():
+    return render_template('upload.html')
+
+# Add a route to handle the uploaded JSON file
+@app.route('/upload', methods=['POST'])
+def upload_json_file():
+    if 'json_file' in request.files:
+        uploaded_file = request.files['json_file']
+        if uploaded_file.filename != '':
+            # You can process the uploaded file here
+            data = uploaded_file.read()
+            # Convert data to a dictionary if it's in JSON format
+            try:
+                json_data = json.loads(data)
+                # Update dict_info_invitados with the uploaded JSON data
+                for phone_number, info in json_data.items():
+                    dict_info_invitados[phone_number] = info
+                return 'File uploaded and data added to dict_info_invitados successfully.'
+            except json.JSONDecodeError:
+                return 'Invalid JSON file.'
+    return 'No file uploaded or an error occurred.'
 
 
 if __name__ == '__main__':
