@@ -48,7 +48,7 @@ global dict_info_invitados
 global conversation_states
 
 dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Santiago', 'num_boletos': 2},
-                       '+5215585308944': {'nom_invitado': 'Gerardo', 'num_boletos': 2},
+                    #    '+5215585308944': {'nom_invitado': 'Gerardo', 'num_boletos': 2},
                         # '+5215633521893': {'recipient_ID':'AMB_170823_002', 'recipient_name': 'Beatriz'},
                         # '+5215539001433': {'recipient_ID':'AMB_170823_001', 'recipient_name': 'Fernando'},
                         # '+5215585308944': {'recipient_name': 'Gerardo', 'tickets': 2},
@@ -76,7 +76,7 @@ def inicio_conversacion():
         nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
         intro = f"""Hola {nom_invitado}
-Te extendemos la invitación para la boda de Amaya y José Manuel que se celebrará el 9 de diciembre del 2023. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+Te extendemos la invitación para **la boda de Amaya y José Manuel** que se celebrará el **9 de diciembre del 2023**. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
         message = client.messages.create(
             messaging_service_sid=messaging_service_sid,
@@ -123,10 +123,21 @@ def webhook():
 
     current_question_index = conversation_state['current_question_index']
 
+    info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
+- La **ceremonia religiosa** se llevará a cabo **en punto de las 13:30 hrs. en el Jardín de Eventos Amatus**, después de la ceremonia lo esperamos en la recepción que se realizará en el mismo lugar
+
+- El **código de vestimenta es formal** (Vestido largo o corto de día / traje sin corbata)
+
+- Encuentra más información sobre **la mesa de regalos, hoteles y salones de belleza** en la página: www.amayayjosemanuel.com
+
+**Soy un chatbot** 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje.
+
+¡Muchas gracias y saludos!"""
+
     if current_question_index == 0:
         if user_answer == 'si':
             time.sleep(2)
-            response.message(f"Gracias. Te recuerdo que tu invitación es para {dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s. Te agradecería si me pudieras confirmar cuantas personas asistirán (con número)")
+            response.message(f"Gracias. Te recuerdo que tu invitación es para **{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s**. Te agradecería si me pudieras confirmar cuantas personas asistirán **(con número)**")
             
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -140,31 +151,36 @@ def webhook():
     
     elif current_question_index == 1:
         time.sleep(2)
-        response.message(f"De acuerdo. ¿Algún invitado tiene alguna restricción alimentaria? Por favor, señala cuantas personas y que restricciones (vegetariano, vegano, alérgico, etc.) en el mismo mensaje")
-
-        current_question_index += 1
-        conversation_state['current_question_index'] = current_question_index   
-
-    elif current_question_index == 2:
-        
-        msg = """Te compartimos información adicional del evento:
-- La ceremonia religiosa se llevará a cabo en punto de las 13:30 hrs. en el Jardín de Eventos Amatus, después de la ceremonia lo esperamos en la recepción que se realizará en el mismo lugar
-
-- El código de vestimenta es formal (Vestido largo o corto de día / traje sin corbata)
-
-- Encuentra más información sobre la mesa de regalos, hoteles y salones de belleza en la página: www.amayayjosemanuel.com
-
-Soy un chatbot. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. ¡Muchas gracias y saludos!"""
-        
-        time.sleep(2)
-        response.message(msg)
+        response.message(f"De acuerdo. ¿Algún invitado tiene alguna **restricción alimentaria**?")
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
 
+    elif current_question_index == 2:
+        if user_answer == 'si':
+            time.sleep(2)
+            response.message(f"Por favor, señala **cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)** en el mismo mensaje")
+
+            current_question_index += 1
+            conversation_state['current_question_index'] = current_question_index
+
+        if user_answer == 'no':
+            time.sleep(2)
+            response.message(info_general)
+
+            current_question_index = -1
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 3:
+        time.sleep(2)
+        response.message(info_general)
+
+        current_question_index = -1
+        conversation_state['current_question_index'] = current_question_index
+
     else:
         time.sleep(2)
-        response.message(f'Hola, soy un chatbot y estoy programado para hacer confirmaciones y brindar información general de eventos. Cualquier otra duda, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
+        response.message(f'**Hola, soy un chatbot** 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. **Cualquier otra duda**, haz click en el siguiente enlace: https://wa.link/lo92v0 y mandanos un mensaje. Gracias')
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
