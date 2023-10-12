@@ -143,9 +143,10 @@ def webhook():
         if user_answer == 'si, confirmo':
             time.sleep(2)
             response.message(f"Gracias. Te recuerdo que tu invitación es para *{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
-            
+
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
+            conversation_state['respuestas'][0] = 'Si'
 
         if user_answer == 'no':
             time.sleep(2)
@@ -153,10 +154,12 @@ def webhook():
 
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
+            conversation_state['respuestas'][0] = 'No'
     
     elif current_question_index == 1:
         time.sleep(2)
         response.message(f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria*?")
+        conversation_state['respuestas'][1] = user_answer
 
         current_question_index += 1
         conversation_state['current_question_index'] = current_question_index
@@ -168,6 +171,7 @@ def webhook():
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
+            conversation_state['respuestas'][2] = 'Si'
 
         if user_answer == 'no':
             time.sleep(2)
@@ -175,6 +179,7 @@ def webhook():
 
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
+            conversation_state['respuestas'][2] = 'No'
 
             # Cargar datos en SQL
             with connection.cursor() as cursor:
@@ -197,6 +202,7 @@ def webhook():
 
         current_question_index = -1
         conversation_state['current_question_index'] = current_question_index
+        conversation_state['respuestas'][3] = user_answer
 
         # Cargar datos en SQL
         with connection.cursor() as cursor:
