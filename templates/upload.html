@@ -8,7 +8,16 @@
 <body>
     <h1>Upload JSON File</h1>
     <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="json_file" accept=".json">
+        <!-- Add a text input for id_evento -->
+        <label for="id_evento">Event ID:</label>
+        <input type="text" name="id_evento" id="id_evento" required>
+        <br>
+
+        <!-- Add the file input for JSON file upload -->
+        <label for="json_file">Upload JSON File:</label>
+        <input type="file" name="json_file" id="json_file" accept=".json" required>
+        <br>
+
         <button type="submit">Upload</button>
     </form>
 </body>

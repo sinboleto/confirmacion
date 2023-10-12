@@ -50,7 +50,7 @@ global conversation_states
 global id_evento
 
 # Input
-id_evento = 'B_001'
+# id_evento = 'B_001'
 
 dict_info_invitados = {}
 conversation_states = {}
@@ -155,6 +155,22 @@ def webhook():
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
             conversation_state['respuestas'][0] = 'No'
+
+            # Cargar datos en SQL
+            with connection.cursor() as cursor:
+                cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                           (str(conversation_state['id_evento']), # id_evento
+                            str(conversation_state['sid']), # sid
+                            str(conversation_state['nom_invitado']), # nom_invitado
+                            str(conversation_state['telefono']), # telefono
+                            int(conversation_state['boletos']), # boletos
+                            str(conversation_state['respuestas'][0]), # respuesta_1
+                            str(conversation_state['respuestas'][1]), # respuesta_2
+                            str(conversation_state['respuestas'][2]), # respuesta_3
+                            str(conversation_state['respuestas'][3]) # respuesta_4
+                            )
+                            )
+                connection.commit()
     
     elif current_question_index == 1:
         time.sleep(2)
@@ -238,6 +254,12 @@ def upload_form():
 # Add a route to handle the uploaded JSON file
 @app.route('/upload', methods=['POST'])
 def upload_json_file():
+    id_evento = request.form.get('id_evento')  # Get the id_evento input value
+    
+    # Check if id_evento is empty
+    if not id_evento:
+        return 'Event ID is required. Please enter an Event ID and try again.'
+    
     if 'json_file' in request.files:
         uploaded_file = request.files['json_file']
         if uploaded_file.filename != '':
