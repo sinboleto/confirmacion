@@ -47,7 +47,6 @@ global intro
 global messages
 global dict_info_invitados
 global conversation_states
-global id_evento
 
 # Input
 # id_evento = 'B_001'
@@ -254,6 +253,7 @@ def upload_form():
 # Add a route to handle the uploaded JSON file
 @app.route('/upload', methods=['POST'])
 def upload_json_file():
+    global id_evento
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
     
     # Check if id_evento is empty
