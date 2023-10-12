@@ -55,13 +55,14 @@ id_evento = 'B_001'
 dict_info_invitados = {}
 conversation_states = {}
 
+connection = psycopg2.connect(POSTGRESQL_URI)
+
 # Table config
 try: 
-    connection = psycopg2.connect(POSTGRESQL_URI)
     with connection:
         with connection.cursor() as cursor:
             cursor.execute('CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 TEXT, respuesta_3 TEXT, respuesta_4 TEXT);')
-except:
+except psycopg2.errors.DuplicateTable:
     pass
 
 # Inicio conversación
