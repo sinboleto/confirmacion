@@ -195,6 +195,7 @@ def webhook():
                             str(conversation_state['respuestas'][3]) # respuesta_4
                             )
                             )
+                connection.commit()
 
     elif current_question_index == 3:
         time.sleep(2)
@@ -218,6 +219,7 @@ def webhook():
                             str(conversation_state['respuestas'][3]) # respuesta_4
                             )
                             )
+            connection.commit()
 
     else:
         time.sleep(2)
