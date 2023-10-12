@@ -10,11 +10,13 @@ from twilio.rest import Client
 # System
 from dotenv import load_dotenv
 import os
+import json
 
 # Delay
 import time
 
-import json
+# POSTGRES SQL
+import psycopg2
 
 
 # Main script
@@ -32,6 +34,7 @@ conversations_sid = os.environ.get('CONVERSATIONS_SERVICE_SID')
 twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 messaging_service_sid = os.environ.get('MESSAGING_SERVICE_SID')
+POSTGRESQL_URI = os.environ.get('POSTGRESQL_URI')
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
@@ -44,17 +47,22 @@ global intro
 global messages
 global dict_info_invitados
 global conversation_states
+global id_evento
+
+# Input
+id_evento = 'B_001'
 
 dict_info_invitados = {}
-
-# dict_info_invitados = {'+5215551078511': {'nom_invitado': 'Bego�a Medrano', 'num_boletos': 2},
-#                     #    '+5215585308944': {'nom_invitado': 'Gerardo Chavez', 'num_boletos': 2},
-#                     #    '+5215630266977': {'nom_invitado': 'Amaya Medrano', 'num_boletos': 2},
-#                     #    '+5215559658559': {'nom_invitado': 'José Manuel Santos', 'num_boletos': 2},
-#                         }
-
 conversation_states = {}
 
+# Table config
+try: 
+    connection = psycopg2.connect(POSTGRESQL_URI)
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute('CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 TEXT, respuesta_3 TEXT, respuesta_4 TEXT);')
+except:
+    pass
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
@@ -82,9 +90,13 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
 
         # Store the conversation SID and initial state for each recipient
         conversation_states[telefono_invitado] = {
-            'conversation_sid': conversation.sid,
-            'num_boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
+            'id_evento': id_evento,
+            'sid': conversation.sid,
+            'nom_invitado': nom_invitado,
+            'telefono': telefono_invitado,
+            'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
+            'respuestas':['SR','SR','SR','SR']
         }
 
     app.logger.info(conversation_states)
@@ -112,9 +124,6 @@ def webhook():
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
-
-    # Get the conversation SID
-    conversation_sid = conversation_state['conversation_sid']
 
     current_question_index = conversation_state['current_question_index']
 
@@ -166,12 +175,42 @@ def webhook():
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
 
+            # Cargar datos en SQL
+            with connection.cursor() as cursor:
+                cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                           (str(conversation_state['id_evento']), # id_evento
+                            str(conversation_state['sid']), # sid
+                            str(conversation_state['nom_invitado']), # nom_invitado
+                            str(conversation_state['telefono']), # telefono
+                            int(conversation_state['boletos']), # boletos
+                            str(conversation_state['respuestas'][0]), # respuesta_1
+                            str(conversation_state['respuestas'][1]), # respuesta_2
+                            str(conversation_state['respuestas'][2]), # respuesta_3
+                            str(conversation_state['respuestas'][3]) # respuesta_4
+                            )
+                            )
+
     elif current_question_index == 3:
         time.sleep(2)
         response.message(info_general)
 
         current_question_index = -1
         conversation_state['current_question_index'] = current_question_index
+
+        # Cargar datos en SQL
+        with connection.cursor() as cursor:
+            cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                           (str(conversation_state['id_evento']), # id_evento
+                            str(conversation_state['sid']), # sid
+                            str(conversation_state['nom_invitado']), # nom_invitado
+                            str(conversation_state['telefono']), # telefono
+                            int(conversation_state['boletos']), # boletos
+                            str(conversation_state['respuestas'][0]), # respuesta_1
+                            str(conversation_state['respuestas'][1]), # respuesta_2
+                            str(conversation_state['respuestas'][2]), # respuesta_3
+                            str(conversation_state['respuestas'][3]) # respuesta_4
+                            )
+                            )
 
     else:
         time.sleep(2)
