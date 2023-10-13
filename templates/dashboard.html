@@ -8,7 +8,6 @@
         table {
             width: 100%;
             table-layout: auto;
-            /* Allow columns to adjust based on content */
         }
 
         th {
@@ -51,15 +50,15 @@
         <table id="data-table">
             <thead>
                 <tr>
-                    <th>ID Evento</th>
-                    <th>SID</th>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Número de invitados</th>
-                    <th>Confirma</th>
-                    <th>Invitados confirmados</th>
-                    <th>Restricciones alimentarias</th>
-                    <th>Menús y restricciones</th>
+                    <th data-name="ID Evento">ID Evento</th>
+                    <th data-name="SID">SID</th>
+                    <th data-name="Nombre">Nombre</th>
+                    <th data-name="Teléfono">Teléfono</th>
+                    <th data-name="Número de invitados">Número de invitados</th>
+                    <th data-name="Confirma">Confirma</th>
+                    <th data-name="Invitados confirmados">Invitados confirmados</th>
+                    <th data-name="Restricciones alimentarias">Restricciones alimentarias</th>
+                    <th data-name="Menús y restricciones">Menús y restricciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,19 +77,42 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        <div>
+            <label for="filterColumnIDEvento">Filter by ID Evento:</label>
+            <input type="text" id="filterColumnIDEvento" onkeyup="filterTable('ID Evento')"
+                placeholder="Filter by ID Evento">
+        </div>
+        <div>
+            <label for="filterColumnSID">Filter by SID:</label>
+            <input type="text" id="filterColumnSID" onkeyup="filterTable('SID')" placeholder="Filter by SID">
+        </div>
+        <div>
+            <label for="filterColumnNombre">Filter by Nombre:</label>
+            <input type="text" id="filterColumnNombre" onkeyup="filterTable('Nombre')" placeholder="Filter by Nombre">
+        </div>
+        <!-- Add filter inputs for other columns -->
         <script>
             // JavaScript function to filter the table
-            function filterTable(columnIndex) {
-                var inputElement = document.getElementById('filterColumn' + columnIndex);
+            function filterTable(columnName) {
+                var inputElement = document.getElementById('filterColumn' + columnName);
                 var filterValue = inputElement.value.toUpperCase();
                 var table = document.getElementById('data-table');
                 var rows = table.getElementsByTagName('tr');
 
+                var columnIndex = -1;
+                var headerRow = table.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0];
+                var headerCells = headerRow.getElementsByTagName('th');
+                for (var i = 0; i < headerCells.length; i++) {
+                    if (headerCells[i].getAttribute('data-name') === columnName) {
+                        columnIndex = i;
+                        break;
+                    }
+                }
+
                 for (var i = 0; i < rows.length; i++) {
-                    var cells = rows[i].getElementsByTagName('td')[columnIndex];
-                    if (cells) {
-                        var cellText = cells.textContent || cells.innerText;
+                    var cells = rows[i].getElementsByTagName('td');
+                    if (cells && columnIndex >= 0) {
+                        var cellText = cells[columnIndex].textContent || cells[columnIndex].innerText;
                         if (cellText.toUpperCase().indexOf(filterValue) > -1) {
                             rows[i].style.display = '';
                         } else {
@@ -99,6 +121,7 @@
                     }
                 }
             }
+
         </script>
     </div>
 </body>
