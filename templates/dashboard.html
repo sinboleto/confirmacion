@@ -25,20 +25,64 @@
             <div class="col-md-6">
                 <img src="data:image/png;base64,{{ plot1_base64 }}" class="img-fluid" alt="Resulados confirmaciones">
             </div>
-            <!-- <div class="col-md-6">
+            <div class="col-md-6">
                 <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
-            </div> -->
+            </div>
         </div>
 
         <!-- Data List -->
-        <ul>
-            {% for row in data %}
-            <li>{{ row }}</li>
-            {% endfor %}
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Evento</th>
+                    <th>SID</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Número de invitados</th>
+                    <th>Confirma</th>
+                    <th>Invitados confirmados</th>
+                    <th>Restricciones alimentarias</th>
+                    <th>Menús y restricciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[7] }}</td>
+                    <td>{{ row[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-        <!-- Display the table
-        {{ results_table }} -->
+        <script>
+            // JavaScript function to filter the table
+            function filterTable(columnIndex) {
+                var inputElement = document.getElementById('filterColumn' + columnIndex);
+                var filterValue = inputElement.value.toUpperCase();
+                var table = document.getElementById('data-table');
+                var rows = table.getElementsByTagName('tr');
+
+                for (var i = 0; i < rows.length; i++) {
+                    var cells = rows[i].getElementsByTagName('td')[columnIndex];
+                    if (cells) {
+                        var cellText = cells.textContent || cells.innerText;
+                        if (cellText.toUpperCase().indexOf(filterValue) > -1) {
+                            rows[i].style.display = '';
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                }
+            }
+        </script>
 
     </div>
 </body>

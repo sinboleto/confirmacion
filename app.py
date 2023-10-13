@@ -343,7 +343,7 @@ def dashboard():
                 'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
     df = pd.DataFrame(data, columns=columnas)
 
-    # Create a bar plot for Answer 1 using Matplotlib
+    # Create the first graph
     plt.figure()
     plt.bar(['Si', 'No'], [len(df[df['respuesta_1'] == 'Si']), len(
         df[df['respuesta_1'] == 'No'])], color=['green', 'red'])
@@ -360,13 +360,22 @@ def dashboard():
     plt.close()
     plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-    # Create the second graph (sum of respuesta 2)
-    # graph2_data = [row[1] for row in data]
-    # graph2 = go.Figure(data=[go.Bar(x=graph1_data, y=graph2_data])
-    # graph2_html=plot(graph2, output_type='div', include_plotlyjs=False)
+    # Create the second graph
+    plt.figure()
+    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['respuesta_2'].sum()], [
+            df[df['respuesta_1'] == 'No']['respuesta_2'].sum()], color=['green', 'red'])
+    plt.title('Personas que asistirán')
+    plt.xticks()
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
-    return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64)
-    # return render_template('dashboard.html', , plot2_base64=plot2_base64, id_evento_values=id_evento_values)
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot2_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
 
 
 if __name__ == '__main__':
