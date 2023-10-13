@@ -18,6 +18,14 @@ import time
 # POSTGRES SQL
 import psycopg2
 
+# Graph
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import io
+import numpy as np
+import pandas as pd
+import base64
+
 
 # Main script
 app = Flask(__name__)
@@ -48,21 +56,20 @@ global messages
 global dict_info_invitados
 global conversation_states
 
-# Input
-# id_evento = 'B_001'
-
 dict_info_invitados = {}
 conversation_states = {}
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 
 # Table config
-try: 
+try:
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute('CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 TEXT, respuesta_3 TEXT, respuesta_4 TEXT);')
+            cursor.execute(
+                'CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 TEXT, respuesta_3 TEXT, respuesta_4 TEXT);')
 except psycopg2.errors.DuplicateTable:
     pass
+
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
@@ -96,7 +103,7 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
             'telefono': telefono_invitado,
             'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
-            'respuestas':['SR','SR','SR','SR']
+            'respuestas': ['SR', 'SR', 'SR', 'SR']
         }
 
     app.logger.info(conversation_states)
@@ -141,7 +148,8 @@ def webhook():
     if current_question_index == 0:
         if user_answer == 'si, confirmo':
             time.sleep(2)
-            response.message(f"Gracias. Te recuerdo que tu invitación es para *{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
+            response.message(
+                f"Gracias. Te recuerdo que tu invitación es para *{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -149,7 +157,8 @@ def webhook():
 
         if user_answer == 'no':
             time.sleep(2)
-            response.message(f"{dict_info_invitados[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
+            response.message(
+                f"{dict_info_invitados[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
 
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
@@ -158,22 +167,29 @@ def webhook():
             # Cargar datos en SQL
             with connection.cursor() as cursor:
                 cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                           (str(conversation_state['id_evento']), # id_evento
-                            str(conversation_state['sid']), # sid
-                            str(conversation_state['nom_invitado']), # nom_invitado
-                            str(conversation_state['telefono']), # telefono
-                            int(conversation_state['boletos']), # boletos
-                            str(conversation_state['respuestas'][0]), # respuesta_1
-                            str(conversation_state['respuestas'][1]), # respuesta_2
-                            str(conversation_state['respuestas'][2]), # respuesta_3
-                            str(conversation_state['respuestas'][3]) # respuesta_4
-                            )
-                            )
+                               (str(conversation_state['id_evento']),  # id_evento
+                                str(conversation_state['sid']),  # sid
+                                # nom_invitado
+                                str(conversation_state['nom_invitado']),
+                                # telefono
+                                str(conversation_state['telefono']),
+                                int(conversation_state['boletos']),  # boletos
+                                # respuesta_1
+                                str(conversation_state['respuestas'][0]),
+                                # respuesta_2
+                                str(conversation_state['respuestas'][1]),
+                                # respuesta_3
+                                str(conversation_state['respuestas'][2]),
+                                # respuesta_4
+                                str(conversation_state['respuestas'][3])
+                                )
+                               )
                 connection.commit()
-    
+
     elif current_question_index == 1:
         time.sleep(2)
-        response.message(f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria*?")
+        response.message(
+            f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria*?")
         conversation_state['respuestas'][1] = user_answer
 
         current_question_index += 1
@@ -182,7 +198,8 @@ def webhook():
     elif current_question_index == 2:
         if user_answer == 'si':
             time.sleep(2)
-            response.message(f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos)*")
+            response.message(
+                f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos)*")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -199,17 +216,23 @@ def webhook():
             # Cargar datos en SQL
             with connection.cursor() as cursor:
                 cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                           (str(conversation_state['id_evento']), # id_evento
-                            str(conversation_state['sid']), # sid
-                            str(conversation_state['nom_invitado']), # nom_invitado
-                            str(conversation_state['telefono']), # telefono
-                            int(conversation_state['boletos']), # boletos
-                            str(conversation_state['respuestas'][0]), # respuesta_1
-                            str(conversation_state['respuestas'][1]), # respuesta_2
-                            str(conversation_state['respuestas'][2]), # respuesta_3
-                            str(conversation_state['respuestas'][3]) # respuesta_4
-                            )
-                            )
+                               (str(conversation_state['id_evento']),  # id_evento
+                                str(conversation_state['sid']),  # sid
+                                # nom_invitado
+                                str(conversation_state['nom_invitado']),
+                                # telefono
+                                str(conversation_state['telefono']),
+                                int(conversation_state['boletos']),  # boletos
+                                # respuesta_1
+                                str(conversation_state['respuestas'][0]),
+                                # respuesta_2
+                                str(conversation_state['respuestas'][1]),
+                                # respuesta_3
+                                str(conversation_state['respuestas'][2]),
+                                # respuesta_4
+                                str(conversation_state['respuestas'][3])
+                                )
+                               )
                 connection.commit()
 
     elif current_question_index == 3:
@@ -223,17 +246,22 @@ def webhook():
         # Cargar datos en SQL
         with connection.cursor() as cursor:
             cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                           (str(conversation_state['id_evento']), # id_evento
-                            str(conversation_state['sid']), # sid
-                            str(conversation_state['nom_invitado']), # nom_invitado
-                            str(conversation_state['telefono']), # telefono
-                            int(conversation_state['boletos']), # boletos
-                            str(conversation_state['respuestas'][0]), # respuesta_1
-                            str(conversation_state['respuestas'][1]), # respuesta_2
-                            str(conversation_state['respuestas'][2]), # respuesta_3
-                            str(conversation_state['respuestas'][3]) # respuesta_4
+                           (str(conversation_state['id_evento']),  # id_evento
+                            str(conversation_state['sid']),  # sid
+                            # nom_invitado
+                            str(conversation_state['nom_invitado']),
+                            str(conversation_state['telefono']),  # telefono
+                            int(conversation_state['boletos']),  # boletos
+                            # respuesta_1
+                            str(conversation_state['respuestas'][0]),
+                            # respuesta_2
+                            str(conversation_state['respuestas'][1]),
+                            # respuesta_3
+                            str(conversation_state['respuestas'][2]),
+                            # respuesta_4
+                            str(conversation_state['respuestas'][3])
                             )
-                            )
+                           )
             connection.commit()
 
     else:
@@ -245,21 +273,23 @@ def webhook():
 
     return str(response)
 
+
 # Add a new route to render the HTML form
 @app.route('/upload', methods=['GET'])
 def upload_form():
     return render_template('upload.html')
+
 
 # Add a route to handle the uploaded JSON file
 @app.route('/upload', methods=['POST'])
 def upload_json_file():
     global id_evento
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
-    
+
     # Check if id_evento is empty
     if not id_evento:
         return 'Event ID is required. Please enter an Event ID and try again.'
-    
+
     if 'json_file' in request.files:
         uploaded_file = request.files['json_file']
         if uploaded_file.filename != '':
@@ -275,6 +305,68 @@ def upload_json_file():
             except json.JSONDecodeError:
                 return 'Invalid JSON file.'
     return 'No file uploaded or an error occurred.'
+
+
+# Function to retrieve data from the database
+def get_data(query):
+    data = []
+    connection = psycopg2.connect(POSTGRESQL_URI)
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            data = cursor.fetchall()
+    return data
+
+
+# Dashboard
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+
+    # Get distinct values of id_evento from the database
+    connection = psycopg2.connect(POSTGRESQL_URI)
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT DISTINCT id_evento FROM confirmaciones;')
+            id_evento_values = [row[0] for row in cursor.fetchall()]
+
+    selected_id_evento = request.form.get('selected_id_evento')
+    if selected_id_evento:
+        # Filter data based on the selected id_evento
+        data = get_data(
+            f'SELECT * FROM confirmaciones WHERE id_evento ="{selected_id_evento}";')
+
+    else:
+        # Get all data if no filter is applied
+        data = get_data('SELECT * FROM confirmaciones;')
+
+    columnas = ['id_evento', 'sid', 'nom_invitado', 'telefono', 'boletos',
+                'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
+    df = pd.DataFrame(data, columns=columnas)
+
+    # Create a bar plot for Answer 1 using Matplotlib
+    plt.figure()
+    plt.bar(['Si', 'No'], [len(df[df['respuesta_1'] == 'Si']), len(
+        df[df['respuesta_1'] == 'No'])], color=['green', 'red'])
+    # plt.xlabel('Value')
+    # plt.ylabel('Count')
+    plt.title('Invitados confirmados')
+    plt.xticks()
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # Create the second graph (sum of respuesta 2)
+    # graph2_data = [row[1] for row in data]
+    # graph2 = go.Figure(data=[go.Bar(x=graph1_data, y=graph2_data])
+    # graph2_html=plot(graph2, output_type='div', include_plotlyjs=False)
+
+    return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64)
+    # return render_template('dashboard.html', , plot2_base64=plot2_base64, id_evento_values=id_evento_values)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>View information</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>View information</h1>
+
+        <form method="POST" action="/dashboard">
+            <label for="selected_id_evento">Select Event ID:</label>
+            <select name="selected_id_evento" id="selected_id_evento">
+                <option value="">All</option>
+                {% for id_evento in id_evento_values %}
+                <option value="{{ id_evento }}">{{ id_evento }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Apply Filter</button>
+        </form>
+
+        <!-- <div class="row">
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot1_base64 }}" class="img-fluid" alt="Answer 1 Value Counts">
+            </div>
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
+            </div>
+        </div> -->
+
+        <!-- Data List -->
+        <ul>
+            {% for row in data %}
+            <li>{{ row }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Display the table
+        {{ results_table }} -->
+
+    </div>
+</body>
+
+</html>
