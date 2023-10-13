@@ -362,7 +362,7 @@ def dashboard():
 
     # Create the second graph
     plt.figure()
-    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['boletos'].sum()], [
+    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['boletos'].sum(),
             df[df['respuesta_1'] == 'No']['boletos'].sum()], color=['green', 'red'])
     plt.title('Personas que asistirán')
     plt.xticks()
