@@ -23,6 +23,11 @@
         .auto-width {
             width: auto;
         }
+
+        /* Center the table */
+        .table-container {
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -50,117 +55,57 @@
             </div>
         </div>
 
-        <!-- Data List -->
-        <table id="data-table">
-            <thead>
-                <tr>
-                    <th data-name="ID Evento" class="auto-width">
-                        ID Evento
-                        <input type="text" id="filterColumnIDEvento" onkeyup="filterTable('ID Evento')"
-                            placeholder="Filter">
-                    </th>
-                    <th data-name="SID" class="auto-width">
-                        SID
-                        <input type="text" id="filterColumnSID" onkeyup="filterTable('SID')" placeholder="Filter">
-                    </th>
-                    <th data-name="Nombre" class="auto-width">
-                        Nombre
-                        <input type="text" id="filterColumnNombre" onkeyup="filterTable('Nombre')" placeholder="Filter">
-                    </th>
-                    <th data-name="Teléfono" class="auto-width">
-                        Teléfono
-                        <input type="text" id="filterColumnTelefono" onkeyup="filterTable('Teléfono')"
-                            placeholder="Filter">
-                    </th>
-                    <th data-name="Número de invitados" class="auto-width">
-                        Número de invitados
-                        <input type="text" id="filterColumnNumeroInvitados" onkeyup="filterTable('Número de invitados')"
-                            placeholder="Filter">
-                    </th>
-                    <th data-name="Confirma" class="auto-width">
-                        Confirma
-                        <input type="text" id="filterColumnConfirma" onkeyup="filterTable('Confirma')"
-                            placeholder="Filter">
-                    </th>
-                    <th data-name="Invitados confirmados" class="auto-width">
-                        Invitados confirmados
-                        <input type="text" id="filterColumnInvitadosConfirmados"
-                            onkeyup="filterTable('Invitados confirmados')" placeholder="Filter">
-                    </th>
-                    <th data-name="Restricciones alimentarias" class="auto-width">
-                        Restricciones alimentarias
-                        <input type="text" id="filterColumnRestriccionesAlimentarias"
-                            onkeyup="filterTable('Restricciones alimentarias')" placeholder="Filter">
-                    </th>
-                    <th data-name="Menús y restricciones" class="auto-width">
-                        Menús y restricciones
-                        <input type="text" id="filterColumnMenusYRestricciones"
-                            onkeyup="filterTable('Menús y restricciones')" placeholder="Filter">
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in data %}
-                <tr>
-                    <td>{{ row[0] }}</td>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                    <td>{{ row[4] }}</td>
-                    <td>{{ row[5] }}</td>
-                    <td>{{ row[6] }}</td>
-                    <td>{{ row[7] }}</td>
-                    <td>{{ row[8] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <script>
-            // JavaScript function to filter the table
-            function filterTable(columnName) {
-                var inputElement = document.getElementById('filterColumn' + columnName);
-                var filterValue = inputElement.value.toUpperCase();
-                var table = document.getElementById('data-table');
-                var rows = table.getElementsByTagName('tr');
-
-                var columnIndex = -1;
-                var headerRow = table.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0];
-                var headerCells = headerRow.getElementsByTagName('th');
-                for (var i = 0; i < headerCells.length; i++) {
-                    if (headerCells[i].getAttribute('data-name') === columnName) {
-                        columnIndex = i;
-                        break;
-                    }
-                }
-
-                for (var i = 0; i < rows.length; i++) {
-                    var cells = rows[i].getElementsByTagName('td');
-                    if (cells && columnIndex >= 0) {
-                        var cellText = cells[columnIndex].textContent || cells[columnIndex].innerText;
-                        if (cellText.toUpperCase().indexOf(filterValue) > -1) {
-                            rows[i].style.display = '';
-                        } else {
-                            rows[i].style.display = 'none';
-                        }
-                    }
-                }
-            }
-
-            // Dynamically adjust column widths based on column name length
-            window.addEventListener('load', function () {
-                const table = document.getElementById('data-table');
-                const headerRow = table.querySelector('thead tr');
-                const headerCells = headerRow.querySelectorAll('th.auto-width');
-
-                headerCells.forEach((cell) => {
-                    const columnName = cell.textContent.trim();
-                    const textWidth = columnName.length * 8; // Adjust the multiplier for the desired width
-
-                    cell.style.minWidth = textWidth + 'px';
-                });
-            });
-        </script>
+        <!-- Centered table -->
+        <div class="table-container">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th data-name="ID Evento" class="auto-width">
+                            ID Evento
+                        </th>
+                        <th data-name="SID" class="auto-width">
+                            SID
+                        </th>
+                        <th data-name="Nombre" class="auto-width">
+                            Nombre
+                        </th>
+                        <th data-name="Teléfono" class="auto-width">
+                            Teléfono
+                        </th>
+                        <th data-name="Número de invitados" class="auto-width">
+                            Número de invitados
+                        </th>
+                        <th data-name="Confirma" class="auto-width">
+                            Confirma
+                        </th>
+                        <th data-name="Invitados confirmados" class="auto-width">
+                            Invitados confirmados
+                        </th>
+                        <th data-name="Restricciones alimentarias" class="auto-width">
+                            Restricciones alimentarias
+                        </th>
+                        <th data-name="Menús y restricciones" class="auto-width">
+                            Menús y restricciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] }}</td>
+                        <td>{{ row[5] }}</td>
+                        <td>{{ row[6] }}</td>
+                        <td>{{ row[7] }}</td>
+                        <td>{{ row[8] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 
