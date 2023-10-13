@@ -333,11 +333,11 @@ def dashboard():
     if selected_id_evento:
         # Filter data based on the selected id_evento
         data = get_data(
-            f'SELECT * FROM confirmaciones WHERE id_evento ="{selected_id_evento}";')
+            f"SELECT * FROM confirmaciones WHERE id_evento ='{selected_id_evento}';")
 
     else:
         # Get all data if no filter is applied
-        data = get_data('SELECT * FROM confirmaciones;')
+        data = get_data("SELECT * FROM confirmaciones;")
 
     columnas = ['id_evento', 'sid', 'nom_invitado', 'telefono', 'boletos',
                 'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
