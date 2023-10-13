@@ -31,6 +31,15 @@
     <div class="container">
         <h1>Dashboard de eventos</h1>
 
+        <div class="row">
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot1_base64 }}" class="img-fluid" alt="Resulados confirmaciones">
+            </div>
+            <div class="col-md-6">
+                <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
+            </div>
+        </div>
+
         <form method="POST" action="/dashboard">
             <label for="selected_id_evento">Selecciona el ID del evento:</label>
             <select name="selected_id_evento" id="selected_id_evento">
@@ -41,15 +50,6 @@
             </select>
             <button type="submit">Aplicar filtro</button>
         </form>
-
-        <div class="row">
-            <div class="col-md-6">
-                <img src="data:image/png;base64,{{ plot1_base64 }}" class="img-fluid" alt="Resulados confirmaciones">
-            </div>
-            <div class="col-md-6">
-                <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
-            </div>
-        </div>
 
         <!-- Centered table -->
         <div class="table-container">
