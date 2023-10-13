@@ -362,8 +362,8 @@ def dashboard():
 
     # Create the second graph
     plt.figure()
-    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['respuesta_2'].sum()], [
-            df[df['respuesta_1'] == 'No']['respuesta_2'].sum()], color=['green', 'red'])
+    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['boletos'].sum()], [
+            df[df['respuesta_1'] == 'No']['boletos'].sum()], color=['green', 'red'])
     plt.title('Personas que asistirán')
     plt.xticks()
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
