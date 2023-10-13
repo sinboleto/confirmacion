@@ -345,13 +345,18 @@ def dashboard():
 
     # Create the first graph
     plt.figure()
-    plt.bar(['Si', 'No'], [len(df[df['respuesta_1'] == 'Si']), len(
-        df[df['respuesta_1'] == 'No'])], color=['green', 'red'])
-    # plt.xlabel('Value')
-    # plt.ylabel('Count')
+    confirmed = len(df[df['respuesta_1'] == 'Si'])
+    not_confirmed = len(df[df['respuesta_1'] == 'No'])
+    plt.bar(['Si', 'No'], [confirmed, not_confirmed],
+            color=['#9524D6', '#D62466'])
     plt.title('Invitados confirmados')
-    plt.xticks()
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Add total numbers to the graph
+    plt.text(0, confirmed + 10, str(confirmed),
+             ha='center', fontsize=12, color='black')
+    plt.text(1, not_confirmed + 10, str(not_confirmed),
+             ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
@@ -362,11 +367,18 @@ def dashboard():
 
     # Create the second graph
     plt.figure()
-    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['respuesta_2'].sum(),
-            df[df['respuesta_1'] == 'No']['boletos'].sum()], color=['green', 'red'])
+    attending = df[df['respuesta_1'] == 'Si']['respuesta_2'].sum()
+    not_attending = df[df['respuesta_1'] == 'No']['boletos'].sum()
+    plt.bar(['Si', 'No'], [attending, not_attending],
+            color=['#9524D6', '#D62466'])
     plt.title('Personas que asistirán')
-    plt.xticks()
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Add total numbers to the graph
+    plt.text(0, attending + 10, str(attending),
+             ha='center', fontsize=12, color='black')
+    plt.text(1, not_attending + 10, str(not_attending),
+             ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()

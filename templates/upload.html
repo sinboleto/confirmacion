@@ -2,16 +2,19 @@
 <html>
 
 <head>
-    <title>Upload JSON File</title>
+    <title>Carga de información</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1>Upload JSON File</h1>
+    <h1>Carga de información</h1>
     <form method="POST" action="/upload" enctype="multipart/form-data">
         <!-- Add a text input for id_evento -->
         <label for="id_evento">ID del evento:</label>
         <input type="text" name="id_evento" id="id_evento" required>
         <br>
+
+        <!-- Aquí vendrá la información de los placeholders del evento -->
 
         <!-- Add the file input for JSON file upload -->
         <label for="json_file">Cargar archivo JSON:</label>
