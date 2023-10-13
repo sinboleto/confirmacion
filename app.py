@@ -103,7 +103,7 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
             'telefono': telefono_invitado,
             'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
-            'respuestas': ['SR', 0, 'SR', 'SR']
+            'respuestas': ['No', 0, 'No', 'Ninguna']
         }
 
     app.logger.info(conversation_states)
@@ -362,7 +362,7 @@ def dashboard():
 
     # Create the second graph
     plt.figure()
-    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['boletos'].sum(),
+    plt.bar(['Si', 'No'], [df[df['respuesta_1'] == 'Si']['respuesta_2'].sum(),
             df[df['respuesta_1'] == 'No']['boletos'].sum()], color=['green', 'red'])
     plt.title('Personas que asistirán')
     plt.xticks()
