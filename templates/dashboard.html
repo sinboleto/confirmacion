@@ -33,17 +33,17 @@
 
 <body>
     <div class="container">
-        <h1>View information</h1>
+        <h1>Dashboard de eventos</h1>
 
         <form method="POST" action="/dashboard">
-            <label for="selected_id_evento">Select Event ID:</label>
+            <label for="selected_id_evento">Selecciona el ID del evento:</label>
             <select name="selected_id_evento" id="selected_id_evento">
-                <option value="">All</option>
+                <option value="">Todos</option>
                 {% for id_evento in id_evento_values %}
                 <option value="{{ id_evento }}">{{ id_evento }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Apply Filter</button>
+            <button type="submit">Aplicar filtro</button>
         </form>
 
         <div class="row">
@@ -105,6 +105,23 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <script>
+                // Dynamically adjust column widths based on column name length
+                window.addEventListener('load', function () {
+                    const table = document.getElementById('data-table');
+                    const headerRow = table.querySelector('thead tr');
+                    const headerCells = headerRow.querySelectorAll('th.auto-width');
+
+                    headerCells.forEach((cell) => {
+                        const columnName = cell.textContent.trim();
+                        const textWidth = columnName.length * 8; // Adjust the multiplier for the desired width
+
+                        cell.style.minWidth = textWidth + 'px';
+                    });
+                });
+            </script>
+
         </div>
     </div>
 </body>
