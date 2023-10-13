@@ -66,7 +66,7 @@ try:
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                'CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 TEXT, respuesta_3 TEXT, respuesta_4 TEXT);')
+                'CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 INT, respuesta_3 TEXT, respuesta_4 TEXT);')
 except psycopg2.errors.DuplicateTable:
     pass
 
@@ -103,7 +103,7 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
             'telefono': telefono_invitado,
             'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
             'current_question_index': 0,
-            'respuestas': ['SR', 'SR', 'SR', 'SR']
+            'respuestas': ['SR', 0, 'SR', 'SR']
         }
 
     app.logger.info(conversation_states)

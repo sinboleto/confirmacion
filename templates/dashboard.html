@@ -2,8 +2,25 @@
 <html>
 
 <head>
-    <title>View information</title>
+    <title>Dashboard de eventos</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        table {
+            width: 100%;
+            table-layout: auto;
+            /* Allow columns to adjust based on content */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 8px;
+        }
+    </style>
 </head>
 
 <body>
@@ -31,7 +48,7 @@
         </div>
 
         <!-- Data List -->
-        <table>
+        <table id="data-table">
             <thead>
                 <tr>
                     <th>ID Evento</th>
@@ -83,7 +100,6 @@
                 }
             }
         </script>
-
     </div>
 </body>
 
