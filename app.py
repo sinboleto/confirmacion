@@ -340,7 +340,7 @@ def dashboard():
         data = get_data(
             "SELECT id_evento, nom_invitado, telefono, boletos, respuesta_1, respuesta_2, respuesta_3, respuesta_4 FROM confirmaciones;")
 
-    columnas = ['id_evento', 'sid', 'nom_invitado', 'telefono', 'boletos',
+    columnas = ['id_evento', 'nom_invitado', 'telefono', 'boletos',
                 'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
     df = pd.DataFrame(data, columns=columnas)
 
