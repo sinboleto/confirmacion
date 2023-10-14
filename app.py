@@ -333,11 +333,12 @@ def dashboard():
     if selected_id_evento:
         # Filter data based on the selected id_evento
         data = get_data(
-            f"SELECT * FROM confirmaciones WHERE id_evento ='{selected_id_evento}';")
+            f"SELECT id_evento, nom_invitado, telefono, boletos, respuesta_1, respuesta_2, respuesta_3, respuesta_4 FROM confirmaciones WHERE id_evento ='{selected_id_evento}';")
 
     else:
         # Get all data if no filter is applied
-        data = get_data("SELECT * FROM confirmaciones;")
+        data = get_data(
+            "SELECT id_evento, nom_invitado, telefono, boletos, respuesta_1, respuesta_2, respuesta_3, respuesta_4 FROM confirmaciones;")
 
     columnas = ['id_evento', 'sid', 'nom_invitado', 'telefono', 'boletos',
                 'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
@@ -353,9 +354,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, confirmed / 2, str(confirmed),
+    plt.text(0, confirmed, str(confirmed),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_confirmed / 2, str(not_confirmed),
+    plt.text(1, not_confirmed, str(not_confirmed),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
@@ -375,9 +376,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, attending / 2, str(attending),
+    plt.text(0, attending, str(attending),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_attending / 2, str(not_attending),
+    plt.text(1, not_attending, str(not_attending),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
