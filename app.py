@@ -353,9 +353,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, confirmed + 10, str(confirmed),
+    plt.text(0, confirmed / 2, str(confirmed),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_confirmed + 10, str(not_confirmed),
+    plt.text(1, not_confirmed / 2, str(not_confirmed),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
@@ -375,9 +375,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, attending + 10, str(attending),
+    plt.text(0, attending / 2, str(attending),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_attending + 10, str(not_attending),
+    plt.text(1, not_attending / 2, str(not_attending),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
