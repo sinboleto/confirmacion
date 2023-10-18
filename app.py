@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, Response, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 
 # Twilio
 from twilio.twiml.messaging_response import MessagingResponse
@@ -249,6 +249,44 @@ def webhook():
 
     return str(response)
 
+@app.route('/conv_xlsx_json', methods=['POST'])
+def conv_xlsx_json():
+    if 'xlsx_file' in request.files:
+        uploaded_file = request.files['xlsx_file']
+
+        if uploaded_file.filename.endswith('.xlsx'):
+            # Read the contents of the Excel file into a DataFrame
+            try:
+                df = pd.read_excel(uploaded_file, sheet_name='BD')
+
+                dict_invitados = {}
+
+                for index, row in df.iterrows():
+                    telefono_modificado = f"+{row['telefono_modificado']}"
+                    nom_invitado = row['nom_invitado']
+                    num_boletos = row['num_boletos']
+
+                    # Create a subdictionary
+                    subdict = {"nom_invitado": nom_invitado, "num_boletos": num_boletos}
+
+                    # Add the subdictionary to the main dictionary with telefono_modificado as the key
+                    dict_invitados[telefono_modificado] = subdict
+
+                # Convert the 'dict_invitados' dictionary to a JSON string
+                json_string = json.dumps(dict_invitados, ensure_ascii=False)
+
+                # Save the JSON string to a JSON file
+                json_filename = 'lista_invitados_json.json'
+                with open(json_filename, 'w') as json_file:
+                    json_file.write(json_string)
+
+                return send_file(json_filename, as_attachment=True, download_name=json_filename)
+
+            except Exception as e:
+                return f'Error en la lectura del archivo de Excel: {str(e)}'
+        else:
+            return 'Formato de archivo inválido. Favor de subir un archivo .xlsx.'
+    return 'Ocurrió un archivo o no se subió un archivo.'
 
 # Add a new route to render the HTML form
 @app.route('/upload', methods=['GET'])
@@ -265,7 +303,7 @@ def upload_json_file():
 
     # Check if id_evento is empty
     if not id_evento:
-        return 'Event ID is required. Please enter an Event ID and try again.'
+        return 'El ID del evento es necesario. Favor de proporcionar un ID del evento y tratar de nuevo.'
 
     if 'json_file' in request.files:
         uploaded_file = request.files['json_file']
@@ -280,8 +318,8 @@ def upload_json_file():
                     dict_info_invitados[phone_number] = info
                 return redirect(url_for('upload_form'))
             except json.JSONDecodeError:
-                return 'Invalid JSON file.'
-    return 'No file uploaded or an error occurred.'
+                return 'Archivo JSON no válido.'
+    return 'Ocurrió un archivo o no se subió un archivo.'
 
 
 # Function to retrieve data from the database
