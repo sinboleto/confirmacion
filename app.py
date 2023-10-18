@@ -81,7 +81,7 @@ def inicio_conversacion():
     for telefono_invitado in dict_info_invitados:
 
         conversation = conversations_client.conversations.create()
-        app.logger.info(conversation.sid)
+        # app.logger.info(conversation.sid)
 
         # Get the recipient_name dynamically for each recipient_phone_number
         nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
@@ -107,9 +107,10 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
             'respuestas': ['No', 0, 'No', 'Ninguna']
         }
 
-    app.logger.info(conversation_states)
+    # app.logger.info(conversation_states)
 
     uploaded_file = ''
+    dict_info_invitados = {}
 
     return 'Confirmación enviada'
 
@@ -121,7 +122,7 @@ def webhook():
     incoming_phone_number = request.values.get('From', '').lower()
     incoming_phone_number = incoming_phone_number.replace('whatsapp:', '')
 
-    app.logger.info(incoming_phone_number)
+    # app.logger.info(incoming_phone_number)
 
     # Get the conversation state for the current recipient
     conversation_state = conversation_states.get(incoming_phone_number, None)
@@ -152,7 +153,7 @@ def webhook():
         if user_answer == 'si, confirmo':
             time.sleep(2)
             response.message(
-                f"Gracias. Te recuerdo que tu invitación es para *{dict_info_invitados[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
+                f"Gracias. Te recuerdo que tu invitación es para *{conversation_states[incoming_phone_number]['num_boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -161,7 +162,7 @@ def webhook():
         if user_answer == 'no':
             time.sleep(2)
             response.message(
-                f"{dict_info_invitados[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
+                f"{conversation_states[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
 
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
