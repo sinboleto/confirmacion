@@ -10,6 +10,8 @@
     <div class="container">
         <h1>Carga de información</h1>
 
+        <br>
+
         <div>
             <h2>Alta de variables</h2>
             <form method="POST" action="/upload" enctype="multipart/form-data">
@@ -21,19 +23,18 @@
                 <!-- Aquí vendrá la información de los placeholders del evento -->
 
                 <!-- Add the file input for JSON file upload -->
-                <label for="json_file">Cargar archivo JSON:</label>
+                <label for="json_file">Cargar base de datos (.JSON):</label>
                 <input type="file" name="json_file" id="json_file" accept=".json" required>
                 <br>
 
-                <button type="submit">Cargar archivo</button>
+                <button type="submit">Subir archivo</button>
             </form>
-        </div>
+            <br>
 
-        <div>
-            <h2>Enviar confirmación</h2>
             <form method="GET" action="/start">
-                <button type="submit">Enviar</button>
+                <button type="submit">Enviar confirmaciones</button>
             </form>
+
         </div>
     </div>
 </body>
