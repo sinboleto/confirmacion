@@ -108,7 +108,7 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
 
     app.logger.info(conversation_states)
 
-    return redirect(url_for('upload'))
+    return 'Confirmación enviada'
 
 
 @app.route('/', methods=['POST'])
@@ -301,7 +301,7 @@ def upload_json_file():
                 # Update dict_info_invitados with the uploaded JSON data
                 for phone_number, info in json_data.items():
                     dict_info_invitados[phone_number] = info
-                return redirect(url_for('upload'))
+                return redirect(url_for('upload_form'))
             except json.JSONDecodeError:
                 return 'Invalid JSON file.'
     return 'No file uploaded or an error occurred.'
