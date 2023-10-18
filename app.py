@@ -116,7 +116,31 @@ def inicio_conversacion():
 
         return 'Confirmación enviada'
     else:
-       return 'Subir archivo de base de datos' 
+       return 'Subir archivo de base de datos'
+    
+
+def carga_SQL(conversation_state):
+    # Cargar datos en SQL
+    with connection.cursor() as cursor:
+        cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
+            (str(conversation_state['id_evento']),  # id_evento
+            str(conversation_state['sid']),  # sid
+            # nom_invitado
+            str(conversation_state['nom_invitado']),
+            # telefono
+            str(conversation_state['telefono']),
+            int(conversation_state['boletos']),  # boletos
+            # respuesta_1
+            str(conversation_state['respuestas'][0]),
+            # respuesta_2
+            str(conversation_state['respuestas'][1]),
+            # respuesta_3
+            str(conversation_state['respuestas'][2]),
+            # respuesta_4
+            str(conversation_state['respuestas'][3])
+            )
+            )
+        connection.commit()
 
 
 @app.route('/', methods=['POST'])
@@ -173,31 +197,12 @@ def webhook():
             conversation_state['respuestas'][0] = 'No'
 
             # Cargar datos en SQL
-            with connection.cursor() as cursor:
-                cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                               (str(conversation_state['id_evento']),  # id_evento
-                                str(conversation_state['sid']),  # sid
-                                # nom_invitado
-                                str(conversation_state['nom_invitado']),
-                                # telefono
-                                str(conversation_state['telefono']),
-                                int(conversation_state['boletos']),  # boletos
-                                # respuesta_1
-                                str(conversation_state['respuestas'][0]),
-                                # respuesta_2
-                                str(conversation_state['respuestas'][1]),
-                                # respuesta_3
-                                str(conversation_state['respuestas'][2]),
-                                # respuesta_4
-                                str(conversation_state['respuestas'][3])
-                                )
-                               )
-                connection.commit()
+            carga_SQL(conversation_state)
 
     elif current_question_index == 1:
         time.sleep(2)
         response.message(
-            f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria*?")
+            f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria (vegetariano, vegano, alérgico a algo, etc.)*?")
         conversation_state['respuestas'][1] = user_answer
 
         current_question_index += 1
@@ -207,7 +212,7 @@ def webhook():
         if user_answer == 'si':
             time.sleep(2)
             response.message(
-                f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos)*")
+                f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*")
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -222,26 +227,7 @@ def webhook():
             conversation_state['respuestas'][2] = 'No'
 
             # Cargar datos en SQL
-            with connection.cursor() as cursor:
-                cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                               (str(conversation_state['id_evento']),  # id_evento
-                                str(conversation_state['sid']),  # sid
-                                # nom_invitado
-                                str(conversation_state['nom_invitado']),
-                                # telefono
-                                str(conversation_state['telefono']),
-                                int(conversation_state['boletos']),  # boletos
-                                # respuesta_1
-                                str(conversation_state['respuestas'][0]),
-                                # respuesta_2
-                                str(conversation_state['respuestas'][1]),
-                                # respuesta_3
-                                str(conversation_state['respuestas'][2]),
-                                # respuesta_4
-                                str(conversation_state['respuestas'][3])
-                                )
-                               )
-                connection.commit()
+            carga_SQL(conversation_state)
 
     elif current_question_index == 3:
         time.sleep(2)
@@ -252,25 +238,7 @@ def webhook():
         conversation_state['respuestas'][3] = user_answer
 
         # Cargar datos en SQL
-        with connection.cursor() as cursor:
-            cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                           (str(conversation_state['id_evento']),  # id_evento
-                            str(conversation_state['sid']),  # sid
-                            # nom_invitado
-                            str(conversation_state['nom_invitado']),
-                            str(conversation_state['telefono']),  # telefono
-                            int(conversation_state['boletos']),  # boletos
-                            # respuesta_1
-                            str(conversation_state['respuestas'][0]),
-                            # respuesta_2
-                            str(conversation_state['respuestas'][1]),
-                            # respuesta_3
-                            str(conversation_state['respuestas'][2]),
-                            # respuesta_4
-                            str(conversation_state['respuestas'][3])
-                            )
-                           )
-            connection.commit()
+        carga_SQL(conversation_state)
 
     else:
         time.sleep(2)
