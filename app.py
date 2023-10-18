@@ -76,6 +76,7 @@ except psycopg2.errors.DuplicateTable:
 def inicio_conversacion():
     global intro
     global conversation_states
+    global uploaded_file
 
     for telefono_invitado in dict_info_invitados:
 
@@ -107,6 +108,8 @@ Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celeb
         }
 
     app.logger.info(conversation_states)
+
+    uploaded_file = ''
 
     return 'Confirmación enviada'
 
@@ -284,6 +287,7 @@ def upload_form():
 @app.route('/upload', methods=['POST'])
 def upload_json_file():
     global id_evento
+    global uploaded_file
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
 
     # Check if id_evento is empty
@@ -328,6 +332,7 @@ def dashboard():
         with connection.cursor() as cursor:
             cursor.execute('SELECT DISTINCT id_evento FROM confirmaciones;')
             id_evento_values = [row[0] for row in cursor.fetchall()]
+            id_evento_values = sorted(id_evento_values)
 
     selected_id_evento = request.form.get('selected_id_evento')
     if selected_id_evento:
@@ -354,9 +359,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, confirmed, str(confirmed),
+    plt.text(0, confirmed * 1.1, str(confirmed),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_confirmed, str(not_confirmed),
+    plt.text(1, not_confirmed * 1.1, str(not_confirmed),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
@@ -376,9 +381,9 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Add total numbers to the graph
-    plt.text(0, attending, str(attending),
+    plt.text(0, attending * 1.1, str(attending),
              ha='center', fontsize=12, color='black')
-    plt.text(1, not_attending, str(not_attending),
+    plt.text(1, not_attending * 1.1, str(not_attending),
              ha='center', fontsize=12, color='black')
 
     # Save the plot to a bytes buffer and encode it in base64
