@@ -78,42 +78,45 @@ def inicio_conversacion():
     global conversation_states
     global uploaded_file
     global dict_info_invitados
+    
+    if uploaded_file != '':
+        for telefono_invitado in dict_info_invitados:
 
-    for telefono_invitado in dict_info_invitados:
+            conversation = conversations_client.conversations.create()
+            # app.logger.info(conversation.sid)
 
-        conversation = conversations_client.conversations.create()
-        # app.logger.info(conversation.sid)
+            # Get the recipient_name dynamically for each recipient_phone_number
+            nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
-        # Get the recipient_name dynamically for each recipient_phone_number
-        nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
+            intro = f"""Hola *{nom_invitado}*,
+    Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
-        intro = f"""Hola *{nom_invitado}*,
-Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=intro,
+                to=f'whatsapp:{telefono_invitado}'
+            )
 
-        message = client.messages.create(
-            messaging_service_sid=messaging_service_sid,
-            from_=f'whatsapp:{twilio_phone_number}',
-            body=intro,
-            to=f'whatsapp:{telefono_invitado}'
-        )
+            # Store the conversation SID and initial state for each recipient
+            conversation_states[telefono_invitado] = {
+                'id_evento': id_evento,
+                'sid': conversation.sid,
+                'nom_invitado': nom_invitado,
+                'telefono': telefono_invitado,
+                'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
+                'current_question_index': 0,
+                'respuestas': ['No', 0, 'No', 'Ninguna']
+            }
 
-        # Store the conversation SID and initial state for each recipient
-        conversation_states[telefono_invitado] = {
-            'id_evento': id_evento,
-            'sid': conversation.sid,
-            'nom_invitado': nom_invitado,
-            'telefono': telefono_invitado,
-            'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
-            'current_question_index': 0,
-            'respuestas': ['No', 0, 'No', 'Ninguna']
-        }
+        # app.logger.info(conversation_states)
 
-    # app.logger.info(conversation_states)
+        uploaded_file = ''
+        dict_info_invitados = {}
 
-    uploaded_file = ''
-    dict_info_invitados = {}
-
-    return 'Confirmación enviada'
+        return 'Confirmación enviada'
+    else:
+       return 'Subir archivo de base de datos' 
 
 
 @app.route('/', methods=['POST'])
