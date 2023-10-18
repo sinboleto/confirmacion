@@ -8,6 +8,7 @@
 
 <body>
     <h1>Carga de información</h1>
+    <h2>Alta de variables</h2>
     <form method="POST" action="/upload" enctype="multipart/form-data">
         <!-- Add a text input for id_evento -->
         <label for="id_evento">ID del evento:</label>
@@ -23,6 +24,12 @@
 
         <button type="submit">Upload</button>
     </form>
+
+    <h2>Enviar confirmación</h2>
+    <form method="POST" action="/start">
+        <button type="submit">Enviar</button>
+    </form>
+
 </body>
 
 </html>
