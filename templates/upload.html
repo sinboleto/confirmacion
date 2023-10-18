@@ -7,29 +7,35 @@
 </head>
 
 <body>
-    <h1>Carga de información</h1>
-    <h2>Alta de variables</h2>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-        <!-- Add a text input for id_evento -->
-        <label for="id_evento">ID del evento:</label>
-        <input type="text" name="id_evento" id="id_evento" required>
-        <br>
+    <div class="container">
+        <h1>Carga de información</h1>
 
-        <!-- Aquí vendrá la información de los placeholders del evento -->
+        <div>
+            <h2>Alta de variables</h2>
+            <form method="POST" action="/upload" enctype="multipart/form-data">
+                <!-- Add a text input for id_evento -->
+                <label for="id_evento">ID del evento:</label>
+                <input type="text" name="id_evento" id="id_evento" required>
+                <br>
 
-        <!-- Add the file input for JSON file upload -->
-        <label for="json_file">Cargar archivo JSON:</label>
-        <input type="file" name="json_file" id="json_file" accept=".json" required>
-        <br>
+                <!-- Aquí vendrá la información de los placeholders del evento -->
 
-        <button type="submit">Upload</button>
-    </form>
+                <!-- Add the file input for JSON file upload -->
+                <label for="json_file">Cargar archivo JSON:</label>
+                <input type="file" name="json_file" id="json_file" accept=".json" required>
+                <br>
 
-    <h2>Enviar confirmación</h2>
-    <form method="GET" action="/start">
-        <button type="submit">Enviar</button>
-    </form>
+                <button type="submit">Cargar archivo</button>
+            </form>
+        </div>
 
+        <div>
+            <h2>Enviar confirmación</h2>
+            <form method="GET" action="/start">
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

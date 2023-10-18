@@ -30,17 +30,20 @@
 <body>
     <div class="container">
         <h1>Dashboard de eventos</h1>
+        <div>
+            <form method="POST" action="/dashboard">
+                <label for="selected_id_evento">Selecciona el ID del evento:</label>
+                <select name="selected_id_evento" id="selected_id_evento">
+                    <option value="">Todos</option>
+                    {% for id_evento in id_evento_values %}
+                    <option value="{{ id_evento }}">{{ id_evento }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Aplicar filtro</button>
+            </form>
+        </div>
 
-        <form method="POST" action="/dashboard">
-            <label for="selected_id_evento">Selecciona el ID del evento:</label>
-            <select name="selected_id_evento" id="selected_id_evento">
-                <option value="">Todos</option>
-                {% for id_evento in id_evento_values %}
-                <option value="{{ id_evento }}">{{ id_evento }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Aplicar filtro</button>
-        </form>
+        <br>
 
         <h2>Resumen</h2>
         <div class="row">
@@ -51,6 +54,8 @@
                 <img src="data:image/png;base64,{{ plot2_base64 }}" class="img-fluid" alt="Answer 2 Value Sums">
             </div>
         </div>
+
+        <br>
 
         <!-- Centered table -->
         <h2>Base de datos</h2>
@@ -100,6 +105,8 @@
                 </tbody>
             </table>
 
+            <br>
+
             <button id="export-csv-button" onclick="exportToCSV()">Exportar CSV</button>
 
             <script>
@@ -136,13 +143,13 @@
                     });
 
                     // Create a CSV content string
-                    const csvContent = 'data:text/csv;charset=utf-8,' + data.map(e => e.join(',')).join('\n');
+                    const csvContent = 'data:text/csv;charset=latin-1,' + data.map(e => e.join(',')).join('\n');
 
                     // Create a hidden anchor element to trigger the download
                     const encodedUri = encodeURI(csvContent);
                     const link = document.createElement('a');
                     link.setAttribute('href', encodedUri);
-                    link.setAttribute('download', 'table_data.csv');
+                    link.setAttribute('download', 'confirmaciones.csv');
                     document.body.appendChild(link);
                     link.click();
                 }
