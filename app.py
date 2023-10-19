@@ -187,7 +187,7 @@ def webhook():
 ¡Muchas gracias y saludos!"""
 
     if current_question_index == 0:
-        if user_answer == 'si, confirmo':
+        if user_answer == 'si, confirmo' or user_answer == 'ok':
             time.sleep(2)
             response.message(
                 f"Gracias. Te recuerdo que tu invitación es para *{conversation_states[incoming_phone_number]['boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
@@ -251,7 +251,7 @@ def webhook():
             carga_SQL(conversation_state)
 
     elif current_question_index == 3:
-        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos'] or user_answer == 'si, confirmo':
             time.sleep(2)
             response.message(info_general)
 
