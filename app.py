@@ -173,6 +173,7 @@ def webhook():
         num_user_answer = 'Sin número'
 
     current_question_index = conversation_state['current_question_index']
+    app.logger.info(current_question_index)
 
     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
