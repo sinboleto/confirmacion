@@ -165,7 +165,7 @@ def webhook():
     # Get the user's answer
     user_answer = str(incoming_message_body)
     
-    num_user_answer = re.findall(r'\d+', user_answer)[0]
+    num_user_answer = re.findall(r'\d+', user_answer)
     if num_user_answer:
         # Return the first number (index 0)
         num_user_answer = int(num_user_answer[0])
