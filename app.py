@@ -225,6 +225,8 @@ def webhook():
                 body=mensaje_error,
                 to=f'whatsapp:{incoming_phone_number}'
             )
+            current_question_index -= 1
+            conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 2:
         if user_answer == 'si':
@@ -267,6 +269,8 @@ def webhook():
                 body=mensaje_error,
                 to=f'whatsapp:{incoming_phone_number}'
             )
+            current_question_index -= 1
+            conversation_state['current_question_index'] = current_question_index
 
     else:
         time.sleep(2)
