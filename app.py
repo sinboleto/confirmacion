@@ -163,6 +163,7 @@ def webhook():
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
+    num_user_answer = 1
 
     current_question_index = conversation_state['current_question_index']
 
@@ -200,13 +201,31 @@ def webhook():
             carga_SQL(conversation_state)
 
     elif current_question_index == 1:
-        time.sleep(2)
-        response.message(
-            f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria (vegetariano, vegano, alérgico a algo, etc.)*?")
-        conversation_state['respuestas'][1] = user_answer
+        if num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+            time.sleep(2)
+            response.message(
+                f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?")
+            conversation_state['respuestas'][1] = user_answer
 
-        current_question_index += 1
-        conversation_state['current_question_index'] = current_question_index
+            current_question_index += 1
+            conversation_state['current_question_index'] = current_question_index
+        else:
+            time.sleep(2)
+            mensaje_error = f"El número de invitados confirmados {num_user_answer} no coincide con los boletos de tu invitación {conversation_states[incoming_phone_number]['boletos']}. Te agradeceríamos si lo pudieras revisar"
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=mensaje_error,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
+
+            time.sleep(2)
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?",
+                to=f'whatsapp:{incoming_phone_number}'
+            )
 
     elif current_question_index == 2:
         if user_answer == 'si':
