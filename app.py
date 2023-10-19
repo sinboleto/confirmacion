@@ -286,7 +286,7 @@ def conv_xlsx_json():
                 return f'Error en la lectura del archivo de Excel: {str(e)}'
         else:
             return 'Formato de archivo inválido. Favor de subir un archivo .xlsx.'
-    return 'Ocurrió un archivo o no se subió un archivo.'
+    return 'Ocurrió un error o no se subió un archivo.'
 
 # Add a new route to render the HTML form
 @app.route('/upload', methods=['GET'])
@@ -319,7 +319,7 @@ def upload_json_file():
                 return redirect(url_for('upload_form'))
             except json.JSONDecodeError:
                 return 'Archivo JSON no válido.'
-    return 'Ocurrió un archivo o no se subió un archivo.'
+    return 'Ocurrió un error o no se subió un archivo.'
 
 
 # Function to retrieve data from the database

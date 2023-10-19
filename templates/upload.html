@@ -18,7 +18,7 @@
             <p>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el archivo JSON
             </p>
 
-            <form method="POST" action="/conv_xlsx_json">
+            <form method="POST" action="/conv_xlsx_json" enctype="multipart/form-data">
                 <label for="json_file">Cargar base de datos (.xlsx):</label>
                 <input type="file" name="xlsx_file" id="xlsx_file" accept=".xlsx">
                 <br>
