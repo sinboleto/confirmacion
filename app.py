@@ -165,16 +165,12 @@ def webhook():
     # Get the user's answer
     user_answer = str(incoming_message_body)
     
-    try:
-        num_user_answer = int(user_answer)
-        num_user_answer = re.findall(r'\d+', user_answer)[0]
-    except:
-        if num_user_answer:
-            # Return the first number (index 0)
-            num_user_answer = int(num_user_answer[0])
-        else:
-            num_user_answer = 'Sin número'
-
+    num_user_answer = re.findall(r'\d+', user_answer)[0]
+    if num_user_answer:
+        # Return the first number (index 0)
+        num_user_answer = int(num_user_answer[0])
+    else:
+        num_user_answer = 'Sin número'
 
     current_question_index = conversation_state['current_question_index']
 
