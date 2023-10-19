@@ -167,9 +167,8 @@ def webhook():
     
     try:
         num_user_answer = int(user_answer)
-    except:
         num_user_answer = re.findall(r'\d+', user_answer)[0]
-
+    except:
         if num_user_answer:
             # Return the first number (index 0)
             num_user_answer = int(num_user_answer[0])
