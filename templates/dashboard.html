@@ -143,7 +143,7 @@
                     });
 
                     // Create a CSV content string
-                    const csvContent = 'data:text/csv;charset=latin-1,' + data.map(e => e.join(',')).join('\n');
+                    const csvContent = 'data:text/csv;charset=utf-8,' + data.map(e => e.join(',')).join('\n');
 
                     // Create a hidden anchor element to trigger the download
                     const encodedUri = encodeURI(csvContent);
