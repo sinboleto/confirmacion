@@ -219,7 +219,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
         else:
             time.sleep(2)
-            mensaje_error = f"El número de invitados confirmados {num_user_answer} no coincide con los boletos de tu invitación {conversation_states[incoming_phone_number]['boletos']}. Te agradeceríamos si lo pudieras revisar"
+            mensaje_error = f"El número de invitados confirmados ({num_user_answer}) no coincide con los boletos de tu invitación ({conversation_states[incoming_phone_number]['boletos']}). Te agradeceríamos si lo pudieras revisar"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -230,7 +230,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 2:
-        if user_answer == 'si':
+        if user_answer == 'si' or user_answer == 'ok':
             time.sleep(2)
             response.message(
                 f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*")
@@ -251,7 +251,7 @@ def webhook():
             carga_SQL(conversation_state)
 
     elif current_question_index == 3:
-        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos'] or user_answer == 'ok':
+        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
             time.sleep(2)
             response.message(info_general)
 
