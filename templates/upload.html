@@ -14,9 +14,9 @@
 
         <div>
             <h2>0. Transformación de Excel a JSON</h2>
-            <p>En caso de tener la base de datos en formato de Excel, selecciona el archivo para convertirlo a JSON</p>
-            <p>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el archivo JSON
-            </p>
+            <p>En caso de tener la base de datos en formato de Excel, selecciona el archivo para convertirlo a
+                JSON.<br><b>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el
+                    archivo JSON</b></p>
 
             <form method="POST" action="/conv_xlsx_json" enctype="multipart/form-data">
                 <label for="json_file">Cargar base de datos (.xlsx):</label>
@@ -32,19 +32,25 @@
 
         <div>
             <h2>1. Alta de información</h2>
+            <br>
             <form method="POST" action="/upload" enctype="multipart/form-data">
-                <h3>1.1 Información del evento</h3>
-                <label for="id_evento">ID del evento:</label>
-                <input type="text" name="id_evento" id="id_evento" required>
+                <div>
+                    <h3>1.1 Información del evento</h3>
+                    <label for="id_evento">ID del evento:</label>
+                    <input type="text" name="id_evento" id="id_evento" required>
+                </div>
+
                 <br>
 
                 <!-- Aquí vendrá la información de los placeholders del evento -->
 
-                <h3>1.2 Base de datos de los invitados</h3>
-                <label for="json_file">Cargar base de datos (.json):</label>
-                <input type="file" name="json_file" id="json_file" accept=".json" required>
-                <br>
-                <button type="submit">Subir archivo</button>
+                <div>
+                    <h3>1.2 Base de datos de los invitados</h3>
+                    <label for="json_file">Cargar base de datos (.json):</label>
+                    <input type="file" name="json_file" id="json_file" accept=".json" required>
+                    <br>
+                    <button type="submit">Subir archivo</button>
+                </div>
             </form>
         </div>
 
