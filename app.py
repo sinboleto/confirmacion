@@ -480,7 +480,7 @@ def dashboard():
                           'no especificado': 'No especificado',
                           }
 
-    df_restricciones['tipo_restricciones'] = df_restricciones['Menús y restricciones'].apply(
+    df_restricciones['tipo_restricciones'] = df_restricciones['respuesta_4'].apply(
         split_string)
 
     lista_restricciones = df_restricciones['tipo_restricciones'].explode(
