@@ -512,8 +512,9 @@ def dashboard():
         p = plt.bar(0, weight_count, width, label=category, bottom=bottom)
         bottom += weight_count
         altura += weight_count
-        plt.text(0, altura - weight_count / 2, str(weight_count),
-                 ha='center', va='center', fontsize=12, color='black')
+        if weight_count > 0:
+            plt.text(0, altura - weight_count / 2, str(weight_count),
+                     ha='center', va='center', fontsize=12, color='black')
 
     plt.title('Restricciones alimentarias')
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
