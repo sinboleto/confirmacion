@@ -522,10 +522,12 @@ def dashboard():
     bottom = np.zeros(len(categories))
 
     altura = 0
+    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153']
+    colors = colors[:len(categories)]
 
-    for category, weight_count in zip(categories, np.array(values)):
-        p = plt.bar(0, weight_count, width, label=category, bottom=bottom, color=[
-                    '#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153'])
+    for category, weight_count, color in zip(categories, np.array(values), colors):
+        p = plt.bar(0, weight_count, width, label=category,
+                    bottom=bottom, color=color)
         bottom += weight_count
         altura += weight_count
         if weight_count > 0:
