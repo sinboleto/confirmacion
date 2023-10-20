@@ -524,7 +524,8 @@ def dashboard():
     altura = 0
 
     for category, weight_count in zip(categories, np.array(values)):
-        p = plt.bar(0, weight_count, width, label=category, bottom=bottom)
+        p = plt.bar(0, weight_count, width, label=category, bottom=bottom, color=[
+                    '#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153'])
         bottom += weight_count
         altura += weight_count
         if weight_count > 0:
