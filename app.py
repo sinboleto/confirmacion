@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import os
 import json
 import re
+import string
 
 # Delay
 import time
@@ -372,25 +373,30 @@ def get_data(query):
             data = cursor.fetchall()
     return data
 
-# Extract the number and text
-
 
 def split_string(text):
-    # Step 1: Split the text using a comma and optional whitespace
-    substrings = re.split(r',\s*', text)
+    # Step 1: Remove Spanish articles and conjunctions
+    articles = ['el', 'la', 'los', 'las', 'un',
+                'una', 'unos', 'unas', 'lo', 'al', 'del']
+    conjunctions = ['y', 'e', 'ni', 'que', 'o', 'u', 'pero', 'aunque',
+                    'sin embargo', 'por lo tanto', 'así que', 'porque', 'ya que']
+    pattern = r'\b(?:' + '|'.join(articles + conjunctions) + r')\b'
+    text_without_articles_conjunctions = re.sub(
+        pattern, '', text, flags=re.IGNORECASE)
 
-    # Step 2: Process each substring in the list
+    # Step 2: Remove punctuation marks
+    text_without_punctuation = text_without_articles_conjunctions.translate(
+        str.maketrans('', '', string.punctuation))
+
+    # Step 3: Split the text before a second number is encountered
+    substrings = re.split(r'(?= \d+\D|$)', text_without_punctuation)
+
+    # Step 4: Process each substring in the list
     for i, substring in enumerate(substrings):
-        # Step 2a: Remove Spanish articles
-        articles = ['el', 'la', 'los', 'las', 'un',
-                    'una', 'unos', 'unas', 'lo', 'al', 'del']
-        pattern = r'\b(?:' + '|'.join(articles) + r')\b'
-        substrings[i] = re.sub(pattern, '', substring, flags=re.IGNORECASE)
+        # Step 4a: Remove accents
+        substrings[i] = unidecode(substring).strip()
 
-        # Step 2b: Remove accents
-        substrings[i] = unidecode(substrings[i]).strip()
-
-        # Step 2c: If there is a number but no text, add 'no especificado'
+        # Step 4b: If there is a number but no text, add 'no especificado'
         if re.search(r'\b\d+\b', substrings[i]) and not re.search(r'\b(?!\d+\b)\w+\b', substrings[i]):
             substrings[i] = f'{substrings[i]} no especificado'
 
@@ -491,6 +497,7 @@ def dashboard():
 
     lista_restricciones = df_restricciones['tipo_restricciones'].explode(
     ).tolist()
+    lista_restricciones = [e for e in lista_restricciones if e != '']
 
     cuentas = []
 
