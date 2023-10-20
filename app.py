@@ -27,6 +27,9 @@ import numpy as np
 import pandas as pd
 import base64
 
+# Quitar acentos
+from unidecode import unidecode
+
 
 # Main script
 app = Flask(__name__)
@@ -79,7 +82,7 @@ def inicio_conversacion():
     global conversation_states
     global uploaded_file
     global dict_info_invitados
-    
+
     if uploaded_file != '':
         for telefono_invitado in dict_info_invitados:
 
@@ -117,30 +120,30 @@ def inicio_conversacion():
 
         return 'Confirmación enviada'
     else:
-       return 'Subir archivo de base de datos'
-    
+        return 'Subir archivo de base de datos'
+
 
 def carga_SQL(conversation_state):
     # Cargar datos en SQL
     with connection.cursor() as cursor:
         cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-            (str(conversation_state['id_evento']),  # id_evento
-            str(conversation_state['sid']),  # sid
-            # nom_invitado
-            str(conversation_state['nom_invitado']),
-            # telefono
-            str(conversation_state['telefono']),
-            int(conversation_state['boletos']),  # boletos
-            # respuesta_1
-            str(conversation_state['respuestas'][0]),
-            # respuesta_2
-            str(conversation_state['respuestas'][1]),
-            # respuesta_3
-            str(conversation_state['respuestas'][2]),
-            # respuesta_4
-            str(conversation_state['respuestas'][3])
-            )
-            )
+                       (str(conversation_state['id_evento']),  # id_evento
+                        str(conversation_state['sid']),  # sid
+                           # nom_invitado
+                           str(conversation_state['nom_invitado']),
+                           # telefono
+                           str(conversation_state['telefono']),
+                           int(conversation_state['boletos']),  # boletos
+                           # respuesta_1
+                           str(conversation_state['respuestas'][0]),
+                           # respuesta_2
+                           str(conversation_state['respuestas'][1]),
+                           # respuesta_3
+                           str(conversation_state['respuestas'][2]),
+                           # respuesta_4
+                           str(conversation_state['respuestas'][3])
+                        )
+                       )
         connection.commit()
 
 
@@ -164,7 +167,7 @@ def webhook():
 
     # Get the user's answer
     user_answer = str(incoming_message_body)
-    
+
     num_user_answer = re.findall(r'\d+', user_answer)
     if num_user_answer:
         # Return the first number (index 0)
@@ -282,6 +285,7 @@ def webhook():
 
     return str(response)
 
+
 @app.route('/conv_xlsx_json', methods=['POST'])
 def conv_xlsx_json():
     if 'xlsx_file' in request.files:
@@ -300,7 +304,8 @@ def conv_xlsx_json():
                     num_boletos = row['num_boletos']
 
                     # Create a subdictionary
-                    subdict = {"nom_invitado": nom_invitado, "num_boletos": num_boletos}
+                    subdict = {"nom_invitado": nom_invitado,
+                               "num_boletos": num_boletos}
 
                     # Add the subdictionary to the main dictionary with telefono_modificado as the key
                     dict_invitados[telefono_modificado] = subdict
@@ -322,6 +327,8 @@ def conv_xlsx_json():
     return 'Ocurrió un error o no se subió un archivo.'
 
 # Add a new route to render the HTML form
+
+
 @app.route('/upload', methods=['GET'])
 def upload_form():
     return render_template('upload.html')
@@ -364,6 +371,30 @@ def get_data(query):
             cursor.execute(query)
             data = cursor.fetchall()
     return data
+
+# Extract the number and text
+
+
+def split_string(text):
+    # Step 1: Split the text using a comma and optional whitespace
+    substrings = re.split(r',\s*', text)
+
+    # Step 2: Process each substring in the list
+    for i, substring in enumerate(substrings):
+        # Step 2a: Remove Spanish articles
+        articles = ['el', 'la', 'los', 'las', 'un',
+                    'una', 'unos', 'unas', 'lo', 'al', 'del']
+        pattern = r'\b(?:' + '|'.join(articles) + r')\b'
+        substrings[i] = re.sub(pattern, '', substring, flags=re.IGNORECASE)
+
+        # Step 2b: Remove accents
+        substrings[i] = unidecode(substrings[i]).strip()
+
+        # Step 2c: If there is a number but no text, add 'no especificado'
+        if re.search(r'\b\d+\b', substrings[i]) and not re.search(r'\b(?!\d+\b)\w+\b', substrings[i]):
+            substrings[i] = f'{substrings[i]} no especificado'
+
+    return substrings
 
 
 # Dashboard
@@ -437,7 +468,71 @@ def dashboard():
     plt.close()
     plot2_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-    return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64)
+    # Create the third graph
+    df_restricciones = df[df['respuesta_3'] == 'Si'].drop(columns=['id_evento', 'nom_invitado', 'telefono', 'boletos',
+                                                                   'respuesta_1', 'respuesta_2', 'respuesta_3'])
+
+    # Equivalencias
+    dict_equivalencias = {'alergi': 'Alérgico',
+                          'vegan': 'Vegano',
+                          'vegetarian': 'Vegetariano',
+                          'celiac': 'Celiaco',
+                          'no especificado': 'No especificado',
+                          }
+
+    df_restricciones['tipo_restricciones'] = df_restricciones['Menús y restricciones'].apply(
+        split_string)
+
+    lista_restricciones = df_restricciones['tipo_restricciones'].explode(
+    ).tolist()
+
+    cuentas = []
+
+    for categoria in dict_equivalencias.keys():
+        cuenta = 0
+        for restriccion in lista_restricciones:
+            if categoria in restriccion:
+                cuenta += sum([int(s)
+                               for s in re.findall(r'\b\d+\b', restriccion)])
+        cuentas.append(cuenta)
+
+    resumen_restricciones = dict(zip(dict_equivalencias.values(), cuentas))
+
+    # Gráfica
+    categories = list(resumen_restricciones.keys())
+    values = list(resumen_restricciones.values())
+    width = 0.25
+
+    plt.figure()
+    bottom = np.zeros(len(categories))
+
+    altura = 0
+
+    for category, weight_count in zip(categories, np.array(values)):
+        p = plt.bar(0, weight_count, width, label=category, bottom=bottom)
+        bottom += weight_count
+        altura += weight_count
+        plt.text(0, altura - weight_count / 2, str(weight_count),
+                 ha='center', va='center', fontsize=12, color='black')
+
+    plt.title('Restricciones alimentarias')
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Create a legend
+    legend_labels = [f"{category}" for category in categories]
+    plt.legend(legend_labels, loc='upper right', title='Categorias',
+               bbox_to_anchor=(1.05, 1), borderaxespad=0.)
+
+    plt.axis('off')
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot3_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
 
 
 if __name__ == '__main__':
