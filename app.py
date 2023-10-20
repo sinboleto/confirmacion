@@ -503,6 +503,8 @@ def dashboard():
         cuentas.append(cuenta)
 
     resumen_restricciones = dict(zip(dict_equivalencias.values(), cuentas))
+    resumen_restricciones = {key: value for key,
+                             value in resumen_restricciones.items() if value != 0}
 
     # Gráfica
     categories = list(resumen_restricciones.keys())
