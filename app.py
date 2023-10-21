@@ -191,7 +191,7 @@ def webhook():
 ¡Muchas gracias y saludos!"""
 
     if current_question_index == 0:
-        if user_answer == 'si, confirmo' or user_answer == 'ok':
+        if user_answer == 'si, confirmo' or user_answer == 'ok' or user_answer.isnumeric():
             time.sleep(2)
             response.message(
                 f"Gracias. Te recuerdo que tu invitación es para *{conversation_states[incoming_phone_number]['boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
@@ -223,7 +223,8 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
         else:
             time.sleep(2)
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({conversation_states[incoming_phone_number]['boletos']})*. Te agradeceríamos si lo pudieras modificar"
+            boletos = conversation_states[incoming_phone_number]['boletos']
+            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -234,7 +235,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 2:
-        if user_answer == 'si' or user_answer == 'ok':
+        if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
             time.sleep(2)
             response.message(
                 f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*")
@@ -267,7 +268,8 @@ def webhook():
             carga_SQL(conversation_state)
         else:
             time.sleep(2)
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({conversation_states[incoming_phone_number]['boletos']})*. Te agradeceríamos si lo pudieras modificar"
+            boletos = conversation_states[incoming_phone_number]['boletos']
+            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -514,8 +516,8 @@ def dashboard():
                              value in resumen_restricciones.items() if value != 0}
 
     # Gráfica
-    categories = list(resumen_restricciones.keys())
-    values = list(resumen_restricciones.values())
+    categories = list(resumen_restricciones.keys())[::-1]
+    values = list(resumen_restricciones.values())[::-1]
     width = 0.25
 
     plt.figure()
