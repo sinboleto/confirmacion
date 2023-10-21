@@ -224,7 +224,7 @@ def webhook():
         else:
             time.sleep(2)
             boletos = conversation_states[incoming_phone_number]['boletos']
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*"
+            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -269,7 +269,7 @@ def webhook():
         else:
             time.sleep(2)
             boletos = conversation_states[incoming_phone_number]['boletos']
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*"
+            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
