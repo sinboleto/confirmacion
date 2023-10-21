@@ -526,7 +526,7 @@ def dashboard():
     values = list(resumen_restricciones.values())
     width = 0.25
 
-    plt.figure()
+    plt.figure(figsize=(3.2, 4.8))
     bottom = np.zeros(len(categories))
 
     altura = 0
