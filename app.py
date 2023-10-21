@@ -475,6 +475,8 @@ def dashboard():
         plt.text(1, not_attending / 2, str(not_attending),
                  ha='center', va='center', fontsize=12, color='black')
 
+    plt.axis('off')
+
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
@@ -516,8 +518,8 @@ def dashboard():
                              value in resumen_restricciones.items() if value != 0}
 
     # Gráfica
-    categories = list(resumen_restricciones.keys())[::-1]
-    values = list(resumen_restricciones.values())[::-1]
+    categories = list(resumen_restricciones.keys())
+    values = list(resumen_restricciones.values())
     width = 0.25
 
     plt.figure()
@@ -540,7 +542,7 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Create a legend
-    legend_labels = [f"{category}" for category in categories]
+    legend_labels = [f"{category}" for category in categories[::-1]]
     plt.legend(legend_labels, loc='upper right', title='Categorias',
                bbox_to_anchor=(1.05, 1), borderaxespad=0.)
 
