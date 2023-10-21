@@ -549,7 +549,7 @@ def dashboard():
     # Create a legend
     legend_labels = [f"{category}" for category in categories[::-1]]
     plt.legend(legend_labels, loc='upper right', title='Categorias',
-               bbox_to_anchor=(1.05, 1), borderaxespad=0.)
+               bbox_to_anchor=(1, 0.9), borderaxespad=0.)
 
     plt.axis('off')
 
