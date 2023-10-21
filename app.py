@@ -524,9 +524,8 @@ def dashboard():
     # Gráfica
     categories = list(resumen_restricciones.keys())
     values = list(resumen_restricciones.values())
-    width = 0.25
 
-    plt.figure(figsize=(3.2, 4.8))
+    plt.figure()
     bottom = np.zeros(len(categories))
 
     altura = 0
@@ -534,7 +533,7 @@ def dashboard():
     colors = colors[:len(categories)]
 
     for category, weight_count, color in zip(categories, np.array(values), colors):
-        p = plt.bar(0, weight_count, width, label=category,
+        p = plt.bar([0, 1], [weight_count, 0], label=category,
                     bottom=bottom, color=color)
         bottom += weight_count
         altura += weight_count
