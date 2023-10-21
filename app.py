@@ -450,6 +450,9 @@ def dashboard():
         plt.text(1, not_confirmed / 2, str(not_confirmed),
                  ha='center', va='center', fontsize=12, color='black')
 
+    plt.box(False)
+    plt.yticks([])
+
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
@@ -475,7 +478,8 @@ def dashboard():
         plt.text(1, not_attending / 2, str(not_attending),
                  ha='center', va='center', fontsize=12, color='black')
 
-    plt.axis('off')
+    plt.box(False)
+    plt.yticks([])
 
     # Save the plot to a bytes buffer and encode it in base64
     buffer = io.BytesIO()
