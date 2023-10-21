@@ -533,7 +533,9 @@ def dashboard():
     colors = colors[:len(categories)]
 
     for category, weight_count, color in zip(categories, np.array(values), colors):
-        p = plt.bar([0, 1], [weight_count, 0], label=category,
+        p = plt.bar(0, weight_count, label=category,
+                    bottom=bottom, color=color)
+        p = plt.bar(1, 0, label=category,
                     bottom=bottom, color=color)
         bottom += weight_count
         altura += weight_count
