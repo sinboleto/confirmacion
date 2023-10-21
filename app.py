@@ -547,7 +547,7 @@ def dashboard():
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
 
     # Create a legend
-    legend_labels = [f"{category}" for category in categories[::-1]]
+    legend_labels = [f"{category}" for category in categories]
     plt.legend(legend_labels, loc='upper right', title='Categorias',
                bbox_to_anchor=(1, 0.9), borderaxespad=0.)
 
