@@ -92,8 +92,11 @@ def inicio_conversacion():
             # Get the recipient_name dynamically for each recipient_phone_number
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
+    #         intro = f"""Hola *{nom_invitado}*,
+    # Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+
             intro = f"""Hola *{nom_invitado}*,
-    Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+            Te extendemos la invitación para *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -181,7 +184,8 @@ def webhook():
     boletos = conversation_states[incoming_phone_number]['boletos']
 
     # Mensajes
-    msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+    # msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+    msg_conf_num = f"Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
 
     msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
 
@@ -191,16 +195,29 @@ def webhook():
 
     msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
 
+#     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
+# - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
+
+# - El *código de vestimenta es formal* (Vestido largo o corto de día / traje sin corbata)
+
+# - Encuentra más información sobre *la mesa de regalos, hoteles y salones de belleza* en la página: www.amayayjosemanuel.com
+
+# *Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje.
+
+# ¡Muchas gracias y saludos!"""
+
     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
+- La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en la Hacienda San Miguel*, después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
 
-- El *código de vestimenta es formal* (Vestido largo o corto de día / traje sin corbata)
+- El *código de vestimenta es formal* (Vestido largo / traje)
 
-- Encuentra más información sobre *la mesa de regalos, hoteles y salones de belleza* en la página: www.amayayjosemanuel.com
+- *Mesas de regalos*
+   • Liverpool: https://mesaderegalos.liverpool.com.mx/milistaderegalos/51214657
+   • Amazon: https://www.amazon.com.mx/wedding/monse-cascajares-diego-grimaldi-ciudad-de-meacutexico-december-2023/registry/2R7ZD760O0QOH
 
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje.
+*Confirmamos su asistencia* y estamos emocionados por verte el próximo sábado 16 de diciembre. ¡Saludos!
 
-¡Muchas gracias y saludos!"""
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje."""
 
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje. Gracias'
 
