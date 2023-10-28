@@ -536,7 +536,7 @@ def dashboard():
                           'otro': 'Otro'
                           }
 
-    df_restricciones['tipo_restricciones'] = df_restricciones['Menús y restricciones'].apply(
+    df_restricciones['tipo_restricciones'] = df_restricciones['respuesta_4'].apply(
         lambda x: split_string(x, dict_equivalencias))
 
     lista_restricciones = df_restricciones['tipo_restricciones'].explode(
