@@ -400,7 +400,7 @@ def get_data(query):
     return data
 
 
-def split_string(text):
+def split_string(text, dict_equivalencias):
     # Step 1: Remove Spanish articles and conjunctions
     articles = ['el', 'la', 'los', 'las', 'un',
                 'una', 'unos', 'unas', 'lo', 'al', 'del']
@@ -425,6 +425,17 @@ def split_string(text):
         # Step 4b: If there is a number but no text, add 'no especificado'
         if re.search(r'\b\d+\b', substrings[i]) and not re.search(r'\b(?!\d+\b)\w+\b', substrings[i]):
             substrings[i] = f'{substrings[i]} no especificado'
+
+        # Step 4c: If restriction not found in dict_equivalencias, add 'otros'
+        encontrado = 0
+        for category in dict_equivalencias.keys():
+            if category in substrings[i]:
+                encontrado = 1
+
+        if encontrado == 0:
+            num_rest = re.search(r'\b\d+\b', substrings[i])
+            if num_rest:
+                substrings[i] = f'{num_rest[0]} otro'
 
     return substrings
 
@@ -522,10 +533,11 @@ def dashboard():
                           'vegetarian': 'Vegetariano',
                           'celiac': 'Celiaco',
                           'no especificado': 'No especificado',
+                          'otro': 'Otro'
                           }
 
-    df_restricciones['tipo_restricciones'] = df_restricciones['respuesta_4'].apply(
-        split_string)
+    df_restricciones['tipo_restricciones'] = df_restricciones['Menús y restricciones'].apply(
+        lambda x: split_string(x, dict_equivalencias))
 
     lista_restricciones = df_restricciones['tipo_restricciones'].explode(
     ).tolist()
@@ -553,7 +565,7 @@ def dashboard():
     bottom = np.zeros(len(categories))
 
     altura = 0
-    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153']
+    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153', '#142029']
     colors = colors[:len(categories)]
 
     for category, weight_count, color in zip(categories, np.array(values), colors):
