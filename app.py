@@ -88,7 +88,6 @@ def inicio_conversacion():
         for telefono_invitado in dict_info_invitados:
 
             conversation = conversations_client.conversations.create()
-            # app.logger.info(conversation.sid)
 
             # Get the recipient_name dynamically for each recipient_phone_number
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
@@ -155,8 +154,6 @@ def webhook():
     incoming_phone_number = request.values.get('From', '').lower()
     incoming_phone_number = incoming_phone_number.replace('whatsapp:', '')
 
-    # app.logger.info(incoming_phone_number)
-
     # Get the conversation state for the current recipient
     conversation_state = conversation_states.get(incoming_phone_number, None)
 
@@ -179,6 +176,21 @@ def webhook():
     current_question_index = conversation_state['current_question_index']
     app.logger.info(current_question_index)
 
+    # Variables de user
+    nombre = conversation_states[incoming_phone_number]['nom_invitado']
+    boletos = conversation_states[incoming_phone_number]['boletos']
+
+    # Mensajes
+    msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+
+    msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
+
+    msg_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
+
+    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?"
+
+    msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
+
     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
 
@@ -190,11 +202,12 @@ def webhook():
 
 ¡Muchas gracias y saludos!"""
 
+    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje. Gracias'
+
     if current_question_index == 0:
         if user_answer == 'si, confirmo' or user_answer == 'ok' or user_answer.isnumeric():
             time.sleep(2)
-            response.message(
-                f"Gracias. Te recuerdo que tu invitación es para *{conversation_states[incoming_phone_number]['boletos']} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*")
+            response.message(msg_conf_num)
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -202,8 +215,7 @@ def webhook():
 
         if user_answer == 'no':
             time.sleep(2)
-            response.message(
-                f"{conversation_states[incoming_phone_number]['nom_invitado']}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día")
+            response.message(msg_no_conf)
 
             current_question_index = -1
             conversation_state['current_question_index'] = current_question_index
@@ -215,20 +227,17 @@ def webhook():
     elif current_question_index == 1:
         if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
             time.sleep(2)
-            response.message(
-                f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?")
+            response.message(msg_conf_rest)
             conversation_state['respuestas'][1] = user_answer
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
         else:
             time.sleep(2)
-            boletos = conversation_states[incoming_phone_number]['boletos']
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=mensaje_error,
+                body=msg_error,
                 to=f'whatsapp:{incoming_phone_number}'
             )
             current_question_index -= 1
@@ -237,8 +246,7 @@ def webhook():
     elif current_question_index == 2:
         if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
             time.sleep(2)
-            response.message(
-                f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*")
+            response.message(msg_num_rest)
 
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
@@ -269,11 +277,10 @@ def webhook():
         else:
             time.sleep(2)
             boletos = conversation_states[incoming_phone_number]['boletos']
-            mensaje_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=mensaje_error,
+                body=msg_error,
                 to=f'whatsapp:{incoming_phone_number}'
             )
             current_question_index -= 1
@@ -281,7 +288,7 @@ def webhook():
 
     else:
         time.sleep(2)
-        response.message(f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje. Gracias')
+        response.message(msg_default)
 
     # Update the conversation state in the global dictionary
     conversation_states[incoming_phone_number] = conversation_state
