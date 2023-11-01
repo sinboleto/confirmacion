@@ -172,7 +172,8 @@ def webhook():
     num_user_answer = re.findall(r'\d+', user_answer)
     if num_user_answer:
         # Return the first number (index 0)
-        num_user_answer = int(num_user_answer[0])
+        num_user_answer = [int(i) for i in num_user_answer]
+        num_user_answer = sum(num_user_answer)
     else:
         num_user_answer = 'Sin número'
 
@@ -194,6 +195,8 @@ def webhook():
     msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?"
 
     msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
+
+    msg_revision = f"*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario y en caso de tener *cualquier otra duda*, al finalizar haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias (dar click en Ok)"
 
 #     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 # - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
@@ -219,66 +222,99 @@ def webhook():
 
 *Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje."""
 
-    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje. Gracias'
+    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias'
 
     if current_question_index == 0:
-        if user_answer == 'si, confirmo' or user_answer == 'ok' or user_answer.isnumeric():
-            time.sleep(2)
-            response.message(msg_conf_num)
+        if len(user_answer) < 10:
+            if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
+                time.sleep(2)
+                response.message(msg_conf_num)
 
-            current_question_index += 1
-            conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][0] = 'Si'
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][0] = 'Si'
 
-        if user_answer == 'no':
-            time.sleep(2)
-            response.message(msg_no_conf)
+            if user_answer == 'no':
+                time.sleep(2)
+                response.message(msg_no_conf)
 
-            current_question_index = -1
-            conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][0] = 'No'
+                current_question_index = -1
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][0] = 'No'
 
-            # Cargar datos en SQL
-            carga_SQL(conversation_state)
-
-    elif current_question_index == 1:
-        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
-            time.sleep(2)
-            response.message(msg_conf_rest)
-            conversation_state['respuestas'][1] = user_answer
-
-            current_question_index += 1
-            conversation_state['current_question_index'] = current_question_index
+                # Cargar datos en SQL
+                carga_SQL(conversation_state)
         else:
             time.sleep(2)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_error,
+                body=msg_revision,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
+            current_question_index -= 1
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 1:
+        if len(user_answer) < 10:
+            if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+                time.sleep(2)
+                response.message(msg_conf_rest)
+                conversation_state['respuestas'][1] = user_answer
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+            else:
+                time.sleep(2)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_error,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
+                current_question_index -= 1
+                conversation_state['current_question_index'] = current_question_index
+        else:
+            time.sleep(2)
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_revision,
                 to=f'whatsapp:{incoming_phone_number}'
             )
             current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 2:
-        if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
+        if len(user_answer) < 10:
+            if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
+                time.sleep(2)
+                response.message(msg_num_rest)
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][2] = 'Si'
+
+            if user_answer == 'no':
+                time.sleep(2)
+                response.message(info_general)
+
+                current_question_index = -1
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][2] = 'No'
+
+                # Cargar datos en SQL
+                carga_SQL(conversation_state)
+        else:
             time.sleep(2)
-            response.message(msg_num_rest)
-
-            current_question_index += 1
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_revision,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
+            current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][2] = 'Si'
-
-        if user_answer == 'no':
-            time.sleep(2)
-            response.message(info_general)
-
-            current_question_index = -1
-            conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][2] = 'No'
-
-            # Cargar datos en SQL
-            carga_SQL(conversation_state)
 
     elif current_question_index == 3:
         if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
