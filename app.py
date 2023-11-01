@@ -253,7 +253,7 @@ def webhook():
                 body=msg_revision,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            current_question_index -= 1
+            current_question_index = 0
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 1:
