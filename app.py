@@ -65,6 +65,7 @@ dict_info_invitados = {}
 conversation_states = {}
 
 connection = psycopg2.connect(POSTGRESQL_URI)
+limite_msg = 15
 
 # Table config
 try:
@@ -225,7 +226,7 @@ def webhook():
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias'
 
     if current_question_index == 0:
-        if len(user_answer) < 10:
+        if len(user_answer) < limite_msg:
             if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
                 time.sleep(2)
                 response.message(msg_conf_num)
@@ -256,7 +257,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 1:
-        if len(user_answer) < 10:
+        if len(user_answer) < limite_msg:
             if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
                 time.sleep(2)
                 response.message(msg_conf_rest)
@@ -286,7 +287,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 2:
-        if len(user_answer) < 10:
+        if len(user_answer) < limite_msg:
             if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
                 time.sleep(2)
                 response.message(msg_num_rest)
