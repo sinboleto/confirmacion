@@ -97,7 +97,7 @@ def inicio_conversacion():
     # Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
             intro = f"""Hola *{nom_invitado}*,
-            Te extendemos la invitación para *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
+            Te extendemos la invitación para *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México*. Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -186,6 +186,8 @@ def webhook():
     boletos = conversation_states[incoming_phone_number]['boletos']
 
     # Mensajes
+    msg_confirmacion = 'Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*'
+
     # msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
     msg_conf_num = f"Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
 
@@ -193,7 +195,7 @@ def webhook():
 
     msg_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
 
-    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)?"
+    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.) (favor de usar los botones)?"
 
     msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
 
@@ -225,7 +227,15 @@ def webhook():
 
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias'
 
-    if current_question_index == 0:
+    if current_question_index == -1:
+        if user_answer == 'ok' or user_answer == 'si':
+            time.sleep(2)
+            response.message(msg_confirmacion)
+
+            current_question_index += 1
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 0:
         if len(user_answer) < limite_msg:
             if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
                 time.sleep(2)
@@ -239,7 +249,7 @@ def webhook():
                 time.sleep(2)
                 response.message(msg_no_conf)
 
-                current_question_index = -1
+                current_question_index = -2
                 conversation_state['current_question_index'] = current_question_index
                 conversation_state['respuestas'][0] = 'No'
 
@@ -253,7 +263,7 @@ def webhook():
                 body=msg_revision,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            current_question_index = 0
+            current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 1:
@@ -300,7 +310,7 @@ def webhook():
                 time.sleep(2)
                 response.message(info_general)
 
-                current_question_index = -1
+                current_question_index = -2
                 conversation_state['current_question_index'] = current_question_index
                 conversation_state['respuestas'][2] = 'No'
 
