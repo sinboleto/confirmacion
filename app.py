@@ -66,6 +66,7 @@ conversation_states = {}
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 15
+lag_msg = 1
 
 # Table config
 try:
@@ -229,7 +230,7 @@ def webhook():
 
     if current_question_index == -1:
         if user_answer == 'ok' or user_answer == 'si':
-            time.sleep(2)
+            time.sleep(lag_msg)
             response.message(msg_confirmacion)
 
             current_question_index += 1
@@ -238,7 +239,7 @@ def webhook():
     elif current_question_index == 0:
         if len(user_answer) < limite_msg:
             if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
-                time.sleep(2)
+                time.sleep(lag_msg)
                 response.message(msg_conf_num)
 
                 current_question_index += 1
@@ -246,7 +247,7 @@ def webhook():
                 conversation_state['respuestas'][0] = 'Si'
 
             if user_answer == 'no':
-                time.sleep(2)
+                time.sleep(lag_msg)
                 response.message(msg_no_conf)
 
                 current_question_index = -2
@@ -256,7 +257,7 @@ def webhook():
                 # Cargar datos en SQL
                 carga_SQL(conversation_state)
         else:
-            time.sleep(2)
+            time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -268,15 +269,15 @@ def webhook():
 
     elif current_question_index == 1:
         if len(user_answer) < limite_msg:
-            if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
-                time.sleep(2)
+            if user_answer.isnumeric() and num_user_answer != 'Sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+                time.sleep(lag_msg)
                 response.message(msg_conf_rest)
                 conversation_state['respuestas'][1] = user_answer
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
             else:
-                time.sleep(2)
+                time.sleep(lag_msg)
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
@@ -286,7 +287,7 @@ def webhook():
                 current_question_index -= 1
                 conversation_state['current_question_index'] = current_question_index
         else:
-            time.sleep(2)
+            time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -299,7 +300,7 @@ def webhook():
     elif current_question_index == 2:
         if len(user_answer) < limite_msg:
             if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
-                time.sleep(2)
+                time.sleep(lag_msg)
                 response.message(msg_num_rest)
 
                 current_question_index += 1
@@ -307,7 +308,7 @@ def webhook():
                 conversation_state['respuestas'][2] = 'Si'
 
             if user_answer == 'no':
-                time.sleep(2)
+                time.sleep(lag_msg)
                 response.message(info_general)
 
                 current_question_index = -2
@@ -317,7 +318,7 @@ def webhook():
                 # Cargar datos en SQL
                 carga_SQL(conversation_state)
         else:
-            time.sleep(2)
+            time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
@@ -329,7 +330,7 @@ def webhook():
 
     elif current_question_index == 3:
         if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
-            time.sleep(2)
+            time.sleep(lag_msg)
             response.message(info_general)
 
             current_question_index = -2
@@ -339,7 +340,7 @@ def webhook():
             # Cargar datos en SQL
             carga_SQL(conversation_state)
         else:
-            time.sleep(2)
+            time.sleep(lag_msg)
             boletos = conversation_states[incoming_phone_number]['boletos']
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -351,7 +352,7 @@ def webhook():
             conversation_state['current_question_index'] = current_question_index
 
     else:
-        time.sleep(2)
+        time.sleep(lag_msg)
         response.message(msg_default)
 
     # Update the conversation state in the global dictionary
