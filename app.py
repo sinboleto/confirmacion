@@ -195,11 +195,11 @@ def webhook():
 
     msg_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
 
-    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.) (favor de usar los botones)?"
+    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? (favor de usar los botones)"
 
     msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
 
-    msg_revision = f"*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario y en caso de tener *cualquier otra duda*, al finalizar haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias (dar click en Ok)"
+    msg_revision = f"*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias (dar click en Ok)"
 
 #     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 # - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
@@ -223,9 +223,9 @@ def webhook():
 
 *Confirmamos su asistencia* y estamos emocionados por verte el próximo sábado 16 de diciembre. ¡Saludos!
 
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje."""
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje."""
 
-    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/zx5tbb y mandanos un mensaje. Gracias'
+    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias'
 
     if current_question_index == -1:
         if user_answer == 'ok' or user_answer == 'si':
@@ -332,7 +332,7 @@ def webhook():
             time.sleep(2)
             response.message(info_general)
 
-            current_question_index = -1
+            current_question_index = -2
             conversation_state['current_question_index'] = current_question_index
             conversation_state['respuestas'][3] = user_answer
 
