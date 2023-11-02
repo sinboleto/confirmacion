@@ -97,7 +97,7 @@ def inicio_conversacion():
     # Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
 
             intro = f"""Hola *{nom_invitado}*,
-            Te extendemos la invitación para *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México*. Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
+            Te escribimos para confirmar tu asistencia a *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
