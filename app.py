@@ -299,7 +299,7 @@ def webhook():
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf_rest,
+                body=msg_revision,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
@@ -333,7 +333,7 @@ def webhook():
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_revision,
+                body=msg_reconf_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
             current_question_index -= 1
