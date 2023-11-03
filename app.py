@@ -228,7 +228,7 @@ def webhook():
 
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias'
 
-    if current_question_index == -1:
+    if current_question_index == -1: # Recibe ok como respuesta de la pregunta anterior (msg_revision)
         if user_answer == 'ok' or user_answer == 'si':
             time.sleep(lag_msg)
             response.message(msg_confirmacion)
@@ -236,8 +236,9 @@ def webhook():
             current_question_index += 1
             conversation_state['current_question_index'] = current_question_index
 
+    # Recibe si, confirmo o no como respuestas de las preguntas anteriores (intro, msg_confirmacion)
     elif current_question_index == 0:
-        if len(user_answer) < limite_msg:
+        if len(user_answer) < limite_msg: # Verifica si hay choro
             if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
                 time.sleep(lag_msg)
                 response.message(msg_conf_num)
@@ -257,6 +258,7 @@ def webhook():
                 # Cargar datos en SQL
                 carga_SQL(conversation_state)
         else:
+            # Si hay choro, manda el mensaje de revisión para referir al cliente a un operador
             time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -267,8 +269,10 @@ def webhook():
             current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
+    # Recibe int como respuesta de la pregunta anterior (msg_conf_num)
+    # Recibe ok como respuesta a la revisión o al mensaje de error
     elif current_question_index == 1:
-        if len(user_answer) < limite_msg:
+        if len(user_answer) < limite_msg: # Verifica si hay choro
             if user_answer.isnumeric() and num_user_answer != 'Sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
                 time.sleep(lag_msg)
                 response.message(msg_conf_rest)
@@ -294,11 +298,21 @@ def webhook():
                 body=msg_revision,
                 to=f'whatsapp:{incoming_phone_number}'
             )
+
+            time.sleep(lag_msg)
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_conf_num,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
             current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
+    # Recibe si, confirmo o no como respuestas de la pregunta anterior (msg_conf_rest)
+    # Recibe ok como respuesta a la revisión
     elif current_question_index == 2:
-        if len(user_answer) < limite_msg:
+        if len(user_answer) < limite_msg: # Verifica si hay choro
             if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
                 time.sleep(lag_msg)
                 response.message(msg_num_rest)
@@ -328,6 +342,8 @@ def webhook():
             current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
+    # Recibe str como respuesta de la pregunta anterior (msg_num_rest)
+    # Recibe ok como respuesta al mensaje de error
     elif current_question_index == 3:
         if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
             time.sleep(lag_msg)
