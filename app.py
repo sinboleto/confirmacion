@@ -336,7 +336,7 @@ def webhook():
                 body=msg_reconf_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            current_question_index -= 1
+            # current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
     # Recibe str como respuesta de la pregunta anterior (msg_num_rest)
