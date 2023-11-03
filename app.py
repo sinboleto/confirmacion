@@ -198,6 +198,10 @@ def webhook():
 
     msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? (favor de usar los botones)"
 
+    msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. 
+
+¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? (favor de usar los botones)"""
+
     msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
 
     msg_revision = f"*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias (dar click en Ok)"
@@ -295,17 +299,10 @@ def webhook():
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_revision,
+                body=msg_reconf_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
-            time.sleep(lag_msg)
-            message = client.messages.create(
-                messaging_service_sid=messaging_service_sid,
-                from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_conf_num,
-                to=f'whatsapp:{incoming_phone_number}'
-            )
             current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
