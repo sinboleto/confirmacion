@@ -197,7 +197,7 @@ Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los b
 
 Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
 
-    msg_error_num_conf = f"""El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*
+    msg_error_num_conf = f"""El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
 
 Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
 
@@ -216,7 +216,7 @@ Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pu
 
 Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
 
-    msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*
+    msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
 
 Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
 
