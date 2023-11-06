@@ -94,11 +94,8 @@ def inicio_conversacion():
             # Get the recipient_name dynamically for each recipient_phone_number
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
 
-    #         msg_conf = f"""Hola *{nom_invitado}*,
-    # Te extendemos la invitación para *la boda de Amaya y José Manuel* que se celebrará el *9 de diciembre de 2023*. Te agradeceríamos si nos pudieras confirmar tu asistencia"""
-
             msg_conf = f"""Hola *{nom_invitado}*,
-            Te escribimos para confirmar tu asistencia a *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
+Te escribimos para confirmar tu asistencia a *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -185,43 +182,46 @@ def webhook():
     # Variables de user
     nombre = conversation_states[incoming_phone_number]['nom_invitado']
     boletos = conversation_states[incoming_phone_number]['boletos']
+    link_soporte = 'https://wa.link/30lobt'
 
     # Mensajes
     # Reconfirmación de asistencia
-    msg_reconf = 'Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*'
+    msg_reconf = f"""Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
+
+Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
 
     # Número de asistentes
     # msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
     msg_conf_num = f"Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+    msg_reconf_num = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
+
+Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
+
+    msg_error_num_conf = f"""El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)*
+
+Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
 
     # No confirma
     msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
 
     # Restricción alimentaria
-    msg_conf_rest = f"De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? (favor de usar los botones)"
-    msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. 
+    msg_conf_rest = "De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"
+    msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
 
-¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? (favor de usar los botones)"""
+¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"""
 
     # Número de restricciones
-    msg_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
+    msg_conf_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
+    msg_reconf_num_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {{1}} y mandanos un mensaje.
 
-    # Excepciones
-    msg_revision = f"*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias (dar click en Ok)"
-    msg_error = f"El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar (dar click en Ok)"
+Por favor, señala *cuantas personas(con número) y que restricciones(vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
 
-#     info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-# - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en el Jardín de Eventos Amatus*, después de la ceremonia lo esperamos en *la recepción* que se realizará *en el mismo lugar*
+    msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar *(dar click en Ok)
 
-# - El *código de vestimenta es formal* (Vestido largo o corto de día / traje sin corbata)
+Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
 
-# - Encuentra más información sobre *la mesa de regalos, hoteles y salones de belleza* en la página: www.amayayjosemanuel.com
-
-# *Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/jh47gm y mandanos un mensaje.
-
-# ¡Muchas gracias y saludos!"""
-
-    msg_info_general = """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
+    # Información general
+    msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 - La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en la Hacienda San Miguel*, después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
 
 - El *código de vestimenta es formal* (Vestido largo / traje)
@@ -232,22 +232,13 @@ def webhook():
 
 *Confirmamos su asistencia* y estamos emocionados por verte el próximo sábado 16 de diciembre. ¡Saludos!
 
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje."""
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
 
-    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: https://wa.link/30lobt y mandanos un mensaje. Gracias'
+    msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. Gracias'
 
-    if current_question_index == -1: # Recibe ok como respuesta de la pregunta anterior (msg_revision)
-        if user_answer == 'ok' or user_answer == 'si':
-            time.sleep(lag_msg)
-            response.message(msg_reconf)
-
-            current_question_index += 1
-            conversation_state['current_question_index'] = current_question_index
-
-    # Recibe si, confirmo o no como respuestas de las preguntas anteriores (msg_conf, msg_confirmacion)
-    elif current_question_index == 0:
-        if len(user_answer) < limite_msg: # Verifica si hay choro
-            if user_answer == 'si, confirmo' or user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
+    if current_question_index == 0:
+        if len(user_answer) < limite_msg:  # Verifica si hay choro
+            if user_answer == 'si, confirmo' or user_answer == 'si':
                 time.sleep(lag_msg)
                 response.message(msg_conf_num)
 
@@ -255,7 +246,7 @@ def webhook():
                 conversation_state['current_question_index'] = current_question_index
                 conversation_state['respuestas'][0] = 'Si'
 
-            if user_answer == 'no':
+            elif user_answer == 'no':
                 time.sleep(lag_msg)
                 response.message(msg_no_conf)
 
@@ -265,22 +256,32 @@ def webhook():
 
                 # Cargar datos en SQL
                 carga_SQL(conversation_state)
+
+            else:
+                time.sleep(lag_msg)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_reconf,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
+
+            conversation_state['current_question_index'] = current_question_index
+
         else:
             # Si hay choro, manda el mensaje de revisión para referir al cliente a un operador
             time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_revision,
+                body=msg_reconf,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            current_question_index -= 1
+
             conversation_state['current_question_index'] = current_question_index
 
-    # Recibe int como respuesta de la pregunta anterior (msg_conf_num)
-    # Recibe ok como respuesta a la revisión o al mensaje de error
     elif current_question_index == 1:
-        if len(user_answer) < limite_msg: # Verifica si hay choro
+        if len(user_answer) < limite_msg:  # Verifica si hay choro
             if user_answer.isnumeric() and num_user_answer != 'Sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
                 time.sleep(lag_msg)
                 response.message(msg_conf_rest)
@@ -288,41 +289,39 @@ def webhook():
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
+
             else:
                 time.sleep(lag_msg)
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
-                    body=msg_error,
+                    body=msg_error_num_conf,
                     to=f'whatsapp:{incoming_phone_number}'
                 )
-                current_question_index -= 1
                 conversation_state['current_question_index'] = current_question_index
+
         else:
             time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_revision,
+                body=msg_reconf_num,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
-            current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
-    # Recibe si, confirmo o no como respuestas de la pregunta anterior (msg_conf_rest)
-    # Recibe ok como respuesta a la revisión
     elif current_question_index == 2:
-        if len(user_answer) < limite_msg: # Verifica si hay choro
-            if user_answer == 'si' or user_answer == 'ok' or user_answer.isnumeric():
+        if len(user_answer) < limite_msg:  # Verifica si hay choro
+            if user_answer == 'si':
                 time.sleep(lag_msg)
-                response.message(msg_num_rest)
+                response.message(msg_conf_num_rest)
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
                 conversation_state['respuestas'][2] = 'Si'
 
-            if user_answer == 'no':
+            elif user_answer == 'no':
                 time.sleep(lag_msg)
                 response.message(msg_info_general)
 
@@ -332,19 +331,29 @@ def webhook():
 
                 # Cargar datos en SQL
                 carga_SQL(conversation_state)
+
+            else:
+                time.sleep(lag_msg)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_reconf_rest,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
+
+                conversation_state['current_question_index'] = current_question_index
+
         else:
             time.sleep(lag_msg)
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf_rest,
+                body=msg_reconf_num_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            # current_question_index -= 1
+
             conversation_state['current_question_index'] = current_question_index
 
-    # Recibe str como respuesta de la pregunta anterior (msg_num_rest)
-    # Recibe ok como respuesta al mensaje de error
     elif current_question_index == 3:
         if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
             time.sleep(lag_msg)
@@ -356,16 +365,16 @@ def webhook():
 
             # Cargar datos en SQL
             carga_SQL(conversation_state)
+
         else:
             time.sleep(lag_msg)
             boletos = conversation_states[incoming_phone_number]['boletos']
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_error,
+                body=msg_error_num_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
-            current_question_index -= 1
             conversation_state['current_question_index'] = current_question_index
 
     else:
