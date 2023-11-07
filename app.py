@@ -205,20 +205,20 @@ Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pu
     msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
 
     # Restricción alimentaria
-    msg_conf_rest = "De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"
+    msg_conf_rest = "De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"
     msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
 
-¿Algún invitado tiene alguna *restricción alimentaria* (vegetariano, vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"""
+¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"""
 
     # Número de restricciones
-    msg_conf_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"
+    msg_conf_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"
     msg_reconf_num_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
 
-Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
+Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
 
     msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
 
-Por favor, señala *cuantas personas (con número) y que restricciones (vegetariano, vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 vegetarianos, 1 alérgico a los mariscos)*"""
+Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
 
     # Información general
     msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
