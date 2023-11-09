@@ -451,7 +451,6 @@ def upload_json_file():
         if uploaded_file.filename != '':
             # You can process the uploaded file here
             data = uploaded_file.read()
-            app.logger.info(json.dumps(data))
             # Convert data to a dictionary if it's in JSON format
             try:
                 json_data = json.loads(data)
