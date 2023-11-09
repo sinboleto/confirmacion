@@ -401,7 +401,7 @@ def conv_xlsx_json():
 
                 for index, row in df.iterrows():
                     telefono_modificado = f"+{row['telefono_modificado']}"
-                    nom_invitado = row['nom_invitado']
+                    nom_invitado = row['nom_invitado'].strip()
                     num_boletos = row['num_boletos']
 
                     # Create a subdictionary
