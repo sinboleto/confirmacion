@@ -451,15 +451,16 @@ def upload_json_file():
         if uploaded_file.filename != '':
             # You can process the uploaded file here
             data = uploaded_file.read()
+            app.logger.info(json.dumps(data))
             # Convert data to a dictionary if it's in JSON format
             try:
                 json_data = json.loads(data)
                 # Update dict_info_invitados with the uploaded JSON data
                 dict_info_invitados = {}
-                app.logger.info(dict_info_invitados)
+                app.logger.info(json.dumps(dict_info_invitados))
                 for phone_number, info in json_data.items():
                     dict_info_invitados[phone_number] = info
-                app.logger.info(dict_info_invitados)
+                app.logger.info(json.dumps(dict_info_invitados))
                 return redirect(url_for('upload_form'))
             except json.JSONDecodeError:
                 return 'Archivo JSON no válido.'
