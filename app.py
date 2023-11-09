@@ -348,7 +348,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf_num_rest,
+                body=msg_reconf_rest,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
