@@ -440,6 +440,7 @@ def upload_form():
 def upload_json_file():
     global id_evento
     global uploaded_file
+    global dict_info_invitados
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
 
     # Check if id_evento is empty
@@ -455,6 +456,7 @@ def upload_json_file():
             try:
                 json_data = json.loads(data)
                 # Update dict_info_invitados with the uploaded JSON data
+                dict_info_invitados = {}
                 for phone_number, info in json_data.items():
                     dict_info_invitados[phone_number] = info
                 return redirect(url_for('upload_form'))
