@@ -427,9 +427,8 @@ def conv_xlsx_json():
             return 'Formato de archivo inválido. Favor de subir un archivo .xlsx.'
     return 'Ocurrió un error o no se subió un archivo.'
 
+
 # Add a new route to render the HTML form
-
-
 @app.route('/upload', methods=['GET'])
 def upload_form():
     return render_template('upload.html')
@@ -457,8 +456,10 @@ def upload_json_file():
                 json_data = json.loads(data)
                 # Update dict_info_invitados with the uploaded JSON data
                 dict_info_invitados = {}
+                app.logger.info(dict_info_invitados)
                 for phone_number, info in json_data.items():
                     dict_info_invitados[phone_number] = info
+                app.logger.info(dict_info_invitados)
                 return redirect(url_for('upload_form'))
             except json.JSONDecodeError:
                 return 'Archivo JSON no válido.'
