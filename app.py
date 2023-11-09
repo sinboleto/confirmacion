@@ -186,7 +186,7 @@ def webhook():
 
     # Mensajes
     # Reconfirmación de asistencia
-    msg_reconf = f"""Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
+    msg_reconf = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
 
 Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
 
