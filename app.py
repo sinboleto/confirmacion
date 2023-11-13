@@ -93,9 +93,10 @@ def inicio_conversacion():
 
             # Get the recipient_name dynamically for each recipient_phone_number
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
+            boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
             msg_conf = f"""Hola *{nom_invitado}*,
-Te escribimos para confirmar tu asistencia a *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
+Te escribimos para confirmar la asistencia de {boletos} persona/s *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
