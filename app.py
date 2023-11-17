@@ -110,7 +110,7 @@ def index():
 
     messages = {
         'msg_conf': """Hola *{nom_invitado_input}*,
-Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)""",
+Te escribimos para confirmar la asistencia de {boletos_input} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)""",
         'msg_conf_num': "Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*",
         'msg_info_general': """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
 - La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
@@ -126,7 +126,7 @@ Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de 
 *Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
     }
 
-    return render_template('info_input.html', messages=messages, saved_inputs=info_plantillas)
+    return render_template('info_input.html', messages=messages, info_plantillas=info_plantillas)
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
