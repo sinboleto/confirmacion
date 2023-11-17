@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Input Form</title>
+</head>
+
+<body>
+    <form method="POST" action="/">
+        <label for="nameInput">Nombre del invitado (ejemplo):</label>
+        <input type="text" id="input_1" name="nom_invitado_input"><br><br>
+
+        <label for="ageInput">Número de boletos (ejemplo):</label>
+        <input type="number" id="input_2" name="boletos_input"><br><br>
+
+        <label for="ageInput">Nombre de la novia:</label>
+        <input type="text" id="input_3" name="nom_novia"><br><br>
+
+        <label for="ageInput">Nombre de la novia:</label>
+        <input type="text" id="input_4" name="nom_novio"><br><br>
+
+        <label for="ageInput">Fecha del evento:</label>
+        <input type="text" id="input_5" name="fecha_evento"><br><br>
+
+        <label for="ageInput">Hora de inicio:</label>
+        <input type="text" id="input_6" name="hora_inicio"><br><br>
+
+        <label for="ageInput">Lugar del evento:</label>
+        <input type="text" id="input_7" name="lugar_evento"><br><br>
+
+        <label for="ageInput">Lugar de la ceremonia:</label>
+        <input type="text" id="input_8" name="lugar_ceremonia"><br><br>
+
+        <label for="ageInput">Código de vestimenta:</label>
+        <input type="text" id="input_9" name="codigo_vestimenta"><br><br>
+
+        <label for="ageInput">Link soporte:</label>
+        <input type="text" id="input_10" name="link_soporte_input"><br><br>
+
+        <input type="radio" id="msg_conf" name="msg_conf" value="msg_conf" checked>
+        <label for="msg_conf">Confirmación asistencia</label><br>
+
+        <input type="radio" id="msg_conf_num" name="msg_conf_num" value="msg_conf_num">
+        <label for="msg_conf_num">Confirmación número de invitados</label><br>
+
+        <input type="radio" id="msg_info_general" name="msg_info_general" value="msg_info_general">
+        <label for="msg_info_general">Información general</label><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if saved_inputs %}
+    {% set message = messages[saved_inputs['message_type']] %}
+    <p>
+        {{ message | format(name_placeholder=saved_inputs['name'] or 'John Doe', age_placeholder=saved_inputs['age'] or
+        '30') }}
+    </p>
+    {% endif %}
+</body>
+
+</html>

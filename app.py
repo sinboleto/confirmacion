@@ -77,6 +77,56 @@ try:
 except psycopg2.errors.DuplicateTable:
     pass
 
+# Input de plantillas
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    global info_plantillas
+    if request.method == 'POST':
+        nom_invitado_input = request.form['nom_invitado_input']
+        boletos_input = request.form['boletos_input']
+        nom_novia = request.form['nom_novia']
+        nom_novio = request.form['nom_novio']
+        fecha_evento = request.form['fecha_evento']
+        hora_inicio = request.form['hora_inicio']
+        lugar_evento = request.form['lugar_evento']
+        lugar_ceremonia = request.form['lugar_ceremonia']
+        codigo_vestimenta = request.form['codigo_vestimenta']
+        link_soporte_input = request.form['link_soporte_input']
+
+        message_type = request.form['message_type']
+
+        info_plantillas['nom_invitado_input'] = nom_invitado_input
+        info_plantillas['boletos_input'] = boletos_input
+        info_plantillas['nom_novia'] = nom_novia
+        info_plantillas['nom_novio'] = nom_novio
+        info_plantillas['fecha_evento'] = fecha_evento
+        info_plantillas['hora_inicio'] = hora_inicio
+        info_plantillas['lugar_evento'] = lugar_evento
+        info_plantillas['lugar_ceremonia'] = lugar_ceremonia
+        info_plantillas['codigo_vestimenta'] = codigo_vestimenta
+        info_plantillas['link_soporte_input'] = link_soporte_input
+
+        info_plantillas['message_type'] = message_type
+
+    messages = {
+        'msg_conf': """Hola *{nom_invitado_input}*,
+Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)""",
+        'msg_conf_num': "Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*",
+        'msg_info_general': """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
+- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
+
+- El *código de vestimenta* es {codigo_vestimenta}
+
+- *Mesas de regalos*
+   • Liverpool: https://mesaderegalos.liverpool.com.mx/milistaderegalos/51214657
+   • Amazon: https://www.amazon.com.mx/wedding/monse-cascajares-diego-grimaldi-ciudad-de-meacutexico-december-2023/registry/2R7ZD760O0QOH
+
+*Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
+
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
+    }
+
+    return render_template('info_input.html', messages=messages, saved_inputs=info_plantillas)
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
