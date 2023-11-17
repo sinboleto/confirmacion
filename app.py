@@ -60,9 +60,11 @@ global msg_conf
 global messages
 global dict_info_invitados
 global conversation_states
+global saved_inputs
 
 dict_info_invitados = {}
 conversation_states = {}
+saved_inputs = {}
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 15
