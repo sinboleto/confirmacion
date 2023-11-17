@@ -78,7 +78,7 @@ except psycopg2.errors.DuplicateTable:
     pass
 
 # Input de plantillas
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/inputs', methods=['GET', 'POST'])
 def index():
     global info_plantillas
     if request.method == 'POST':
