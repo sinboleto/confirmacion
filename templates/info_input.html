@@ -14,7 +14,7 @@
 
         <br>
 
-        <form method="POST" action="/inputs">
+        <form method="POST" action="/inputs" id="myForm">
             <label for="nom_invitado_input">Nombre del invitado (ejemplo):</label>
             <input type="text" id="input_1" name="nom_invitado_input"><br><br>
 
@@ -61,7 +61,7 @@
         </form>
     </div>
 
-    <div id="messageContainer" class="container"></div>
+    <div id="messageContainer"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -77,23 +77,23 @@
             });
 
             function getMessage(values) {
-                const messageType = values.message_type || '';
                 let message = '';
 
-                // Generating different messages based on message_type
-                switch (messageType) {
-                    case 'msg_conf':
-                        message = `Confirmation message based on the input values`;
-                        break;
-                    case 'msg_conf_num':
-                        message = `Confirmation message based on the input values`;
-                        break;
-                    case 'msg_info_general':
-                        message = `Information message based on the input values`;
-                        break;
-                    default:
-                        message = `No message selected`;
+                // Accessing the message text from the 'messages' variable
+                if (values.message_type === 'msg_conf') {
+                    message = `${messages.msg_conf}`;
+                } else if (values.message_type === 'msg_conf_num') {
+                    message = `${messages.msg_conf_num}`;
+                } else if (values.message_type === 'msg_info_general') {
+                    message = `${messages.msg_info_general}`;
+                } else {
+                    message = `No message selected`;
                 }
+
+                // Replace placeholders in the message with actual values from 'values'
+                message = message.replace(/\{([^}]+)\}/g, function (match, key) {
+                    return values[key.trim()] || '';
+                });
 
                 return `<p>${message}</p>`;
             }
