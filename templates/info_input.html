@@ -61,9 +61,7 @@
         </form>
     </div>
 
-    <div class="container">
-        <p id="messageContainer"></p>
-    </div>
+    <div id="messageContainer" class="container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -79,23 +77,25 @@
             });
 
             function getMessage(values) {
-                return `
-                    <p>
-                        Your generated message based on input values:
-                        Name: ${values.nom_invitado_input || 'Santiago'}
-                        Boletos: ${values.boletos_input || 2}
-                        Novia: ${values.nom_novia || 'Emilia'}
-                        Novio: ${values.nom_novio || 'Roberto'}
-                        Fecha del evento: ${values.fecha_evento || '27 de marzo de 2024'}
-                        Hora de inicio: ${values.hora_inicio || '13:00 hrs'}
-                        Lugar del evento: ${values.lugar_evento || 'Salón Vista Luna, Xochitepec, Morelos'}
-                        Lugar de la ceremonia: ${values.lugar_ceremonia || 'Iglesia San José'}
-                        Código de vestimenta: ${values.codigo_vestimenta || 'Formal'}
-                        Link mesa regalos: ${values.link_mesa_regalos || 'https://supportlink.com'}
-                        Link soporte: ${values.link_soporte_input || 'https://supportlink.com'}
-                        Selected Message Type: ${values.message_type || ''}
-                    </p>
-                `;
+                const messageType = values.message_type || '';
+                let message = '';
+
+                // Generating different messages based on message_type
+                switch (messageType) {
+                    case 'msg_conf':
+                        message = `Confirmation message based on the input values`;
+                        break;
+                    case 'msg_conf_num':
+                        message = `Confirmation message based on the input values`;
+                        break;
+                    case 'msg_info_general':
+                        message = `Information message based on the input values`;
+                        break;
+                    default:
+                        message = `No message selected`;
+                }
+
+                return `<p>${message}</p>`;
             }
         });
     </script>
