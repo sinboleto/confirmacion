@@ -2,58 +2,63 @@
 <html>
 
 <head>
-    <title>Input Form</title>
+    <title>Plantillas de mensajes</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
+<header><br></header>
+
 <body>
-    <form method="POST" action="/inputs">
-        <label for="nom_invitado_input">Nombre del invitado (ejemplo):</label>
-        <input type="text" id="input_1" name="nom_invitado_input"><br><br>
+    <div class="container">
+        <h1>Plantillas de mensajes</h1>
+        <form method="POST" action="/inputs">
+            <label for="nom_invitado_input">Nombre del invitado (ejemplo):</label>
+            <input type="text" id="input_1" name="nom_invitado_input"><br><br>
 
-        <label for="boletos_input">Número de boletos (ejemplo):</label>
-        <input type="number" id="input_2" name="boletos_input"><br><br>
+            <label for="boletos_input">Número de boletos (ejemplo):</label>
+            <input type="number" id="input_2" name="boletos_input"><br><br>
 
-        <label for="nom_novia">Nombre de la novia:</label>
-        <input type="text" id="input_3" name="nom_novia"><br><br>
+            <label for="nom_novia">Nombre de la novia:</label>
+            <input type="text" id="input_3" name="nom_novia"><br><br>
 
-        <label for="nom_novio">Nombre de la novia:</label>
-        <input type="text" id="input_4" name="nom_novio"><br><br>
+            <label for="nom_novio">Nombre de la novia:</label>
+            <input type="text" id="input_4" name="nom_novio"><br><br>
 
-        <label for="fecha_evento">Fecha del evento:</label>
-        <input type="text" id="input_5" name="fecha_evento"><br><br>
+            <label for="fecha_evento">Fecha del evento:</label>
+            <input type="text" id="input_5" name="fecha_evento"><br><br>
 
-        <label for="hora_inicio">Hora de inicio:</label>
-        <input type="text" id="input_6" name="hora_inicio"><br><br>
+            <label for="hora_inicio">Hora de inicio:</label>
+            <input type="text" id="input_6" name="hora_inicio"><br><br>
 
-        <label for="lugar_evento">Lugar del evento:</label>
-        <input type="text" id="input_7" name="lugar_evento"><br><br>
+            <label for="lugar_evento">Lugar del evento:</label>
+            <input type="text" id="input_7" name="lugar_evento"><br><br>
 
-        <label for="lugar_ceremonia">Lugar de la ceremonia:</label>
-        <input type="text" id="input_8" name="lugar_ceremonia"><br><br>
+            <label for="lugar_ceremonia">Lugar de la ceremonia:</label>
+            <input type="text" id="input_8" name="lugar_ceremonia"><br><br>
 
-        <label for="codigo_vestimenta">Código de vestimenta:</label>
-        <input type="text" id="input_9" name="codigo_vestimenta"><br><br>
+            <label for="codigo_vestimenta">Código de vestimenta:</label>
+            <input type="text" id="input_9" name="codigo_vestimenta"><br><br>
 
-        <label for="codigo_vestimenta">Link mesa regalos:</label>
-        <input type="text" id="input_10" name="codigo_vestimenta"><br><br>
+            <label for="codigo_vestimenta">Link mesa regalos:</label>
+            <input type="text" id="input_10" name="codigo_vestimenta"><br><br>
 
-        <label for="link_soporte_input">Link soporte:</label>
-        <input type="text" id="input_11" name="link_soporte_input"><br><br>
+            <label for="link_soporte_input">Link soporte:</label>
+            <input type="text" id="input_11" name="link_soporte_input"><br><br>
 
-        <input type="radio" id="msg_conf" name="message_type" value="msg_conf" checked>
-        <label for="msg_conf">Confirmación asistencia</label><br>
+            <input type="radio" id="msg_conf" name="message_type" value="msg_conf" checked>
+            <label for="msg_conf">Confirmación asistencia</label><br>
 
-        <input type="radio" id="msg_conf_num" name="message_type" value="msg_conf_num">
-        <label for="msg_conf_num">Confirmación número de invitados</label><br>
+            <input type="radio" id="msg_conf_num" name="message_type" value="msg_conf_num">
+            <label for="msg_conf_num">Confirmación número de invitados</label><br>
 
-        <input type="radio" id="msg_info_general" name="message_type" value="msg_info_general">
-        <label for="msg_info_general">Información general</label><br><br>
+            <input type="radio" id="msg_info_general" name="message_type" value="msg_info_general">
+            <label for="msg_info_general">Información general</label><br><br>
 
-        <input type="submit" value="Submit">
-    </form>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
 
-    <div id="messageContainer"></div>
+    <div id="messageContainer" class="container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
