@@ -93,6 +93,7 @@ def index():
         lugar_evento = request.form['lugar_evento']
         lugar_ceremonia = request.form['lugar_ceremonia']
         codigo_vestimenta = request.form['codigo_vestimenta']
+        link_mesa_regalos = request.form['link_mesa_regalos']
         link_soporte_input = request.form['link_soporte_input']
 
         message_type = request.form['message_type']
@@ -106,6 +107,7 @@ def index():
         info_plantillas['lugar_evento'] = lugar_evento
         info_plantillas['lugar_ceremonia'] = lugar_ceremonia
         info_plantillas['codigo_vestimenta'] = codigo_vestimenta
+        info_plantillas['link_mesa_regalos'] = link_mesa_regalos
         info_plantillas['link_soporte_input'] = link_soporte_input
 
         info_plantillas['message_type'] = message_type
@@ -119,9 +121,7 @@ Te escribimos para confirmar la asistencia de {boletos_input} persona/s a *la bo
 
 - El *código de vestimenta* es {codigo_vestimenta}
 
-- *Mesas de regalos*
-   • Liverpool: https://mesaderegalos.liverpool.com.mx/milistaderegalos/51214657
-   • Amazon: https://www.amazon.com.mx/wedding/monse-cascajares-diego-grimaldi-ciudad-de-meacutexico-december-2023/registry/2R7ZD760O0QOH
+- *Mesas de regalos*: {link_mesa_regalos} 
 
 *Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
 

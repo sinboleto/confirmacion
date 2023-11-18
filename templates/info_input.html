@@ -35,8 +35,11 @@
         <label for="codigo_vestimenta">Código de vestimenta:</label>
         <input type="text" id="input_9" name="codigo_vestimenta"><br><br>
 
+        <label for="codigo_vestimenta">Link mesa regalos:</label>
+        <input type="text" id="input_10" name="codigo_vestimenta"><br><br>
+
         <label for="link_soporte_input">Link soporte:</label>
-        <input type="text" id="input_10" name="link_soporte_input"><br><br>
+        <input type="text" id="input_11" name="link_soporte_input"><br><br>
 
         <input type="radio" id="msg_conf" name="message_type" value="msg_conf" checked>
         <label for="msg_conf">Confirmación asistencia</label><br>
@@ -50,34 +53,43 @@
         <input type="submit" value="Submit">
     </form>
 
-    {% if info_plantillas %}
-    {% set message = messages[info_plantillas['message_type']] %}
-    <p>
-        {% set default_values = {
-        'nom_invitado_input': 'Santiago',
-        'boletos_input': 2,
-        'nom_novia': 'Emilia',
-        'nom_novio': 'Roberto',
-        'fecha_evento': '27 de marzo de 2024',
-        'hora_inicio': '13:00 hrs',
-        'lugar_evento': 'Salón Vista Luna, Xochitepec, Morelos'
-        } %}
+    <div id="messageContainer"></div>
 
-        {% set message = messages[info_plantillas['message_type']] %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('myForm');
+            const messageContainer = document.getElementById('messageContainer');
 
-        {% set values = info_plantillas | default(default_values) %}
+            form.addEventListener('input', function () {
+                const formData = new FormData(form);
+                const values = Object.fromEntries(formData.entries());
 
-        {{ message | format(
-        nom_invitado_input=values['nom_invitado_input'],
-        boletos_input=values['boletos_input'],
-        nom_novia=values['nom_novia'],
-        nom_novio=values['nom_novio'],
-        fecha_evento=values['fecha_evento'],
-        hora_inicio=values['hora_inicio'],
-        lugar_evento=values['lugar_evento']
-        ) }}
-    </p>
-    {% endif %}
+                const message = getMessage(values);
+                messageContainer.innerHTML = message;
+            });
+
+            function getMessage(values) {
+                return `
+                    <p>
+                        Your generated message based on input values:
+                        Name: ${values.nom_invitado_input || 'Santiago'}
+                        Boletos: ${values.boletos_input || 2}
+                        Novia: ${values.nom_novia || 'Emilia'}
+                        Novio: ${values.nom_novio || 'Roberto'}
+                        Fecha del evento: ${values.fecha_evento || '27 de marzo de 2024'}
+                        Hora de inicio: ${values.hora_inicio || '13:00 hrs'}
+                        Lugar del evento: ${values.lugar_evento || 'Salón Vista Luna, Xochitepec, Morelos'}
+                        Lugar de la ceremonia: ${values.lugar_ceremonia || 'Iglesia San José'}
+                        Código de vestimenta: ${values.codigo_vestimenta || 'Formal'}
+                        Link mesa regalos: ${values.link_mesa_regalos || 'https://supportlink.com'}
+                        Link soporte: ${values.link_soporte_input || 'https://supportlink.com'}
+                        Selected Message Type: ${values.message_type || ''}
+                    </p>
+                `;
+            }
+        });
+    </script>
+
 </body>
 
 </html>
