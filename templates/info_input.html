@@ -37,13 +37,13 @@
         <label for="link_soporte_input">Link soporte:</label>
         <input type="text" id="input_10" name="link_soporte_input"><br><br>
 
-        <input type="radio" id="msg_conf" name="msg_conf" value="msg_conf" checked>
+        <input type="radio" id="msg_conf" name="nom_msg" value="msg_conf" checked>
         <label for="msg_conf">Confirmación asistencia</label><br>
 
-        <input type="radio" id="msg_conf_num" name="msg_conf_num" value="msg_conf_num">
+        <input type="radio" id="msg_conf_num" name="nom_msg" value="msg_conf_num">
         <label for="msg_conf_num">Confirmación número de invitados</label><br>
 
-        <input type="radio" id="msg_info_general" name="msg_info_general" value="msg_info_general">
+        <input type="radio" id="msg_info_general" name="nom_msg" value="msg_info_general">
         <label for="msg_info_general">Información general</label><br><br>
 
         <input type="submit" value="Submit">
@@ -52,12 +52,29 @@
     {% if info_plantillas %}
     {% set message = messages[info_plantillas['message_type']] %}
     <p>
-        {{ message | format(nom_invitado_input=info_plantillas['nom_invitado_input'] or 'Santiago',
-        boletos_input=info_plantillas['boletos_input'] or
-        2, nom_novia=info_plantillas['nom_novia'] or 'Emilia', nom_novia=info_plantillas['nom_novio'] or 'Roberto'),
-        fecha_evento=info_plantillas['fecha_evento'] or '27 de marzo de 2024', hora_inicio=saved_inputs['hora_inicio']
-        or
-        '13:00 hrs', lugar_evento=info_plantillas['lugar_evento'] or 'Salón Vista Luna, Xochitepec, Morelos'}}
+        {% set default_values = {
+        'nom_invitado_input': 'Santiago',
+        'boletos_input': 2,
+        'nom_novia': 'Emilia',
+        'nom_novio': 'Roberto',
+        'fecha_evento': '27 de marzo de 2024',
+        'hora_inicio': '13:00 hrs',
+        'lugar_evento': 'Salón Vista Luna, Xochitepec, Morelos'
+        } %}
+
+        {% set message = messages[info_plantillas['message_type']] %}
+
+        {% set values = info_plantillas | default(default_values) %}
+
+        {{ message | format(
+        nom_invitado_input=values['nom_invitado_input'],
+        boletos_input=values['boletos_input'],
+        nom_novia=values['nom_novia'],
+        nom_novio=values['nom_novio'],
+        fecha_evento=values['fecha_evento'],
+        hora_inicio=values['hora_inicio'],
+        lugar_evento=values['lugar_evento']
+        ) }}
     </p>
     {% endif %}
 </body>
