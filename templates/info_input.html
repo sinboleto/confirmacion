@@ -68,6 +68,32 @@
             const form = document.getElementById('myForm');
             const messageContainer = document.getElementById('messageContainer');
 
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                const formData = new FormData(form);
+                const values = Object.fromEntries(formData.entries());
+
+                fetch('/inputs', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        messageContainer.innerHTML = data;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('myForm');
+            const messageContainer = document.getElementById('messageContainer');
+
             form.addEventListener('input', function () {
                 const formData = new FormData(form);
                 const values = Object.fromEntries(formData.entries());
@@ -98,7 +124,7 @@
                 return `<p>${message}</p>`;
             }
         });
-    </script>
+    </script> -->
 
 </body>
 
