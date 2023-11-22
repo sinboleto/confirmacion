@@ -239,7 +239,7 @@ def webhook():
         num_user_answer = [int(i) for i in num_user_answer]
         num_user_answer = sum(num_user_answer)
     else:
-        num_user_answer = 'Sin número'
+        num_user_answer = 'sin número'
 
     current_question_index = conversation_state['current_question_index']
     app.logger.info(current_question_index)
@@ -344,7 +344,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
 
     elif current_question_index == 1:
         if len(user_answer) < limite_msg:  # Verifica si hay choro
-            if user_answer.isnumeric() and num_user_answer != 'Sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+            if user_answer.isnumeric() and num_user_answer != 'sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
                 time.sleep(lag_msg)
                 response.message(msg_conf_rest)
                 conversation_state['respuestas'][1] = user_answer
@@ -417,7 +417,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
             conversation_state['current_question_index'] = current_question_index
 
     elif current_question_index == 3:
-        if num_user_answer == 'Sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+        if num_user_answer == 'sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
             time.sleep(lag_msg)
             response.message(msg_info_general)
 
@@ -611,7 +611,7 @@ def visualize_summary(summary):
     plt.figure()
     bottom = np.zeros(len(categories))
     altura = 0
-    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153', '#142029']
+    colors = ['#5C80A0','#6A8EAC','#759FBC','#80ACCA','#8EBAD6','#9EC8E2','#ADC6D9','#B7D3E6']
     colors = colors[:len(categories)-1]
 
     for category, weight_count, color in zip(categories, np.array(values), colors):
@@ -733,13 +733,17 @@ def dashboard():
                                                                    'respuesta_1', 'respuesta_2', 'respuesta_3'])
 
     # Equivalencias
-    dict_equivalencias = {'alergi': 'Alérgico',
-                          'vegan': 'Vegano',
-                          'vegetarian': 'Vegetariano',
-                          'celiac': 'Celiaco',
-                          'no especificado': 'No especificado',
-                          'otro': 'Otro'
-                          }
+    dict_equivalencias = {
+        'alergi': 'Alérgico',
+        'vegan': 'Vegano',
+        'vegetarian': 'Vegetariano',
+        'celiac': 'Celiaco', 
+        'intol':'Intolerante',
+        'no especificado': 
+        'No especificado',
+        'otro': 'Otro', 
+        'varios':'+1 restricción',
+    }
 
     summary = summarize_restrictions(df_restricciones, dict_equivalencias)
     plot3_base64 = visualize_summary(summary)
