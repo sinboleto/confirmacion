@@ -70,6 +70,18 @@ connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 15
 lag_msg = 1
 
+# Variables del evento
+nom_novia = 'Roberta'
+nom_novio = 'Ernesto'
+fecha_evento = '2 de diciembre de 2023'
+hora_inicio = '13:00 hrs'
+lugar_evento = 'Xochitepec, Morelos'
+lugar_ceremonia = 'Jardín Paraíso'
+lugar_recepcion = 'en el mismo lugar'
+codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
+link_mesa_regalos = 'https://dagiftmx.com/'
+link_soporte= 'https://wa.link/zx5tbb'
+
 # Table config
 try:
     with connection:
@@ -86,29 +98,29 @@ def index():
     if request.method == 'POST':
         nom_invitado_input = request.form['nom_invitado_input']
         boletos_input = request.form['boletos_input']
-        nom_novia = request.form['nom_novia']
-        nom_novio = request.form['nom_novio']
-        fecha_evento = request.form['fecha_evento']
-        hora_inicio = request.form['hora_inicio']
-        lugar_evento = request.form['lugar_evento']
-        lugar_ceremonia = request.form['lugar_ceremonia']
-        codigo_vestimenta = request.form['codigo_vestimenta']
-        link_mesa_regalos = request.form['link_mesa_regalos']
-        link_soporte_input = request.form['link_soporte_input']
+        nom_novia_input = request.form['nom_novia']
+        nom_novio_input = request.form['nom_novio']
+        fecha_evento_input = request.form['fecha_evento']
+        hora_inicio_input = request.form['hora_inicio']
+        lugar_evento_input = request.form['lugar_evento']
+        lugar_ceremonia_input = request.form['lugar_ceremonia']
+        codigo_vestimenta_input = request.form['codigo_vestimenta']
+        link_mesa_regalos_input = request.form['link_mesa_regalos']
+        link_soporte_input_input = request.form['link_soporte_input']
 
         message_type = request.form['message_type']
 
         info_plantillas['nom_invitado_input'] = nom_invitado_input
         info_plantillas['boletos_input'] = boletos_input
-        info_plantillas['nom_novia'] = nom_novia
-        info_plantillas['nom_novio'] = nom_novio
-        info_plantillas['fecha_evento'] = fecha_evento
-        info_plantillas['hora_inicio'] = hora_inicio
-        info_plantillas['lugar_evento'] = lugar_evento
-        info_plantillas['lugar_ceremonia'] = lugar_ceremonia
-        info_plantillas['codigo_vestimenta'] = codigo_vestimenta
-        info_plantillas['link_mesa_regalos'] = link_mesa_regalos
-        info_plantillas['link_soporte_input'] = link_soporte_input
+        info_plantillas['nom_novia'] = nom_novia_input
+        info_plantillas['nom_novio'] = nom_novio_input
+        info_plantillas['fecha_evento'] = fecha_evento_input
+        info_plantillas['hora_inicio'] = hora_inicio_input
+        info_plantillas['lugar_evento'] = lugar_evento_input
+        info_plantillas['lugar_ceremonia'] = lugar_ceremonia_input
+        info_plantillas['codigo_vestimenta'] = codigo_vestimenta_input
+        info_plantillas['link_mesa_regalos'] = link_mesa_regalos_input
+        info_plantillas['link_soporte_input'] = link_soporte_input_input
 
         info_plantillas['message_type'] = message_type
 
@@ -148,7 +160,7 @@ def inicio_conversacion():
             boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
             msg_conf = f"""Hola *{nom_invitado}*,
-Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de Monse Cascajares y Diego Grimaldi* que se celebrará el *16 de diciembre de 2023 a las 13:30 hrs. en la Hacienda San Miguel Country Club, ubicada en Av. Juárez 120, San Mateo Tecoloapan, Estado de México* (favor de usar los botones)"""
+Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
 
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
@@ -235,7 +247,6 @@ def webhook():
     # Variables de user
     nombre = conversation_states[incoming_phone_number]['nom_invitado']
     boletos = conversation_states[incoming_phone_number]['boletos']
-    link_soporte = 'https://wa.link/30lobt'
 
     # Mensajes
     # Reconfirmación de asistencia
@@ -275,15 +286,13 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
 
     # Información general
     msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las 13:30 hrs. en la Hacienda San Miguel*, después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
+- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
 
-- El *código de vestimenta es formal* (Vestido largo / traje)
+- El *código de vestimenta* es {codigo_vestimenta}
 
-- *Mesas de regalos*
-   • Liverpool: https://mesaderegalos.liverpool.com.mx/milistaderegalos/51214657
-   • Amazon: https://www.amazon.com.mx/wedding/monse-cascajares-diego-grimaldi-ciudad-de-meacutexico-december-2023/registry/2R7ZD760O0QOH
+- *Mesas de regalos*: {link_mesa_regalos} 
 
-*Confirmamos su asistencia* y estamos emocionados por verte el próximo sábado 16 de diciembre. ¡Saludos!
+*Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
 
 *Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
 
