@@ -771,7 +771,7 @@ def setup_ngrok_tunnel(ngrok_auth_token):
 @app.route('/start_ngrok', methods=['GET'])
 def inicio_ngrok():
     # Call the function to create the tunnel
-    ngrok_url = setup_ngrok_tunnel()
+    ngrok_url = setup_ngrok_tunnel(ngrok_auth_token)
     return f'Ngrok tunnel started at: {ngrok_url}'
 
 @app.route('/end_ngrok', methods=['GET'])
