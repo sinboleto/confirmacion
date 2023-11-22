@@ -623,7 +623,7 @@ def visualize_summary(summary):
         altura += weight_count
         if weight_count > 0:
             plt.text(0, altura - weight_count / 2, str(weight_count),
-                     ha='center', va='center', fontsize=12, color='b')
+                     ha='center', va='center', fontsize=12, color='black')
 
     plt.title('Restricciones alimentarias')
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
