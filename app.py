@@ -758,9 +758,10 @@ def dashboard():
     return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
 
 # Function to establish Ngrok tunnel with edge and additional credentials
-def setup_ngrok_tunnel():
+def setup_ngrok_tunnel(ngrok_auth_token):
     options = {
-        "hostname": "ltnki0al.ngrok.app",
+        "authtoken":ngrok_auth_token,
+        "domain": "ltnki0al.ngrok.app",
         "edge": "edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy",
         # Add more options as needed
     }
