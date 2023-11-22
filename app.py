@@ -763,6 +763,7 @@ def setup_ngrok_tunnel(ngrok_auth_token):
         'authtoken':ngrok_auth_token,
         'domain': 'ltnki0al.ngrok.app',
         'edge': 'edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy',
+        'host_header':'localhost 80'
         # Add more options as needed
     }
     ngrok_url = ngrok.connect(80, bind_tls=True, options=options)
