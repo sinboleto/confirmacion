@@ -80,7 +80,7 @@ lugar_ceremonia = 'Jardín Paraíso'
 lugar_recepcion = 'en el mismo lugar'
 codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
 link_mesa_regalos = 'https://dagiftmx.com/'
-link_soporte= 'https://wa.link/zx5tbb'
+link_soporte = 'https://wa.link/zx5tbb'
 
 # Table config
 try:
@@ -106,7 +106,7 @@ def index():
         lugar_ceremonia_input = request.form['lugar_ceremonia_input']
         codigo_vestimenta_input = request.form['codigo_vestimenta_input']
         link_mesa_regalos_input = request.form['link_mesa_regalos_input']
-        link_soporte_input_input = request.form['link_soporte_input']
+        link_soporte_input = request.form['link_soporte_input']
 
         message_type = request.form['message_type']
 
@@ -120,7 +120,7 @@ def index():
         info_plantillas['lugar_ceremonia_input'] = lugar_ceremonia_input
         info_plantillas['codigo_vestimenta_input'] = codigo_vestimenta_input
         info_plantillas['link_mesa_regalos_input'] = link_mesa_regalos_input
-        info_plantillas['link_soporte_input'] = link_soporte_input_input
+        info_plantillas['link_soporte_input'] = link_soporte_input
 
         info_plantillas['message_type'] = message_type
 
