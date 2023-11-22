@@ -70,8 +70,8 @@
             const form = document.getElementById('myForm');
             const messageContainer = document.getElementById('messageContainer');
 
-            form.addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent form submission
+            form.addEventListener('input', function () {
+                // event.preventDefault(); // Prevent form submission
 
                 const formData = new FormData(form);
                 const values = Object.fromEntries(formData.entries());

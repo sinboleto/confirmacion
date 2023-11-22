@@ -112,14 +112,14 @@ def index():
 
         info_plantillas['nom_invitado_input'] = nom_invitado_input
         info_plantillas['boletos_input'] = boletos_input
-        info_plantillas['nom_novia'] = nom_novia_input
-        info_plantillas['nom_novio'] = nom_novio_input
-        info_plantillas['fecha_evento'] = fecha_evento_input
-        info_plantillas['hora_inicio'] = hora_inicio_input
-        info_plantillas['lugar_evento'] = lugar_evento_input
-        info_plantillas['lugar_ceremonia'] = lugar_ceremonia_input
-        info_plantillas['codigo_vestimenta'] = codigo_vestimenta_input
-        info_plantillas['link_mesa_regalos'] = link_mesa_regalos_input
+        info_plantillas['nom_novia_input'] = nom_novia_input
+        info_plantillas['nom_novio_input'] = nom_novio_input
+        info_plantillas['fecha_evento_input'] = fecha_evento_input
+        info_plantillas['hora_inicio_input'] = hora_inicio_input
+        info_plantillas['lugar_evento_input'] = lugar_evento_input
+        info_plantillas['lugar_ceremonia_input'] = lugar_ceremonia_input
+        info_plantillas['codigo_vestimenta_input'] = codigo_vestimenta_input
+        info_plantillas['link_mesa_regalos_input'] = link_mesa_regalos_input
         info_plantillas['link_soporte_input'] = link_soporte_input_input
 
         info_plantillas['message_type'] = message_type
