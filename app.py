@@ -20,6 +20,9 @@ import time
 # POSTGRES SQL
 import psycopg2
 
+# Ngrok
+from pyngrok import ngrok
+
 # Graph
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -48,12 +51,16 @@ twilio_phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
 app.secret_key = os.environ.get('APP_SECRET_KEY')
 messaging_service_sid = os.environ.get('MESSAGING_SERVICE_SID')
 POSTGRESQL_URI = os.environ.get('POSTGRESQL_URI')
+ngrok_auth_token = os.environ.get('NGROK_AUTH_TOKEN')
 
 # Create Twilio client
 client = Client(account_sid, auth_token)
 
 # Twilio Conversations API client
 conversations_client = client.conversations.v1.services(conversations_sid)
+
+# Set Ngrok authentication token
+ngrok.set_auth_token(ngrok_auth_token)
 
 # Model inputs
 global msg_conf
@@ -749,6 +756,26 @@ def dashboard():
     plot3_base64 = visualize_summary(summary)
 
     return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
+
+# Function to establish Ngrok tunnel with edge and additional credentials
+def setup_ngrok_tunnel():
+    options = {
+        "hostname": "ltnki0al.ngrok.app",
+        "edge": "edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy",
+        # Add more options as needed
+    }
+    ngrok_url = ngrok.connect(80, bind_tls=True, options=options)
+    return ngrok_url
+
+@app.route('/start_ngrok', methods=['GET'])
+def inicio_ngrok():
+    # Call the function to create the tunnel
+    setup_ngrok_tunnel()
+
+@app.route('/end_ngrok', methods=['GET'])
+def fin_ngrok():
+    ngrok.disconnect()
+
 
 
 if __name__ == '__main__':
