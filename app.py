@@ -612,7 +612,7 @@ def visualize_summary(summary):
     bottom = np.zeros(len(categories))
     altura = 0
     colors = ['#5C80A0','#6A8EAC','#759FBC','#80ACCA','#8EBAD6','#9EC8E2','#ADC6D9','#B7D3E6']
-    colors = colors[:len(categories)-1]
+    colors = colors[0:len(categories)]
 
     for category, weight_count, color in zip(categories, np.array(values), colors):
         p = plt.bar(0, weight_count, label=category,
@@ -623,7 +623,7 @@ def visualize_summary(summary):
         altura += weight_count
         if weight_count > 0:
             plt.text(0, altura - weight_count / 2, str(weight_count),
-                     ha='center', va='center', fontsize=12, color='w')
+                     ha='center', va='center', fontsize=12, color='b')
 
     plt.title('Restricciones alimentarias')
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
