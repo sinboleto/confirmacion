@@ -423,7 +423,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
 
             current_question_index = -2
             conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][3] = user_answer
+            conversation_state['respuestas'][3] = user_answer.replace(',',';')
 
             # Cargar datos en SQL
             carga_SQL(conversation_state)
@@ -538,46 +538,112 @@ def get_data(query):
             data = cursor.fetchall()
     return data
 
-
-def split_string(text, dict_equivalencias):
-    # Step 1: Remove Spanish articles and conjunctions
+def clean_text(text):
     articles = ['el', 'la', 'los', 'las', 'un',
                 'una', 'unos', 'unas', 'lo', 'al', 'del']
     conjunctions = ['y', 'e', 'ni', 'que', 'o', 'u', 'pero', 'aunque',
                     'sin embargo', 'por lo tanto', 'así que', 'porque', 'ya que']
     pattern = r'\b(?:' + '|'.join(articles + conjunctions) + r')\b'
-    text_without_articles_conjunctions = re.sub(
-        pattern, '', text, flags=re.IGNORECASE)
+    text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+    text = text.translate(str.maketrans('', '', string.punctuation))
+    
+    numbers_to_replace = {
+        'una': '1', 'uno': '1', 'dos': '2', 'tres': '3', 'cuatro': '4',
+        'cinco': '5', 'seis': '6', 'siete': '7', 'ocho': '8', 'nueve': '9',
+    }
+    
+    for word, digit in numbers_to_replace.items():
+        text = re.sub(r'\b' + word + r'\b', digit, text, flags=re.IGNORECASE)
 
-    # Step 2: Remove punctuation marks
-    text_without_punctuation = text_without_articles_conjunctions.translate(
-        str.maketrans('', '', string.punctuation))
+    return unidecode(text).strip()
 
-    # Step 3: Split the text before a second number is encountered
-    substrings = re.split(r'(?= \d+\D|$)', text_without_punctuation)
+def process_restriction(text, dict_equivalencias):
+    text = clean_text(text)
+    substrings = re.split(r'\b(?=\d+\D|$)', text)
+    substrings = [s for s in substrings if s != '']
+    processed_substrings = []
 
-    # Step 4: Process each substring in the list
-    for i, substring in enumerate(substrings):
-        # Step 4a: Remove accents
-        substrings[i] = unidecode(substring).strip()
+    for substring in substrings:
+        if re.search(r'\b\d+\b', substring) and not re.search(r'\b(?!\d+\b)\w+\b', substring):
+            substring = f'{substring} no especificado'
 
-        # Step 4b: If there is a number but no text, add 'no especificado'
-        if re.search(r'\b\d+\b', substrings[i]) and not re.search(r'\b(?!\d+\b)\w+\b', substrings[i]):
-            substrings[i] = f'{substrings[i]} no especificado'
+        num_encontrados = sum([1 for category in dict_equivalencias.keys() if category in substring])
+        
+        if num_encontrados > 1:
+            substring = '1 varios'
+        elif num_encontrados == 1 and not re.search(r'\b\d+\b', substring):
+            substring = f'1 {substring}'
+        elif num_encontrados == 0:
+            substring = '1 otro'
 
-        # Step 4c: If restriction not found in dict_equivalencias, add 'otros'
-        encontrado = 0
-        for category in dict_equivalencias.keys():
-            if category in substrings[i]:
-                encontrado = 1
+        processed_substrings.append(substring)
 
-        if encontrado == 0:
-            num_rest = re.search(r'\b\d+\b', substrings[i])
-            if num_rest:
-                substrings[i] = f'{num_rest[0]} otro'
+    return processed_substrings
 
-    return substrings
 
+def summarize_restrictions(df_restricciones, dict_equivalencias):
+    df_restricciones['tipo_restricciones'] = df_restricciones['respuesta_4'].apply(
+        lambda x: process_restriction(x, dict_equivalencias))
+
+    lista_restricciones = df_restricciones['tipo_restricciones'].explode().tolist()
+    lista_restricciones = [e for e in lista_restricciones if e != '']
+
+    cuentas = []
+
+    for categoria in dict_equivalencias.keys():
+        cuenta = 0
+        for restriccion in lista_restricciones:
+            if categoria in restriccion:
+                cuenta += sum([int(s)
+                            for s in re.findall(r'\b\d+\b', restriccion)])
+        cuentas.append(cuenta)
+
+    resumen_restricciones = dict(zip(dict_equivalencias.values(), cuentas))
+    resumen_restricciones = {key: value for key, value in resumen_restricciones.items() if value != 0}
+
+    return resumen_restricciones
+
+def visualize_summary(summary):
+    categories = list(summary.keys())
+    values = list(summary.values())
+    width = 0.25
+
+    plt.figure()
+    bottom = np.zeros(len(categories))
+    altura = 0
+    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153', '#142029']
+    colors = colors[:len(categories)-1]
+
+    for category, weight_count, color in zip(categories, np.array(values), colors):
+        p = plt.bar(0, weight_count, label=category,
+                    bottom=bottom, color=color)
+        p = plt.bar(1, 0, label=category,
+                    bottom=bottom, color=color)
+        bottom += weight_count
+        altura += weight_count
+        if weight_count > 0:
+            plt.text(0, altura - weight_count / 2, str(weight_count),
+                     ha='center', va='center', fontsize=12, color='w')
+
+    plt.title('Restricciones alimentarias')
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Create a legend
+    legend_labels = [f"{category}" for category in categories]
+    plt.legend(legend_labels, loc='upper right', title='Categorias',
+               bbox_to_anchor=(1, 0.9), borderaxespad=0.)
+
+    plt.axis('off')
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    return plot_base64
+    
 
 # Dashboard
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -675,65 +741,8 @@ def dashboard():
                           'otro': 'Otro'
                           }
 
-    df_restricciones['tipo_restricciones'] = df_restricciones['respuesta_4'].apply(
-        lambda x: split_string(x, dict_equivalencias))
-
-    lista_restricciones = df_restricciones['tipo_restricciones'].explode(
-    ).tolist()
-    lista_restricciones = [e for e in lista_restricciones if e != '']
-
-    cuentas = []
-
-    for categoria in dict_equivalencias.keys():
-        cuenta = 0
-        for restriccion in lista_restricciones:
-            if categoria in restriccion:
-                cuenta += sum([int(s)
-                               for s in re.findall(r'\b\d+\b', restriccion)])
-        cuentas.append(cuenta)
-
-    resumen_restricciones = dict(zip(dict_equivalencias.values(), cuentas))
-    resumen_restricciones = {key: value for key,
-                             value in resumen_restricciones.items() if value != 0}
-
-    # Gráfica
-    categories = list(resumen_restricciones.keys())
-    values = list(resumen_restricciones.values())
-
-    plt.figure()
-    bottom = np.zeros(len(categories))
-
-    altura = 0
-    colors = ['#9FBCD1', '#759FBC', '#5082A5', '#3C617C', '#284153', '#142029']
-    colors = colors[:len(categories)]
-
-    for category, weight_count, color in zip(categories, np.array(values), colors):
-        p = plt.bar(0, weight_count, label=category,
-                    bottom=bottom, color=color)
-        p = plt.bar(1, 0, label=category,
-                    bottom=bottom, color=color)
-        bottom += weight_count
-        altura += weight_count
-        if weight_count > 0:
-            plt.text(0, altura - weight_count / 2, str(weight_count),
-                     ha='center', va='center', fontsize=12, color='black')
-
-    plt.title('Restricciones alimentarias')
-    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
-
-    # Create a legend
-    legend_labels = [f"{category}" for category in categories]
-    plt.legend(legend_labels, loc='upper right', title='Categorias',
-               bbox_to_anchor=(1, 0.9), borderaxespad=0.)
-
-    plt.axis('off')
-
-    # Save the plot to a bytes buffer and encode it in base64
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    plt.close()
-    plot3_base64 = base64.b64encode(buffer.getvalue()).decode()
+    summary = summarize_restrictions(df_restricciones, dict_equivalencias)
+    plot3_base64 = visualize_summary(summary)
 
     return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
 
