@@ -521,9 +521,12 @@ def upload_files():
     app.logger.info(request.files)
 
     for archivo in request.files:
+
         app.logger.info(archivo)
+
         if 'json_file' in request.files:
             uploaded_json_file = request.files['json_file']
+            app.logger.info(uploaded_json_file)
             if uploaded_json_file.filename != '':
                 # You can process the uploaded file here
                 data = uploaded_json_file.read()
@@ -540,9 +543,11 @@ def upload_files():
                 
         if 'invitation_file' in request.files:
             uploaded_invitation_file = request.files['invitation_file']
+            app.logger.info(uploaded_invitation_file)
             if uploaded_invitation_file.filename != '':
                 file_extension = os.path.splitext(uploaded_invitation_file.filename)[1]
                 filename = f'invitacion_{id_evento}.{file_extension}'
+                app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 # Generating URL for the uploaded text file
