@@ -759,18 +759,7 @@ def dashboard():
 
 # Function to establish Ngrok tunnel with edge and additional credentials
 def setup_ngrok_tunnel():
-    options = {
-        'authtoken': ngrok_auth_token,
-        'tunnels': {
-            'confirmaciones': {
-                'proto': 'http',
-                'addr': 'http://localhost:80',
-                'domain': 'https://ltnki0al.ngrok.app/',
-                'edge': 'edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy'
-            }
-        }
-    }
-    ngrok_url = ngrok.connect(options=options, name='confirmaciones')
+    ngrok_url = ngrok.connect(name='envio_documentos')
     return ngrok_url
 
 @app.route('/start_ngrok', methods=['GET'])
