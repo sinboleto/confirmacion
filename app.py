@@ -524,7 +524,7 @@ def upload_files():
 
         app.logger.info(archivo)
 
-        if 'json_file' in request.files:
+        if 'json_file' in archivo:
             uploaded_json_file = request.files['json_file']
             app.logger.info(uploaded_json_file)
             if uploaded_json_file.filename != '':
@@ -541,20 +541,25 @@ def upload_files():
                 except json.JSONDecodeError:
                     return 'Archivo JSON no válido.'
                 
-        if 'invitation_file' in request.files:
+        if 'invitation_file' in archivo:
             uploaded_invitation_file = request.files['invitation_file']
             app.logger.info(uploaded_invitation_file)
             if uploaded_invitation_file.filename != '':
                 file_extension = os.path.splitext(uploaded_invitation_file.filename)[1]
-                filename = f'invitacion_{id_evento}.{file_extension}'
+                filename = f'invitacion_{id_evento}{file_extension}'
                 app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 # Generating URL for the uploaded text file
-                url_invitacion = url_for('get_uploaded_text', filename=filename)
+                url_invitacion = url_for('get_uploaded_file', filename=filename)
                 app.logger.info(url_invitacion)
     
     return redirect(url_for('upload_form'))
+
+@app.route('/uploaded_file/<filename>')
+def get_uploaded_file(filename):
+    # Your logic to handle the uploaded text file and return a response
+    return f'Text file: {filename}'
 
 # Function to retrieve data from the database
 def get_data(query):
