@@ -764,13 +764,14 @@ def setup_ngrok_tunnel():
 
 @app.route('/start_ngrok', methods=['GET'])
 def inicio_ngrok():
+    global ngrok_url
     # Call the function to create the tunnel
     ngrok_url = setup_ngrok_tunnel()
     return f'Ngrok tunnel started at: {ngrok_url}'
 
 @app.route('/end_ngrok', methods=['GET'])
 def fin_ngrok():
-    ngrok.disconnect()
+    ngrok.disconnect(ngrok_url)
     return 'Ngrok tunnel stopped'
 
 
