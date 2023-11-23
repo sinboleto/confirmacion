@@ -519,6 +519,7 @@ def upload_files():
         return 'El ID del evento es necesario. Favor de proporcionar un ID del evento y tratar de nuevo.'
     
     app.logger.info(request.files)
+    app.logger.info(request.files.getlist('file_name'))
 
     for archivo in request.files.getlist('file_name'):
         app.logger.info(archivo)
