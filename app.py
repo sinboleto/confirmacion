@@ -759,13 +759,6 @@ def dashboard():
 
 # Function to establish Ngrok tunnel with edge and additional credentials
 def setup_ngrok_tunnel():
-    ngrok_url = ngrok.connect(name='confirmaciones')
-    return ngrok_url
-
-@app.route('/start_ngrok', methods=['GET'])
-def inicio_ngrok():
-    global ngrok_url
-    # Call the function to create the tunnel
     options = {
         'authtoken': ngrok_auth_token,
         'tunnels': {
@@ -777,7 +770,14 @@ def inicio_ngrok():
             }
         }
     }
-    ngrok_url = setup_ngrok_tunnel(options=options)
+    ngrok_url = ngrok.connect(options=options, name='confirmaciones')
+    return ngrok_url
+
+@app.route('/start_ngrok', methods=['GET'])
+def inicio_ngrok():
+    global ngrok_url
+    # Call the function to create the tunnel
+    ngrok_url = setup_ngrok_tunnel()
     return f'Ngrok tunnel started at: {ngrok_url}'
 
 @app.route('/end_ngrok', methods=['GET'])
