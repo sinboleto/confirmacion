@@ -190,8 +190,6 @@ Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de 
                 'respuestas': ['No', 0, 'No', 'Ninguna']
             }
 
-        # app.logger.info(conversation_states)
-
         uploaded_file = ''
         dict_info_invitados = {}
 
@@ -508,10 +506,11 @@ def upload_form():
 
 # Add a route to handle the uploaded JSON file
 @app.route('/upload', methods=['POST'])
-def upload_json_file():
+def upload_files():
     global id_evento
     global uploaded_file
     global dict_info_invitados
+    global url_invitacion
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
 
     # Check if id_evento is empty
@@ -520,23 +519,38 @@ def upload_json_file():
     
     app.logger.info(request.files)
 
-    if 'json_file' in request.files:
-        uploaded_file = request.files['json_file']
-        if uploaded_file.filename != '':
-            # You can process the uploaded file here
-            data = uploaded_file.read()
-            # Convert data to a dictionary if it's in JSON format
-            try:
-                json_data = json.loads(data)
-                # Update dict_info_invitados with the uploaded JSON data
-                dict_info_invitados = {}
-                app.logger.info(json.dumps(dict_info_invitados))
-                for phone_number, info in json_data.items():
-                    dict_info_invitados[phone_number] = info
-                app.logger.info(json.dumps(dict_info_invitados))
-                return redirect(url_for('upload_form'))
-            except json.JSONDecodeError:
-                return 'Archivo JSON no válido.'
+    for archivo in request.files.getlist('file_name'):
+        if 'json_file' in request.files:
+            uploaded_file = request.files['json_file']
+            if uploaded_file.filename != '':
+                # You can process the uploaded file here
+                data = uploaded_file.read()
+                # Convert data to a dictionary if it's in JSON format
+                try:
+                    json_data = json.loads(data)
+                    # Update dict_info_invitados with the uploaded JSON data
+                    dict_info_invitados = {}
+                    for phone_number, info in json_data.items():
+                        dict_info_invitados[phone_number] = info
+                    app.logger.info(json.dumps(dict_info_invitados))
+                    return redirect(url_for('upload_form'))
+                except json.JSONDecodeError:
+                    return 'Archivo JSON no válido.'
+                
+        if 'invitation_file' in request.files:
+            uploaded_file = request.files['invitation_file']
+            if uploaded_file.filename != '':
+                file_extension = os.path.splitext(uploaded_file.filename)[1]
+                filename = f'invitacion_{id_evento}.{file_extension}'
+                uploaded_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                # Generating URL for the uploaded text file
+                url_invitacion = url_for('get_uploaded_text', filename=filename)
+                app.logger.info(url_invitacion)
+                
+                # Process the uploaded text file or perform specific logic here
+            return f'Text file uploaded successfully. URL: {url_invitacion}'
+                
     return 'Ocurrió un error o no se subió un archivo.'
 
 
