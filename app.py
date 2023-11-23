@@ -520,6 +520,7 @@ def upload_files():
     app.logger.info(request.files)
 
     for archivo in request.files.getlist('file_name'):
+        app.logger.info(archivo)
         if 'json_file' in request.files:
             uploaded_file = request.files['json_file']
             if uploaded_file.filename != '':
