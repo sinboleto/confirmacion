@@ -766,7 +766,18 @@ def setup_ngrok_tunnel():
 def inicio_ngrok():
     global ngrok_url
     # Call the function to create the tunnel
-    ngrok_url = setup_ngrok_tunnel()
+    options = {
+        'authtoken': ngrok_auth_token,
+        'tunnels': {
+            'confirmaciones': {
+                'proto': 'http',
+                'addr': 'http://localhost:80',
+                'domain': 'https://ltnki0al.ngrok.app/',
+                'edge': 'edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy'
+            }
+        }
+    }
+    ngrok_url = setup_ngrok_tunnel(options=options)
     return f'Ngrok tunnel started at: {ngrok_url}'
 
 @app.route('/end_ngrok', methods=['GET'])
