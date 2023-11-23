@@ -1,0 +1,7 @@
+authtoken: 2TRLEz7kKtOoFrmsx2fKqdpq88A_7bfBANgtYHDJd3dJr1s81
+tunnels:
+  confirmaciones:
+    proto: http
+    addr: http://localhost:80
+    domain: https://ltnki0al.ngrok.app/
+    edge: edghts_2TTvmZWrGoLtlLkstXKiZcbcPhy
