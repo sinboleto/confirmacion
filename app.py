@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory
 
 # Twilio
 from twilio.twiml.messaging_response import MessagingResponse
@@ -560,6 +560,15 @@ def upload_files():
 def get_uploaded_file(filename):
     # Your logic to handle the uploaded text file and return a response
     return f'Text file: {filename}'
+
+@app.route('/render_invitation')
+def render_invitation():
+    # Assuming 'UPLOAD_FOLDER' is the directory where the files are uploaded
+    # Extracting the filename from the URL (assuming it's the last part of the URL)
+    filename = url_invitacion.rsplit('/', 1)[-1]
+    
+    # Send the file from the directory to the client
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # Function to retrieve data from the database
 def get_data(query):
