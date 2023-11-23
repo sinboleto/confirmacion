@@ -759,8 +759,9 @@ def dashboard():
 
 # Function to establish Ngrok tunnel with edge and additional credentials
 def setup_ngrok_tunnel():
-    ngrok_url = ngrok.connect(name='envio_documentos')
-    return ngrok_url
+    ngrok_tunnel = ngrok.connect(addr='4040',name='envio_documentos')
+    app.logger.info(f'ngrok_url = {ngrok_tunnel}')
+    return ngrok_tunnel
 
 @app.route('/start_ngrok', methods=['GET'])
 def inicio_ngrok():
