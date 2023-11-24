@@ -81,6 +81,8 @@ limite_msg = 15
 lag_msg = 1
 
 # Variables del evento
+content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Revisar
+
 nom_novia = 'Roberta'
 nom_novio = 'Ernesto'
 fecha_evento = '2 de diciembre de 2023'
@@ -91,6 +93,8 @@ lugar_recepcion = 'en el mismo lugar'
 codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
 link_mesa_regalos = 'https://dagiftmx.com/'
 link_soporte = 'https://wa.link/zx5tbb'
+
+dict_variables_evento = {}
 
 # Table config
 try:
@@ -169,15 +173,37 @@ def inicio_conversacion():
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
             boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
-            msg_conf = f"""Hola *{nom_invitado}*,
-Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+            if uploaded_invitation_file == '':
 
-            message = client.messages.create(
-                messaging_service_sid=messaging_service_sid,
-                from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_conf,
-                to=f'whatsapp:{telefono_invitado}'
-            )
+                msg_conf = f"""Hola *{nom_invitado}*,
+    Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_conf,
+                    to=f'whatsapp:{telefono_invitado}'
+                )
+
+            else:
+
+                content_variables = json.dumps({'1': nom_invitado,
+                                                '2': boletos,
+                                                '3': nom_novia,
+                                                '4': nom_novio,
+                                                '5': fecha_evento,
+                                                '6': hora_inicio,
+                                                '7': lugar_evento
+                                                })
+
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    content_sid=content_SID,
+                    content_variables=content_variables,
+                    media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                    to=f'whatsapp:{telefono_invitado}',
+                )
 
             # Store the conversation SID and initial state for each recipient
             conversation_states[telefono_invitado] = {
@@ -191,6 +217,7 @@ Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de 
             }
 
         uploaded_json_file = ''
+        uploaded_invitation_file = ''
         dict_info_invitados = {}
 
         return 'Confirmación enviada'
@@ -512,6 +539,7 @@ def upload_files():
     global uploaded_invitation_file
     global dict_info_invitados
     global url_invitacion
+
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
 
     # Check if id_evento is empty
