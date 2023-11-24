@@ -187,15 +187,18 @@ def inicio_conversacion():
                 )
 
             else:
-
+                
                 content_variables = {'1': nom_invitado,
-                                                '2': boletos,
-                                                '3': nom_novia,
-                                                '4': nom_novio,
-                                                '5': fecha_evento,
-                                                '6': hora_inicio,
-                                                '7': lugar_evento
-                                                }
+                                    '2': boletos,
+                                    '3': nom_novia,
+                                    '4': nom_novio,
+                                    '5': fecha_evento,
+                                    '6': hora_inicio,
+                                    '7': lugar_evento,
+                                    }
+                
+                app.logger.info(json.dumps(content_variables))
+                app.logger.info(type(content_variables))
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
