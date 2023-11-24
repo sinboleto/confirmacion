@@ -203,6 +203,7 @@ def inicio_conversacion():
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
+                    body='',
                     content_sid=content_SID,
                     content_variables=content_variables,
                     media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
