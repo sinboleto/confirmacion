@@ -197,6 +197,8 @@ def inicio_conversacion():
                                     '7': lugar_evento,
                                     }
                 
+                content_variables = json.dumps(content_variables)
+                
                 app.logger.info(json.dumps(content_variables))
                 app.logger.info(type(content_variables))
 
