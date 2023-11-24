@@ -162,9 +162,10 @@ def inicio_conversacion():
     global msg_conf
     global conversation_states
     global uploaded_json_file
+    global uploaded_invitation_file
     global dict_info_invitados
 
-    if uploaded_json_file != '':
+    if uploaded_json_file.filename != '':
         for telefono_invitado in dict_info_invitados:
 
             conversation = conversations_client.conversations.create()
@@ -173,7 +174,7 @@ def inicio_conversacion():
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
             boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
-            if uploaded_invitation_file == '':
+            if uploaded_invitation_file.filename == '':
 
                 msg_conf = f"""Hola *{nom_invitado}*,
     Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
