@@ -83,8 +83,8 @@ lag_msg = 1
 # Variables del evento
 content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Revisar
 
-nom_novia = 'Roberta'
-nom_novio = 'Ernesto'
+nom_novia = 'Sofía'
+nom_novio = 'Benito'
 fecha_evento = '2 de diciembre de 2023'
 hora_inicio = '13:00 hrs'
 lugar_evento = 'Xochitepec, Morelos'
