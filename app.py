@@ -20,9 +20,6 @@ import time
 # POSTGRES SQL
 import psycopg2
 
-# Ngrok
-from pyngrok import ngrok
-
 # Graph
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -164,6 +161,7 @@ def inicio_conversacion():
     global uploaded_json_file
     global uploaded_invitation_file
     global dict_info_invitados
+    global url_invitacion
 
     if uploaded_json_file.filename != '':
         for telefono_invitado in dict_info_invitados:
@@ -193,8 +191,7 @@ def inicio_conversacion():
                 app.logger.info(json.dumps(content_variables))
                 app.logger.info(type(content_variables))
                 
-                filename = uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf))
-                url_invitacion = url_for('get_uploaded_file', filename=filename)
+                url_invitacion = uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf))
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
@@ -202,8 +199,7 @@ def inicio_conversacion():
                     body='',
                     content_sid=content_SID,
                     content_variables=content_variables,
-                    # media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
-                    media_url=url_invitacion,
+                    media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
                     to=f'whatsapp:{telefono_invitado}',
                 )
 
@@ -821,24 +817,6 @@ def dashboard():
     plot3_base64 = visualize_summary(summary)
 
     return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
-
-# Function to establish Ngrok tunnel with edge and additional credentials
-# def setup_ngrok_tunnel():
-#     ngrok_tunnel = ngrok.connect(addr='4040',name='envio_documentos')
-#     app.logger.info(f'ngrok_url = {ngrok_tunnel}')
-#     return ngrok_tunnel
-
-# @app.route('/start_ngrok', methods=['GET'])
-# def inicio_ngrok():
-#     global ngrok_url
-#     # Call the function to create the tunnel
-#     ngrok_url = setup_ngrok_tunnel()
-#     return f'Ngrok tunnel started at: {ngrok_url}'
-
-# @app.route('/end_ngrok', methods=['GET'])
-# def fin_ngrok():
-#     ngrok.disconnect(ngrok_url)
-#     return 'Ngrok tunnel stopped'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
