@@ -65,10 +65,12 @@ global messages
 global dict_info_invitados
 global conversation_states
 global info_plantillas
+global url_invitacion
 
 dict_info_invitados = {}
 conversation_states = {}
 info_plantillas = {}
+url_invitacion = ''
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 15
