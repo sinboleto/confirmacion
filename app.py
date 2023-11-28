@@ -186,9 +186,9 @@ def inicio_conversacion():
                 content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
                 
                 app.logger.info(json.dumps(content_variables))
-                app.logger.info(type(content_variables))
                 
                 url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf)
+                app.logger.info(url_invitacion)
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
@@ -586,6 +586,7 @@ def get_uploaded_file(filename):
 
 @app.route('/render_invitation')
 def render_invitation():
+    global url_invitacion
     # Assuming 'UPLOAD_FOLDER' is the directory where the files are uploaded
     # Extracting the filename from the URL (assuming it's the last part of the URL)
     filename = url_invitacion.rsplit('/', 1)[-1]
