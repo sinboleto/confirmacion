@@ -56,9 +56,6 @@ client = Client(account_sid, auth_token)
 # Twilio Conversations API client
 conversations_client = client.conversations.v1.services(conversations_sid)
 
-# Set Ngrok authentication token
-ngrok.set_auth_token(ngrok_auth_token)
-
 UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -191,7 +188,7 @@ def inicio_conversacion():
                 app.logger.info(json.dumps(content_variables))
                 app.logger.info(type(content_variables))
                 
-                url_invitacion = uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf))
+                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf)
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
