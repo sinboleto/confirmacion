@@ -189,7 +189,7 @@ def inicio_conversacion():
                 
                 app.logger.info(json.dumps(content_variables))
                 
-                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}.pdf')
+                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
                 app.logger.info(url_invitacion)
 
                 message = client.messages.create(
