@@ -192,6 +192,9 @@ def inicio_conversacion():
                 
                 app.logger.info(json.dumps(content_variables))
                 app.logger.info(type(content_variables))
+                
+                filename = uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'f{nom_invitado}'.pdf))
+                url_invitacion = url_for('get_uploaded_file', filename=filename)
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
@@ -199,7 +202,8 @@ def inicio_conversacion():
                     body='',
                     content_sid=content_SID,
                     content_variables=content_variables,
-                    media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                    # media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                    media_url=url_invitacion,
                     to=f'whatsapp:{telefono_invitado}',
                 )
 
