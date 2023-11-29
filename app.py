@@ -173,26 +173,42 @@ def inicio_conversacion():
 
             if uploaded_invitation_file.filename == '':
 
-                msg_conf = f"""Hola *{nom_invitado}*,
-    Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+                if invitacion_carpeta == 'si':
 
-                message = client.messages.create(
-                    messaging_service_sid=messaging_service_sid,
-                    from_=f'whatsapp:{twilio_phone_number}',
-                    body=msg_conf,
-                    to=f'whatsapp:{telefono_invitado}'
-                )
+                    content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
+                    app.logger.info(json.dumps(content_variables))
+
+                    url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
+                    app.logger.info(url_invitacion)
+
+                    # Incluir selección si las invitaciones están en el folder del evento (p.ej., P_001)
+
+                    message = client.messages.create(
+                        messaging_service_sid=messaging_service_sid,
+                        from_=f'whatsapp:{twilio_phone_number}',
+                        body='',
+                        content_sid=content_SID,
+                        content_variables=content_variables,
+                        media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                        to=f'whatsapp:{telefono_invitado}',
+                    )
+
+                else:
+
+                    msg_conf = f"""Hola *{nom_invitado}*,
+        Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+
+                    message = client.messages.create(
+                        messaging_service_sid=messaging_service_sid,
+                        from_=f'whatsapp:{twilio_phone_number}',
+                        body=msg_conf,
+                        to=f'whatsapp:{telefono_invitado}'
+                    )
 
             else:
                 
                 content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
-                
                 app.logger.info(json.dumps(content_variables))
-                
-                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
-                app.logger.info(url_invitacion)
-
-                # Incluir selección si las invitaciones están en el folder del evento (p.ej., P_001)
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
@@ -534,12 +550,15 @@ def upload_form():
 @app.route('/upload', methods=['POST'])
 def upload_files():
     global id_evento
+    global invitacion_carpeta
     global uploaded_json_file
     global uploaded_invitation_file
     global dict_info_invitados
     global url_invitacion
 
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
+    invitacion_carpeta = request.form.get('invitacion_carpeta')  # Get the id_evento input value
+    app.logger.info(archivo)
 
     # Check if id_evento is empty
     if not id_evento:
