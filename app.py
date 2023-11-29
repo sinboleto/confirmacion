@@ -192,6 +192,8 @@ def inicio_conversacion():
                 url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
                 app.logger.info(url_invitacion)
 
+                # Incluir selección si las invitaciones están en el folder del evento (p.ej., P_001)
+
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
@@ -576,7 +578,7 @@ def upload_files():
                 uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 # Generating URL for the uploaded text file
-                url_invitacion = url_for('get_uploaded_file', filename=filename)
+                url_invitacion = url_for('get_uploaded_file', filename=filename) # Ver si esto es necesario
                 app.logger.info(url_invitacion)
     
     return redirect(url_for('upload_form'))
