@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_file,
 
 # Twilio
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
 # System
@@ -30,6 +31,9 @@ import base64
 
 # Quitar acentos
 from unidecode import unidecode
+
+# Fecha
+from datetime import date
 
 
 # Main script
@@ -97,6 +101,18 @@ try:
                 'CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 INT, respuesta_3 TEXT, respuesta_4 TEXT);')
 except psycopg2.errors.DuplicateTable:
     pass
+finally:
+    connection.close()
+
+try:
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'CREATE TABLE errores_confirmaciones (id_evento TEXT, nom_invitado TEXT, telefono TEXT, fecha DATE);')
+except psycopg2.errors.DuplicateTable:
+    pass
+finally:
+    connection.close()
 
 # Input de plantillas
 @app.route('/inputs', methods=['GET', 'POST'])
@@ -162,24 +178,53 @@ def inicio_conversacion():
     if uploaded_json_file.filename != '':
         for telefono_invitado in dict_info_invitados:
 
-            conversation = conversations_client.conversations.create()
+            try:
 
-            # Get the recipient_name dynamically for each recipient_phone_number
-            nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
-            boletos = dict_info_invitados[telefono_invitado]['num_boletos']
+                conversation = conversations_client.conversations.create()
 
-            if uploaded_invitation_file.filename == '':
+                # Get the recipient_name dynamically for each recipient_phone_number
+                nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
+                boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
-                if invitacion_carpeta == 'si':
+                if uploaded_invitation_file.filename == '':
 
+                    if invitacion_carpeta == 'si':
+
+                        content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
+                        app.logger.info(json.dumps(content_variables))
+
+                        UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
+                        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+                        url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
+                        app.logger.info(url_invitacion)
+
+                        message = client.messages.create(
+                            messaging_service_sid=messaging_service_sid,
+                            from_=f'whatsapp:{twilio_phone_number}',
+                            body='',
+                            content_sid=content_SID,
+                            content_variables=content_variables,
+                            media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                            to=f'whatsapp:{telefono_invitado}',
+                        )
+
+                    else:
+
+                        msg_conf = f"""Hola *{nom_invitado}*,
+            Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+
+                        message = client.messages.create(
+                            messaging_service_sid=messaging_service_sid,
+                            from_=f'whatsapp:{twilio_phone_number}',
+                            body=msg_conf,
+                            to=f'whatsapp:{telefono_invitado}'
+                        )
+
+                else:
+                    
                     content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
                     app.logger.info(json.dumps(content_variables))
-
-                    UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
-                    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-                    url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
-                    app.logger.info(url_invitacion)
 
                     message = client.messages.create(
                         messaging_service_sid=messaging_service_sid,
@@ -191,32 +236,11 @@ def inicio_conversacion():
                         to=f'whatsapp:{telefono_invitado}',
                     )
 
-                else:
-
-                    msg_conf = f"""Hola *{nom_invitado}*,
-        Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
-
-                    message = client.messages.create(
-                        messaging_service_sid=messaging_service_sid,
-                        from_=f'whatsapp:{twilio_phone_number}',
-                        body=msg_conf,
-                        to=f'whatsapp:{telefono_invitado}'
-                    )
-
-            else:
-                
-                content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
-                app.logger.info(json.dumps(content_variables))
-
-                message = client.messages.create(
-                    messaging_service_sid=messaging_service_sid,
-                    from_=f'whatsapp:{twilio_phone_number}',
-                    body='',
-                    content_sid=content_SID,
-                    content_variables=content_variables,
-                    media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
-                    to=f'whatsapp:{telefono_invitado}',
-                )
+            except TwilioRestException as e:
+                carga_SQL_errores(id_evento, nom_invitado, telefono_invitado)
+                app.logger.error(f"Failed to send message to {telefono_invitado}: {str(e)}")
+                # Continue the loop if sending the message fails for any specific recipient
+                continue
 
             # Store the conversation SID and initial state for each recipient
             conversation_states[telefono_invitado] = {
@@ -238,25 +262,32 @@ def inicio_conversacion():
         return 'Subir archivo de base de datos'
 
 
-def carga_SQL(conversation_state):
+def carga_SQL_confirmaciones(conversation_state):
     # Cargar datos en SQL
     with connection.cursor() as cursor:
         cursor.execute('INSERT INTO confirmaciones VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
                        (str(conversation_state['id_evento']),  # id_evento
                         str(conversation_state['sid']),  # sid
-                           # nom_invitado
-                           str(conversation_state['nom_invitado']),
-                           # telefono
-                           str(conversation_state['telefono']),
-                           int(conversation_state['boletos']),  # boletos
-                           # respuesta_1
-                           str(conversation_state['respuestas'][0]),
-                           # respuesta_2
-                           str(conversation_state['respuestas'][1]),
-                           # respuesta_3
-                           str(conversation_state['respuestas'][2]),
-                           # respuesta_4
-                           str(conversation_state['respuestas'][3])
+                        str(conversation_state['nom_invitado']), # nom_invitado
+                        str(conversation_state['telefono']), # telefono
+                        int(conversation_state['boletos']),  # boletos
+                        str(conversation_state['respuestas'][0]), # respuesta_1
+                        str(conversation_state['respuestas'][1]), # respuesta_2
+                        str(conversation_state['respuestas'][2]), # respuesta_3
+                        str(conversation_state['respuestas'][3]) # respuesta_4
+                        )
+                       )
+        connection.commit()
+
+
+def carga_SQL_errores(id_evento, nom_invitado, telefono):
+    # Cargar datos en SQL
+    with connection.cursor() as cursor:
+        cursor.execute('INSERT INTO errores_confirmaciones VALUES (%s, %s, %s, %s);',
+                       (str(id_evento),  # id_evento
+                        str(nom_invitado), # nom_invitado
+                        str(telefono), # telefono
+                        date.today() # fecha
                         )
                        )
         connection.commit()
@@ -365,7 +396,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
                 conversation_state['respuestas'][0] = 'No'
 
                 # Cargar datos en SQL
-                carga_SQL(conversation_state)
+                carga_SQL_confirmaciones(conversation_state)
 
             else:
                 time.sleep(lag_msg)
@@ -440,7 +471,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
                 conversation_state['respuestas'][2] = 'No'
 
                 # Cargar datos en SQL
-                carga_SQL(conversation_state)
+                carga_SQL_confirmaciones(conversation_state)
 
             else:
                 time.sleep(lag_msg)
@@ -474,7 +505,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
             conversation_state['respuestas'][3] = user_answer.replace(',',';')
 
             # Cargar datos en SQL
-            carga_SQL(conversation_state)
+            carga_SQL_confirmaciones(conversation_state)
 
         else:
             time.sleep(lag_msg)
