@@ -538,7 +538,7 @@ def conv_xlsx_json():
     return 'Ocurrió un error o no se subió un archivo.'
 
 @app.route('/validacion_telefonos', methods=['POST'])
-def conv_xlsx_json():
+def validacion_telefonos():
     if 'xlsx_file' in request.files:
         uploaded_file = request.files['xlsx_file']
 
