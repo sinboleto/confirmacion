@@ -101,8 +101,6 @@ try:
                 'CREATE TABLE confirmaciones (id_evento TEXT, sid TEXT, nom_invitado TEXT, telefono TEXT, boletos INT, respuesta_1 TEXT, respuesta_2 INT, respuesta_3 TEXT, respuesta_4 TEXT);')
 except psycopg2.errors.DuplicateTable:
     pass
-finally:
-    connection.close()
 
 try:
     with connection:
@@ -111,8 +109,6 @@ try:
                 'CREATE TABLE errores_confirmaciones (id_evento TEXT, nom_invitado TEXT, telefono TEXT, fecha DATE);')
 except psycopg2.errors.DuplicateTable:
     pass
-finally:
-    connection.close()
 
 # Input de plantillas
 @app.route('/inputs', methods=['GET', 'POST'])
