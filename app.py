@@ -537,6 +537,45 @@ def conv_xlsx_json():
             return 'Formato de archivo inválido. Favor de subir un archivo .xlsx.'
     return 'Ocurrió un error o no se subió un archivo.'
 
+@app.route('/validacion_telefonos', methods=['POST'])
+def conv_xlsx_json():
+    if 'xlsx_file' in request.files:
+        uploaded_file = request.files['xlsx_file']
+
+        if uploaded_file.filename.endswith('.xlsx'):
+            # Read the contents of the Excel file into a DataFrame
+            try:
+                telefono_modificado = []
+                df = pd.read_excel(uploaded_file, sheet_name='BD')
+
+                for telefono in df['telefono']:
+                    
+                    if len(str(telefono)) == 10:
+                        telefono_validado = f'+521{telefono}'
+                        info_telefono = client.lookups.v2.phone_numbers(f'{telefono_validado}').fetch()
+                    else:
+                        info_telefono = client.lookups.v2.phone_numbers(f'+{telefono}').fetch()
+
+                    if info_telefono.valid:
+                        telefono_modificado.append(info_telefono.phone_number)
+                    else:
+                        telefono_modificado.append('Revisar número')
+
+
+                df['telefono_modificado'] = telefono_modificado
+
+                # Save the modified DataFrame to a new Excel file
+                xlsx_filename = 'lista_invitados_validada.xlsx'
+                df.to_excel(xlsx_filename, index=False)
+
+                return send_file(xlsx_filename, as_attachment=True, download_name=xlsx_filename)
+
+            except Exception as e:
+                return f'Error en la lectura del archivo de Excel: {str(e)}'
+        else:
+            return 'Formato de archivo inválido. Favor de subir un archivo .xlsx.'
+    return 'Ocurrió un error o no se subió un archivo.'
+
 
 # Add a new route to render the HTML form
 @app.route('/upload', methods=['GET'])
