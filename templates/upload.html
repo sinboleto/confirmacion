@@ -56,17 +56,18 @@
 
                 <div>
                     <h3>1.3 Subir archivo de invitación (opcional)</h3>
-                    <label for="invitation_file">Cargar invitación individual (PDF, PNG o JPEG):</label>
-                    <input type="file" name="invitation_file" id="invitation_file" accept=".pdf, image/png, image/jpeg">
+                    <p>Invitación en carpetas</p>
+                    <label for="invitacion_carpeta_si">Si</label>
+                    <input type="radio" id="invitacion_carpeta_si" name="invitacion_carpeta" value="si"><br>
+
+                    <label for="invitacion_carpeta_no">No</label>
+                    <input type="radio" id="invitacion_carpeta_no" name="invitacion_carpeta" value="no" checked><br>
 
                     <br>
 
-                    <h4>Invitación en carpetas</h4>
-                    <label for="invitacion_carpeta_si">Si</label>
-                    <input type="radio" id="invitacion_carpeta_si" name="invitacion_carpeta" value="si">
+                    <label for="invitation_file">Cargar invitación individual (PDF, PNG o JPEG):</label>
+                    <input type="file" name="invitation_file" id="invitation_file" accept=".pdf, image/png, image/jpeg">
 
-                    <label for="invitacion_carpeta_no">No</label>
-                    <input type="radio" id="invitacion_carpeta_no" name="invitacion_carpeta" value="no" checked>
                 </div>
 
                 <button type="submit">Subir información</button>

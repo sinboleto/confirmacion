@@ -558,7 +558,7 @@ def upload_files():
 
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
     invitacion_carpeta = request.form.get('invitacion_carpeta')  # Get the id_evento input value
-    app.logger.info(archivo)
+    app.logger.info(invitacion_carpeta)
 
     # Check if id_evento is empty
     if not id_evento:
