@@ -16,8 +16,10 @@
 
         <div>
             <h2 style="color: #9524D6">0. Validación de números de teléfono</h2>
-            <p>El primer paso es corroborar que <b>los números de teléfono de los invitados sean correctos</b>. Sube el
-                archivo<br> con 3 columnas (nom_invitado, telefono, num_boletos) y valida los números</p>
+            <p>El primer paso es corroborar que <b>los números de teléfono de los invitados sean correctos</b>.
+                <br>Sube el archivo con 3 columnas (nom_invitado, telefono, num_boletos) y valida los números.
+                <br><b>En caso de ser necesario, corrige los números en el archivo original y vuelve a validarlos</b>
+            </p>
 
             <form method="POST" action="/validacion_telefonos" enctype="multipart/form-data">
                 <label for="xlsx_file">Cargar base de datos (.xlsx):</label>
@@ -31,9 +33,9 @@
 
         <div>
             <h2 style="color: #9524D6">1. Transformación de Excel a JSON</h2>
-            <p>Una vez validados los teléfonos (la del paso 0), selecciona el archivo validado para convertirlo a
+            <p>Una vez validados los teléfonos, selecciona el archivo verificado (descargado en el 0) para convertirlo a
                 JSON.<br><b>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el
-                    archivo JSON y en caso de ser necesario, modificarlos.</b></p>
+                    archivo JSON y en caso de ser necesario, modificarlos</b></p>
 
             <form method="POST" action="/conv_xlsx_json" enctype="multipart/form-data">
                 <label for="json_file">Cargar base de datos (.xlsx):</label>
@@ -60,8 +62,8 @@
                 <!-- Aquí vendrá la información de los placeholders del evento -->
 
                 <div>
-                    <h3>2.2 Base de datos de los invitados (la del paso 1)</h3>
-                    <label for="json_file">Cargar base de datos (.json):</label>
+                    <h3>2.2 Base de datos de los invitados</h3>
+                    <label for="json_file">Cargar base de datos (paso 1) (.json):</label>
                     <input type="file" name="json_file" id="json_file" accept=".json" required>
                 </div>
 
@@ -69,16 +71,16 @@
 
                 <div>
                     <h3>2.3 Invitación (opcional)</h3>
-                    <p>Invitación en carpetas<br><b>Es importante validar que exista la carpeta y que el nombre
-                            coincida con el ID del evento y que el tamaño de los archivos no exceda los 16 MB</b></p>
+                    <p>Invitación en carpetas <b>(Es importante validar que exista la carpeta y que el nombre
+                            coincida con el ID del evento y que el tamaño de los archivos no exceda los 16 MB)</b></p>
                     <label for="invitacion_carpeta_si">Si</label>
                     <input type="radio" id="invitacion_carpeta_si" name="invitacion_carpeta" value="si"><br>
 
                     <label for="invitacion_carpeta_no">No</label>
                     <input type="radio" id="invitacion_carpeta_no" name="invitacion_carpeta" value="no" checked><br>
 
-                    <label for="invitation_file">Cargar invitación individual (PDF, PNG o JPEG):</label>
-                    <input type="file" name="invitation_file" id="invitation_file" accept=".pdf, image/png, image/jpeg">
+                    <label for="invitation_file">Cargar invitación individual (.pdf, .png o .jpeg):</label>
+                    <input type="file" name="invitation_file" id="invitation_file" accept=".pdf, .png, .jpeg">
 
                 </div>
 
