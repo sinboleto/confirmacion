@@ -15,7 +15,7 @@
         <br>
 
         <div>
-            <h2>0. Validación de números de teléfono</h2>
+            <h2 style="color: #9524D6">0. Validación de números de teléfono</h2>
             <p>El primer paso es corroborar que <b>los números de teléfono de los invitados sean correctos</b>. Sube el
                 archivo<br> con 3 columnas (nom_invitado, telefono, num_boletos) y valida los números</p>
 
@@ -30,7 +30,7 @@
         <br>
 
         <div>
-            <h2>1. Transformación de Excel a JSON</h2>
+            <h2 style="color: #9524D6">1. Transformación de Excel a JSON</h2>
             <p>En caso de tener la base de datos en formato de Excel, selecciona el archivo para convertirlo a
                 JSON.<br><b>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el
                     archivo JSON y en caso de ser necesario, modificarlos.</b></p>
@@ -46,7 +46,8 @@
         <br>
 
         <div>
-            <h2>2. Alta de información</h2>
+            <h2 style="color: #9524D6">2. Alta de información</h2>
+            <p>Sube la información de tu evento y tus invitados para realizar las confirmaciones personalizadas</p>
             <br>
             <form method="POST" action="/upload" enctype="multipart/form-data">
                 <div>
@@ -69,7 +70,7 @@
 
                 <div>
                     <h3>2.3 Subir archivo de invitación (opcional)</h3>
-                    <p>Invitación en carpetas (validar que exista la carpeta y qu el nombre coincida con el ID del
+                    <p>Invitación en carpetas (validar que exista la carpeta y que el nombre coincida con el ID del
                         evento)</p>
                     <label for="invitacion_carpeta_si">Si</label>
                     <input type="radio" id="invitacion_carpeta_si" name="invitacion_carpeta" value="si"><br>
@@ -89,7 +90,7 @@
         <br>
 
         <div>
-            <h2>3. Envio de confirmaciones</h2>
+            <h2 style="color: #9524D6">3. Envio de confirmaciones</h2>
             <form method="GET" action="/start">
                 <p>Ya que hayas subido la información, envía las confirmaciones</p>
                 <button type="submit">Enviar confirmaciones</button>
