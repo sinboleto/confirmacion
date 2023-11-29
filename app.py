@@ -56,9 +56,6 @@ client = Client(account_sid, auth_token)
 # Twilio Conversations API client
 conversations_client = client.conversations.v1.services(conversations_sid)
 
-UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 # Model inputs
 global msg_conf
 global messages
@@ -178,10 +175,11 @@ def inicio_conversacion():
                     content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento})
                     app.logger.info(json.dumps(content_variables))
 
+                    UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
+                    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
                     url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
                     app.logger.info(url_invitacion)
-
-                    # Incluir selección si las invitaciones están en el folder del evento (p.ej., P_001)
 
                     message = client.messages.create(
                         messaging_service_sid=messaging_service_sid,
@@ -591,6 +589,10 @@ def upload_files():
             uploaded_invitation_file = request.files['invitation_file']
             app.logger.info(uploaded_invitation_file)
             if uploaded_invitation_file.filename != '':
+
+                UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
+                app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
                 file_extension = os.path.splitext(uploaded_invitation_file.filename)[1]
                 filename = f'invitacion_{id_evento}{file_extension}'
                 app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
