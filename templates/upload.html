@@ -31,7 +31,7 @@
 
         <div>
             <h2 style="color: #9524D6">1. Transformación de Excel a JSON</h2>
-            <p>En caso de tener la base de datos en formato de Excel, selecciona el archivo para convertirlo a
+            <p>Una vez validados los teléfonos (la del paso 0), selecciona el archivo validado para convertirlo a
                 JSON.<br><b>Es importante revisar que los acentos y caracteres especiales estén de forma correcta en el
                     archivo JSON y en caso de ser necesario, modificarlos.</b></p>
 
@@ -60,7 +60,7 @@
                 <!-- Aquí vendrá la información de los placeholders del evento -->
 
                 <div>
-                    <h3>2.2 Base de datos de los invitados</h3>
+                    <h3>2.2 Base de datos de los invitados (la del paso 1)</h3>
                     <label for="json_file">Cargar base de datos (.json):</label>
                     <input type="file" name="json_file" id="json_file" accept=".json" required>
                 </div>
@@ -68,9 +68,9 @@
                 <br>
 
                 <div>
-                    <h3>2.3 Subir archivo de invitación (opcional)</h3>
-                    <p>Invitación en carpetas (validar que exista la carpeta y que el nombre coincida con el ID del
-                        evento)</p>
+                    <h3>2.3 Invitación (opcional)</h3>
+                    <p>Invitación en carpetas<br><b>Es importante validar que exista la carpeta y que el nombre
+                            coincida con el ID del evento y que el tamaño de los archivos no exceda los 16 MB</b></p>
                     <label for="invitacion_carpeta_si">Si</label>
                     <input type="radio" id="invitacion_carpeta_si" name="invitacion_carpeta" value="si"><br>
 
@@ -91,7 +91,7 @@
         <div>
             <h2 style="color: #9524D6">3. Envio de confirmaciones</h2>
             <form method="GET" action="/start">
-                <p>Ya que hayas subido la información, envía las confirmaciones</p>
+                <p>Ya que hayas subido la información, da click en el botón y envía las confirmaciones</p>
                 <button type="submit">Enviar confirmaciones</button>
             </form>
         </div>
