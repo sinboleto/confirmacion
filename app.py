@@ -80,16 +80,28 @@ lag_msg = 1
 # Variables del evento
 content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Revisar
 
-nom_novia = 'Sofía'
-nom_novio = 'Benito'
-fecha_evento = '2 de diciembre de 2023'
+# nom_novia = 'Sofía'
+# nom_novio = 'Benito'
+# fecha_evento = '2 de diciembre de 2023'
+# hora_inicio = '13:00 hrs'
+# lugar_evento = 'Xochitepec, Morelos'
+# lugar_ceremonia = 'Jardín Paraíso'
+# lugar_recepcion = 'en el mismo lugar'
+# codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
+# link_mesa_regalos = 'https://dagiftmx.com/'
+# link_soporte = 'https://wa.link/zx5tbb'
+
+nom_novia = 'Julieta Rodríguez'
+nom_novio = 'Daniel Rosado'
+fecha_evento = '10 de febrero de 2024'
 hora_inicio = '13:00 hrs'
-lugar_evento = 'Xochitepec, Morelos'
-lugar_ceremonia = 'Jardín Paraíso'
+lugar_evento = 'Mérida, Yucatán'
+lugar_ceremonia = 'Quinta Montes Molina'
 lugar_recepcion = 'en el mismo lugar'
-codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
-link_mesa_regalos = 'https://dagiftmx.com/'
-link_soporte = 'https://wa.link/zx5tbb'
+codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)' # Revisar
+link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token' # Revisar
+link_soporte = 'https://wa.link/zx5tbb' # Cambiar
+# Incluir página de internet de los novios
 
 dict_variables_evento = {}
 
