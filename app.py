@@ -164,7 +164,7 @@ def index():
 Te escribimos para confirmar la asistencia de {boletos_input} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)""",
         'msg_conf_num': "Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*",
         'msg_info_general': """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
+- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *{en el mismo lugar}*
 
 - El *código de vestimenta* es {codigo_vestimenta}
 
@@ -198,6 +198,7 @@ def inicio_conversacion():
             try:
 
                 conversation = conversations_client.conversations.create()
+                # https://www.twilio.com/docs/conversations/api/conversation-message-resource asociar mensajes a conversaciones
 
                 # Get the recipient_name dynamically for each recipient_phone_number
                 nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
@@ -383,7 +384,7 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
 
     # Información general
     msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *en el mismo lugar*
+- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *{lugar_recepcion}*
 
 - El *código de vestimenta* es {codigo_vestimenta}
 
