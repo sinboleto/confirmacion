@@ -933,5 +933,94 @@ def dashboard():
 
     return render_template('dashboard.html', id_evento_values=id_evento_values, data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
 
+# Dashboard
+@app.route('/dashboard_eventos/<id_evento>', methods=['GET', 'POST'])
+def dashboard_eventos(id_evento):
+
+    data = get_data(
+            f"SELECT id_evento, nom_invitado, boletos, respuesta_1, respuesta_2, respuesta_3, respuesta_4 FROM confirmaciones WHERE id_evento ='{id_evento}' ORDER BY id_evento;")
+
+    columnas = ['id_evento', 'nom_invitado', 'boletos',
+                'respuesta_1', 'respuesta_2', 'respuesta_3', 'respuesta_4']
+    df = pd.DataFrame(data, columns=columnas)
+
+    # Create the first graph
+    plt.figure()
+    confirmed = len(df[df['respuesta_1'] == 'Si'])
+    not_confirmed = len(df[df['respuesta_1'] == 'No'])
+    plt.bar(['Si', 'No'], [confirmed, not_confirmed],
+            color=['#9524D6', '#D62466'])
+    plt.title('Invitados confirmados')
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Add total numbers to the graph
+    if confirmed > 0:
+        plt.text(0, confirmed / 2, str(confirmed),
+                 ha='center', va='center', fontsize=12, color='black')
+
+    if not_confirmed > 0:
+        plt.text(1, not_confirmed / 2, str(not_confirmed),
+                 ha='center', va='center', fontsize=12, color='black')
+
+    plt.box(False)
+    plt.yticks([])
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot1_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # Create the second graph
+    plt.figure()
+    attending = df[df['respuesta_1'] == 'Si']['respuesta_2'].sum()
+    not_attending = df[df['respuesta_1'] == 'No']['boletos'].sum()
+    plt.bar(['Si', 'No'], [attending, not_attending],
+            color=['#9524D6', '#D62466'])
+    plt.title('Personas que asistirán')
+    plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:.0f}'))
+
+    # Add total numbers to the graph
+    if attending > 0:
+        plt.text(0, attending / 2, str(attending),
+                 ha='center', va='center', fontsize=12, color='black')
+
+    if not_attending > 0:
+        plt.text(1, not_attending / 2, str(not_attending),
+                 ha='center', va='center', fontsize=12, color='black')
+
+    plt.box(False)
+    plt.yticks([])
+
+    # Save the plot to a bytes buffer and encode it in base64
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+    plot2_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # Create the third graph
+    df_restricciones = df[df['respuesta_3'] == 'Si'].drop(columns=['id_evento', 'nom_invitado', 'telefono', 'boletos',
+                                                                   'respuesta_1', 'respuesta_2', 'respuesta_3'])
+
+    # Equivalencias
+    dict_equivalencias = {
+        'alergi': 'Alérgico',
+        'vegan': 'Vegano',
+        'vegetarian': 'Vegetariano',
+        'celiac': 'Celiaco', 
+        'intol':'Intolerante',
+        'no especificado': 
+        'No especificado',
+        'otro': 'Otro', 
+        'varios':'+1 restricción',
+    }
+
+    summary = summarize_restrictions(df_restricciones, dict_equivalencias)
+    plot3_base64 = visualize_summary(summary)
+
+    return render_template('dashboard_eventos.html', data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
