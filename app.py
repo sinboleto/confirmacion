@@ -271,6 +271,7 @@ def inicio_conversacion():
         uploaded_json_file = ''
         uploaded_invitation_file = ''
         dict_info_invitados = {}
+        invitacion_carpeta = 'no'
 
         return 'Confirmación enviada'
     else:
