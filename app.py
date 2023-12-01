@@ -1001,7 +1001,7 @@ def dashboard_eventos(id_evento):
     plot2_base64 = base64.b64encode(buffer.getvalue()).decode()
 
     # Create the third graph
-    df_restricciones = df[df['respuesta_3'] == 'Si'].drop(columns=['id_evento', 'nom_invitado', 'telefono', 'boletos',
+    df_restricciones = df[df['respuesta_3'] == 'Si'].drop(columns=['id_evento', 'nom_invitado', 'boletos',
                                                                    'respuesta_1', 'respuesta_2', 'respuesta_3'])
 
     # Equivalencias
