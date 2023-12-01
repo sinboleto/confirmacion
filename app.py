@@ -67,6 +67,7 @@ global dict_info_invitados
 global conversation_states
 global info_plantillas
 global url_invitacion
+global invitacion_carpeta
 
 dict_info_invitados = {}
 conversation_states = {}
@@ -187,6 +188,7 @@ def inicio_conversacion():
     global uploaded_invitation_file
     global dict_info_invitados
     global url_invitacion
+    global invitacion_carpeta
 
     media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
@@ -641,6 +643,7 @@ def upload_files():
     global uploaded_invitation_file
     global dict_info_invitados
     global url_invitacion
+    global invitacion_carpeta
 
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
     invitacion_carpeta = request.form.get('invitacion_carpeta')  # Get the id_evento input value
