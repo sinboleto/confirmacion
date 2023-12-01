@@ -94,14 +94,15 @@ content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Revisar
 nom_novia = 'Julieta Rodríguez'
 nom_novio = 'Daniel Rosado'
 fecha_evento = '10 de febrero de 2024'
-hora_inicio = '13:00 hrs'
+hora_inicio = '17:30 hrs'
 lugar_evento = 'Mérida, Yucatán'
-lugar_ceremonia = 'Quinta Montes Molina'
-lugar_recepcion = 'en el mismo lugar'
-codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)' # Revisar
+lugar_ceremonia = 'la Rectoría de Nuestra Señora de Líbano'
+lugar_recepcion = 'la Quinta Montes Molina'
+codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal' # Revisar
 link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token' # Revisar
-link_soporte = 'https://wa.link/zx5tbb' # Cambiar
-# Incluir página de internet de los novios
+# link_soporte = 'https://wa.link/zx5tbb'
+link_soporte = 'https://wa.link/pmx35g'
+pagina_web = 'https://www.theknot.com/us/julieta-rodriguez-and-daniel-rosado-feb-2024'
 
 dict_variables_evento = {}
 
@@ -138,6 +139,7 @@ def index():
         codigo_vestimenta_input = request.form['codigo_vestimenta_input']
         link_mesa_regalos_input = request.form['link_mesa_regalos_input']
         link_soporte_input = request.form['link_soporte_input']
+        pagina_web_input = request.form['pagina_web_input']
 
         message_type = request.form['message_type']
 
@@ -152,6 +154,7 @@ def index():
         info_plantillas['codigo_vestimenta_input'] = codigo_vestimenta_input
         info_plantillas['link_mesa_regalos_input'] = link_mesa_regalos_input
         info_plantillas['link_soporte_input'] = link_soporte_input
+        info_plantillas['pagina_web_input'] = pagina_web_input
 
         info_plantillas['message_type'] = message_type
 
@@ -164,7 +167,9 @@ Te escribimos para confirmar la asistencia de {boletos_input} persona/s a *la bo
 
 - El *código de vestimenta* es {codigo_vestimenta}
 
-- *Mesas de regalos*: {link_mesa_regalos} 
+- *Mesas de regalos*: {link_mesa_regalos}
+
+Para más información, te compartimos la página web del evento {pagina_web}
 
 *Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
 
@@ -182,6 +187,8 @@ def inicio_conversacion():
     global uploaded_invitation_file
     global dict_info_invitados
     global url_invitacion
+
+    media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
     if uploaded_json_file.filename != '':
         for telefono_invitado in dict_info_invitados:
@@ -213,7 +220,7 @@ def inicio_conversacion():
                             body='',
                             content_sid=content_SID,
                             content_variables=content_variables,
-                            media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                            media_url=media_url,
                             to=f'whatsapp:{telefono_invitado}',
                         )
 
@@ -240,7 +247,7 @@ def inicio_conversacion():
                         body='',
                         content_sid=content_SID,
                         content_variables=content_variables,
-                        media_url='https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation',
+                        media_url=media_url,
                         to=f'whatsapp:{telefono_invitado}',
                     )
 
@@ -377,7 +384,9 @@ Por favor, señala *cuantas personas (con número) y que restricciones (vegano, 
 
 - El *código de vestimenta* es {codigo_vestimenta}
 
-- *Mesas de regalos*: {link_mesa_regalos} 
+- *Mesas de regalos*: {link_mesa_regalos}
+
+Para más información, te compartimos la página web del evento: {pagina_web}
 
 *Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
 
