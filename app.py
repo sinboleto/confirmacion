@@ -91,6 +91,7 @@ content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Revisar
 # codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
 # link_mesa_regalos = 'https://dagiftmx.com/'
 # link_soporte = 'https://wa.link/zx5tbb'
+# pagina_web = 'https://www.sinboleto.com.mx'
 
 nom_novia = 'Julieta Rodríguez'
 nom_novio = 'Daniel Rosado'
@@ -98,10 +99,9 @@ fecha_evento = '10 de febrero de 2024'
 hora_inicio = '17:30 hrs'
 lugar_evento = 'Mérida, Yucatán'
 lugar_ceremonia = 'la Rectoría de Nuestra Señora de Líbano'
-lugar_recepcion = 'la Quinta Montes Molina'
-codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal' # Revisar
-link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token' # Revisar
-# link_soporte = 'https://wa.link/zx5tbb'
+lugar_recepcion = 'en la Quinta Montes Molina'
+codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal'
+link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token'
 link_soporte = 'https://wa.link/pmx35g'
 pagina_web = 'https://www.theknot.com/us/julieta-rodriguez-and-daniel-rosado-feb-2024'
 
