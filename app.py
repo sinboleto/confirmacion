@@ -229,7 +229,8 @@ def inicio_conversacion():
 
                     else:
 
-                        msg_conf = f"""Hola *{nom_invitado}*,
+                        msg_conf = f"""DEMO
+            Hola *{nom_invitado}*,
             Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
 
                         message = client.messages.create(
