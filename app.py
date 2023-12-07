@@ -76,7 +76,7 @@ url_invitacion = ''
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 15
-lag_msg = 0.3
+lag_msg = 0.2
 
 # Variables del evento
 # content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
