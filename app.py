@@ -82,29 +82,29 @@ lag_msg = 0.2
 # content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
 content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
 
-# nom_novia = 'Sofía'
-# nom_novio = 'Benito'
-# fecha_evento = '2 de diciembre de 2023'
-# hora_inicio = '13:00 hrs'
-# lugar_evento = 'Xochitepec, Morelos'
-# lugar_ceremonia = 'el Jardín Paraíso'
-# lugar_recepcion = 'en el mismo lugar'
-# codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
-# link_mesa_regalos = 'https://dagiftmx.com/'
-# link_soporte = 'https://wa.link/tsi7us'
-# pagina_web = 'https://www.sinboleto.com.mx'
+nom_novia = 'Sofía'
+nom_novio = 'Benito'
+fecha_evento = '2 de diciembre de 2023'
+hora_inicio = '13:00 hrs'
+lugar_evento = 'Xochitepec, Morelos'
+lugar_ceremonia = 'el Jardín Paraíso'
+lugar_recepcion = 'en el mismo lugar'
+codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
+link_mesa_regalos = 'https://dagiftmx.com/'
+link_soporte = 'https://wa.link/tsi7us'
+pagina_web = 'https://www.sinboleto.com.mx'
 
-nom_novia = 'Julieta Rodríguez'
-nom_novio = 'Daniel Rosado'
-fecha_evento = '10 de febrero de 2024'
-hora_inicio = '17:30 hrs'
-lugar_evento = 'Mérida, Yucatán'
-lugar_ceremonia = 'la Rectoría de Nuestra Señora de Líbano'
-lugar_recepcion = 'en la Quinta Montes Molina'
-codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal'
-link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token'
-link_soporte = 'https://wa.link/pmx35g' # Revisar link
-pagina_web = 'https://www.theknot.com/us/julieta-rodriguez-and-daniel-rosado-feb-2024'
+# nom_novia = 'Julieta Rodríguez'
+# nom_novio = 'Daniel Rosado'
+# fecha_evento = '10 de febrero de 2024'
+# hora_inicio = '17:30 hrs'
+# lugar_evento = 'Mérida, Yucatán'
+# lugar_ceremonia = 'la Rectoría de Nuestra Señora de Líbano'
+# lugar_recepcion = 'en la Quinta Montes Molina'
+# codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal'
+# link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token'
+# link_soporte = 'https://wa.link/pmx35g' # Revisar link
+# pagina_web = 'https://www.theknot.com/us/julieta-rodriguez-and-daniel-rosado-feb-2024'
 
 dict_variables_evento = {}
 
