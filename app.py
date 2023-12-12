@@ -125,60 +125,13 @@ try:
 except psycopg2.errors.DuplicateTable:
     pass
 
-# Input de plantillas
-@app.route('/inputs', methods=['GET', 'POST'])
-def index():
-    global info_plantillas
-    if request.method == 'POST':
-        nom_invitado_input = request.form['nom_invitado_input']
-        boletos_input = request.form['boletos_input']
-        nom_novia_input = request.form['nom_novia_input']
-        nom_novio_input = request.form['nom_novio_input']
-        fecha_evento_input = request.form['fecha_evento_input']
-        hora_inicio_input = request.form['hora_inicio_input']
-        lugar_evento_input = request.form['lugar_evento_input']
-        lugar_ceremonia_input = request.form['lugar_ceremonia_input']
-        codigo_vestimenta_input = request.form['codigo_vestimenta_input']
-        link_mesa_regalos_input = request.form['link_mesa_regalos_input']
-        link_soporte_input = request.form['link_soporte_input']
-        pagina_web_input = request.form['pagina_web_input']
-
-        message_type = request.form['message_type']
-
-        info_plantillas['nom_invitado_input'] = nom_invitado_input
-        info_plantillas['boletos_input'] = boletos_input
-        info_plantillas['nom_novia_input'] = nom_novia_input
-        info_plantillas['nom_novio_input'] = nom_novio_input
-        info_plantillas['fecha_evento_input'] = fecha_evento_input
-        info_plantillas['hora_inicio_input'] = hora_inicio_input
-        info_plantillas['lugar_evento_input'] = lugar_evento_input
-        info_plantillas['lugar_ceremonia_input'] = lugar_ceremonia_input
-        info_plantillas['codigo_vestimenta_input'] = codigo_vestimenta_input
-        info_plantillas['link_mesa_regalos_input'] = link_mesa_regalos_input
-        info_plantillas['link_soporte_input'] = link_soporte_input
-        info_plantillas['pagina_web_input'] = pagina_web_input
-
-        info_plantillas['message_type'] = message_type
-
-    messages = {
-        'msg_conf': """Hola *{nom_invitado_input}*,
-Te escribimos para confirmar la asistencia de {boletos_input} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)""",
-        'msg_conf_num': "Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*",
-        'msg_info_general': """Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en la {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *{en el mismo lugar}*
-
-- El *código de vestimenta* es {codigo_vestimenta}
-
-- *Mesas de regalos*: {link_mesa_regalos}
-
-Para más información, te compartimos la página web del evento {pagina_web}
-
-*Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
-
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
-    }
-
-    return render_template('info_input.html', messages=messages, info_plantillas=info_plantillas)
+try:
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'CREATE TABLE info_eventos (id_evento TEXT, nom_novia TEXT, nom_novio TEXT, fecha_evento TEXT, hora_inicio TEXT, lugar_evento TEXT, lugar_ceremonia TEXT, lugar_recepcion TEXT, codigo_vestimenta TEXT, pagina_web TEXT, link_mesa_regalos TEXT, link_soporte TEXT);')
+except psycopg2.errors.DuplicateTable:
+    pass
 
 # Inicio conversación
 @app.route('/start', methods=['GET'])
@@ -317,6 +270,25 @@ def carga_SQL_errores(id_evento, nom_invitado, telefono):
                        )
         connection.commit()
 
+def carga_SQL_info_eventos(id_evento, nom_novia, nom_novio, fecha_evento, hora_inicio, lugar_evento, lugar_ceremonia, lugar_recepcion, codigo_vestimenta, pagina_web, link_mesa_regalos, link_soporte):
+    # Cargar datos en SQL
+    with connection.cursor() as cursor:
+        cursor.execute('INSERT INTO info_eventos VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
+                       (str(id_evento),
+                        str(nom_novia),
+                        str(nom_novio),
+                        str(fecha_evento),
+                        str(hora_inicio),
+                        str(lugar_evento),
+                        str(lugar_ceremonia),
+                        str(lugar_recepcion),
+                        str(codigo_vestimenta),
+                        str(pagina_web),
+                        str(link_mesa_regalos),
+                        str(link_soporte)
+                        )
+                       )
+        connection.commit()
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -653,6 +625,39 @@ def upload_files():
     global invitacion_carpeta
 
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
+
+    # if id_evento:
+    #     data_evento = get_data(f"SELECT * FROM confirmaciones WHERE id_evento = {id_evento};")
+
+    #     nom_novia = data_evento[0]
+    #     nom_novio = data_evento[1]
+    #     fecha_evento = data_evento[2]
+    #     hora_inicio = data_evento[3]
+    #     lugar_evento = data_evento[4]
+    #     lugar_ceremonia = data_evento[5]
+    #     lugar_recepcion = data_evento[6]
+    #     codigo_vestimenta = data_evento[7]
+    #     pagina_web = data_evento[8]
+    #     link_mesa_regalos = data_evento[9]
+    #     link_soporte = data_evento[10]
+
+    # else:
+
+    #     carga_SQL_info_eventos(id_evento, nom_novia, nom_novio, fecha_evento, hora_inicio, lugar_evento, lugar_ceremonia, lugar_recepcion, codigo_vestimenta, pagina_web, link_mesa_regalos, link_soporte)
+
+    #     id_evento = request.form.get('id_evento')
+    #     nom_novia = request.form.get('nom_novia_input')
+    #     nom_novio = request.form.get('nom_novio_input')
+    #     fecha_evento = request.form.get('fecha_evento_input')
+    #     hora_inicio = request.form.get('hora_inicio_input')
+    #     lugar_evento = request.form.get('lugar_evento_input')
+    #     lugar_ceremonia = request.form.get('lugar_ceremonia_input')
+    #     lugar_recepcion = request.form.get('lugar_recepcion_input')
+    #     codigo_vestimenta = request.form.get('codigo_vestimenta_input')
+    #     pagina_web = request.form.get('pagina_web_input')
+    #     link_mesa_regalos = request.form.get('link_mesa_regalos_input')
+    #     link_soporte = request.form.get('link_soporte_input')
+
     invitacion_carpeta = request.form.get('invitacion_carpeta')  # Get the id_evento input value
     app.logger.info(invitacion_carpeta)
 
