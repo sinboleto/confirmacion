@@ -79,19 +79,31 @@ limite_msg = 15
 lag_msg = 0.2
 
 # Variables del evento
-# content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
-content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
+content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
+# content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
 
-nom_novia = 'Sofía'
-nom_novio = 'Benito'
-fecha_evento = '2 de diciembre de 2023'
+# nom_novia = 'Sofía'
+# nom_novio = 'Benito'
+# fecha_evento = '2 de diciembre de 2023'
+# hora_inicio = '13:00 hrs'
+# lugar_evento = 'Xochitepec, Morelos'
+# lugar_ceremonia = 'el Jardín Paraíso'
+# lugar_recepcion = 'en el mismo lugar'
+# codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
+# link_mesa_regalos = 'https://dagiftmx.com/'
+# link_soporte = 'https://wa.link/tsi7us'
+# pagina_web = 'https://www.sinboleto.com.mx'
+
+nom_novia = 'Alejandra García'
+nom_novio = 'Pedro Vaca'
+fecha_evento = '7 de septiembre de 2024'
 hora_inicio = '13:00 hrs'
-lugar_evento = 'Xochitepec, Morelos'
-lugar_ceremonia = 'el Jardín Paraíso'
+lugar_evento = 'Tequisquiapan, Querétaro'
+lugar_ceremonia = 'Hacienda Grande (https://maps.app.goo.gl/BcfhfmrGMJuLKKrz8)'
 lugar_recepcion = 'en el mismo lugar'
-codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
+codigo_vestimenta = 'formal'
 link_mesa_regalos = 'https://dagiftmx.com/'
-link_soporte = 'https://wa.link/tsi7us'
+link_soporte = 'https://wa.link/9ncc9w'
 pagina_web = 'https://www.sinboleto.com.mx'
 
 # nom_novia = 'Julieta Rodríguez'
