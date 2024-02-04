@@ -80,7 +80,9 @@ lag_msg = 0.2
 
 # Variables del evento
 # content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
-content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
+# content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
+content_SID_std = 'HX678d071aa529f6bdebf8384f8805c7e0'  # Save the date
+content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
 
 # nom_novia = 'Sofía'
 # nom_novio = 'Benito'
@@ -175,7 +177,8 @@ def inicio_conversacion():
                     if invitacion_carpeta == 'si':
 
                         # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento}) # msg_std
                         app.logger.info(json.dumps(content_variables))
 
                         UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
@@ -188,7 +191,7 @@ def inicio_conversacion():
                             messaging_service_sid=messaging_service_sid,
                             from_=f'whatsapp:{twilio_phone_number}',
                             body='',
-                            content_sid=content_SID,
+                            content_sid=content_SID_std,
                             content_variables=content_variables,
                             media_url=media_url,
                             to=f'whatsapp:{telefono_invitado}',
@@ -196,28 +199,30 @@ def inicio_conversacion():
 
                     else:
 
-                        msg_conf = f"""DEMO
-            Hola *{nom_invitado}*,
-            Te escribimos para confirmar la asistencia de {boletos} persona/s a *la boda de {nom_novia} y {nom_novio}* que se celebrará el *{fecha_evento} a las {hora_inicio}. en {lugar_evento}* (favor de usar los botones)"""
+                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento}) # msg_std
+                        app.logger.info(json.dumps(content_variables))
 
                         message = client.messages.create(
                             messaging_service_sid=messaging_service_sid,
                             from_=f'whatsapp:{twilio_phone_number}',
-                            body=msg_conf,
-                            to=f'whatsapp:{telefono_invitado}'
+                            body='',
+                            content_sid=content_SID_std,
+                            content_variables=content_variables,
+                            to=f'whatsapp:{telefono_invitado}',
                         )
 
                 else:
                     
                     # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento}) # msg_std
                     app.logger.info(json.dumps(content_variables))
 
                     message = client.messages.create(
                         messaging_service_sid=messaging_service_sid,
                         from_=f'whatsapp:{twilio_phone_number}',
                         body='',
-                        content_sid=content_SID,
+                        content_sid=content_SID_std,
                         content_variables=content_variables,
                         media_url=media_url,
                         to=f'whatsapp:{telefono_invitado}',
@@ -332,91 +337,16 @@ def webhook():
     current_question_index = conversation_state['current_question_index']
     app.logger.info(current_question_index)
 
-    # Variables de user
-    nombre = conversation_states[incoming_phone_number]['nom_invitado']
-    boletos = conversation_states[incoming_phone_number]['boletos']
-
-    # Mensajes
-    # Reconfirmación de asistencia
-    msg_reconf = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
-
-Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
-
-    # Número de asistentes
-    # msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
-    msg_conf_num = f"Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
-    msg_reconf_num = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
-
-Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
-
-    msg_error_num_conf = f"""El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
-
-Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
-
-    # No confirma
-    msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
-
-    # Restricción alimentaria
-    msg_conf_rest = "De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"
-    msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
-
-¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"""
-
-    # Número de restricciones
-    msg_conf_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"
-    msg_reconf_num_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
-
-Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
-
-    msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
-
-Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
-
-    # Información general
-    msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
-- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *{lugar_recepcion}*
-
-- El *código de vestimenta* es {codigo_vestimenta}
-
-- *Mesas de regalos*: {link_mesa_regalos}
-
-Para más información, te compartimos la página web del evento: {pagina_web}
-
-*Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
-
-*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
-
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. Gracias'
 
     if current_question_index == 0:
         if len(user_answer) < limite_msg:  # Verifica si hay choro
-            if user_answer == 'si, confirmo' or user_answer == 'si':
-                time.sleep(lag_msg)
-                response.message(msg_conf_num)
 
-                current_question_index += 1
-                conversation_state['current_question_index'] = current_question_index
-                conversation_state['respuestas'][0] = 'Si'
+            time.sleep(lag_msg)
+            response.message('Muchas gracias por tu respuesta, que tengas un lindo día')
 
-            elif user_answer == 'no':
-                time.sleep(lag_msg)
-                response.message(msg_no_conf)
-
-                current_question_index = -2
-                conversation_state['current_question_index'] = current_question_index
-                conversation_state['respuestas'][0] = 'No'
-
-                # Cargar datos en SQL
-                carga_SQL_confirmaciones(conversation_state)
-
-            else:
-                time.sleep(lag_msg)
-                message = client.messages.create(
-                    messaging_service_sid=messaging_service_sid,
-                    from_=f'whatsapp:{twilio_phone_number}',
-                    body=msg_reconf,
-                    to=f'whatsapp:{incoming_phone_number}'
-                )
+            current_question_index += 1
+            conversation_state['current_question_index'] = current_question_index
 
             conversation_state['current_question_index'] = current_question_index
 
@@ -426,107 +356,10 @@ Para más información, te compartimos la página web del evento: {pagina_web}
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf,
+                body=msg_default,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
-            conversation_state['current_question_index'] = current_question_index
-
-    elif current_question_index == 1:
-        if len(user_answer) < limite_msg:  # Verifica si hay choro
-            if user_answer.isnumeric() and num_user_answer != 'sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
-                time.sleep(lag_msg)
-                response.message(msg_conf_rest)
-                conversation_state['respuestas'][1] = user_answer
-
-                current_question_index += 1
-                conversation_state['current_question_index'] = current_question_index
-
-            else:
-                time.sleep(lag_msg)
-                message = client.messages.create(
-                    messaging_service_sid=messaging_service_sid,
-                    from_=f'whatsapp:{twilio_phone_number}',
-                    body=msg_error_num_conf,
-                    to=f'whatsapp:{incoming_phone_number}'
-                )
-                conversation_state['current_question_index'] = current_question_index
-
-        else:
-            time.sleep(lag_msg)
-            message = client.messages.create(
-                messaging_service_sid=messaging_service_sid,
-                from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf_num,
-                to=f'whatsapp:{incoming_phone_number}'
-            )
-
-            conversation_state['current_question_index'] = current_question_index
-
-    elif current_question_index == 2:
-        if len(user_answer) < limite_msg:  # Verifica si hay choro
-            if user_answer == 'si':
-                time.sleep(lag_msg)
-                response.message(msg_conf_num_rest)
-
-                current_question_index += 1
-                conversation_state['current_question_index'] = current_question_index
-                conversation_state['respuestas'][2] = 'Si'
-
-            elif user_answer == 'no':
-                time.sleep(lag_msg)
-                response.message(msg_info_general)
-
-                current_question_index = -2
-                conversation_state['current_question_index'] = current_question_index
-                conversation_state['respuestas'][2] = 'No'
-
-                # Cargar datos en SQL
-                carga_SQL_confirmaciones(conversation_state)
-
-            else:
-                time.sleep(lag_msg)
-                message = client.messages.create(
-                    messaging_service_sid=messaging_service_sid,
-                    from_=f'whatsapp:{twilio_phone_number}',
-                    body=msg_reconf_rest,
-                    to=f'whatsapp:{incoming_phone_number}'
-                )
-
-                conversation_state['current_question_index'] = current_question_index
-
-        else:
-            time.sleep(lag_msg)
-            message = client.messages.create(
-                messaging_service_sid=messaging_service_sid,
-                from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_reconf_rest,
-                to=f'whatsapp:{incoming_phone_number}'
-            )
-
-            conversation_state['current_question_index'] = current_question_index
-
-    elif current_question_index == 3:
-        if num_user_answer == 'sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
-            time.sleep(lag_msg)
-            response.message(msg_info_general)
-
-            current_question_index = -2
-            conversation_state['current_question_index'] = current_question_index
-            conversation_state['respuestas'][3] = user_answer.replace(',',';')
-
-            # Cargar datos en SQL
-            carga_SQL_confirmaciones(conversation_state)
-
-        else:
-            time.sleep(lag_msg)
-            boletos = conversation_states[incoming_phone_number]['boletos']
-            message = client.messages.create(
-                messaging_service_sid=messaging_service_sid,
-                from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_error_num_rest,
-                to=f'whatsapp:{incoming_phone_number}'
-            )
             conversation_state['current_question_index'] = current_question_index
 
     else:
