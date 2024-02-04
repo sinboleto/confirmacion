@@ -75,7 +75,7 @@ info_plantillas = {}
 url_invitacion = ''
 
 connection = psycopg2.connect(POSTGRESQL_URI)
-limite_msg = 15
+limite_msg = 17
 lag_msg = 0.2
 
 # Variables del evento
