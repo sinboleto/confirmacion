@@ -375,18 +375,17 @@ Saludos
 
                 filename = 'boda_A&P.ics'
                 app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
 
                 contenido_respuesta = {
                     'content_sid': content_SID_texto_media,
-                    'content_variables': {content_variables},
-                    'media_url': {media_url}
+                    'content_variables': content_variables,
+                    'media_url': media_url,
                 }
 
-                response.message(contenido_respuesta)
+                response.message(jsonify(contenido_respuesta))
 
                 # response.message(f'content_sid: {content_SID_texto_media}')
                 # response.message(f'content_variables: {content_variables}')
