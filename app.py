@@ -186,7 +186,6 @@ def inicio_conversacion():
                         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                         url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
-                        render_invitation()
                         app.logger.info(url_invitacion)
 
                         message = client.messages.create(
