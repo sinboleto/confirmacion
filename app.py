@@ -386,7 +386,7 @@ Saludos
                     'media_url': media_url,
                 }
 
-                response.message(jsonify(contenido_respuesta))
+                response.message(str(jsonify(contenido_respuesta)))
 
                 # response.message(f'content_sid: {content_SID_texto_media}')
                 # response.message(f'content_variables: {content_variables}')
