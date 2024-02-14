@@ -1,7 +1,7 @@
 # Libraries
 
 # Flask app
-from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory, jsonify
 
 # Twilio
 from twilio.twiml.messaging_response import MessagingResponse
@@ -83,6 +83,7 @@ lag_msg = 0.2
 # content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
 content_SID_std = 'HX973fe6a8e3741bf1d85209b5d16fb2f7'  # Save the date
 content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
+content_SID_texto_media = 'HX36e96191c5cc3066a336e7449269b1d5'  # Save the date
 
 # nom_novia = 'Sofía'
 # nom_novio = 'Benito'
@@ -185,6 +186,7 @@ def inicio_conversacion():
                         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                         url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
+                        render_invitation()
                         app.logger.info(url_invitacion)
 
                         message = client.messages.create(
@@ -307,6 +309,19 @@ def carga_SQL_info_eventos(id_evento, nom_novia, nom_novio, fecha_evento, hora_i
                        )
         connection.commit()
 
+def send_response(messaging_service_sid, content_sid, content_variables, media_url):
+
+    # Create a response message
+    response_message = {
+        'messaging_service_sid': messaging_service_sid,
+        'content_sid': content_sid,
+        'content_variables': content_variables,
+        'media_url': media_url
+    }
+
+    # Return the response as JSON
+    return jsonify(response_message)
+
 @app.route('/', methods=['POST'])
 def webhook():
 
@@ -342,12 +357,12 @@ def webhook():
     if current_question_index == 0:
         if len(user_answer) < limite_msg:  # Verifica si hay choro
             if user_answer == 'si, confirmo' or user_answer == 'si':
+                
 
                 time.sleep(lag_msg)
                 link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MDFmcWtiODFqNmNpZ3JrNXFmdmpuZjBzcmQgY181ZjQ1NTlhMjk1ZTIyNjAyNmQ5NzhjMzQzZmRkMWI4ZTVjYTBjODk5MjhhN2JlYjJjNzg2ZDNmN2E2MDA4ZTFkQGc&tmsrc=c_5f4559a295e226026d978c343fdd1b8e5ca0c89928a7beb2c786d3f7a6008e1d%40group.calendar.google.com'
                 
-                respuesta = f"""Muchas gracias por tu respuesta. Da click en el link para agregarlo a tu calendario:
-Google Calendar: {link_gc}
+                respuesta = f"""Muchas gracias por tu respuesta. Da click en el archivo enviado para agregarlo a tu calendario
 
 También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
 
@@ -355,14 +370,16 @@ También, te sugerimos los siguientes hoteles en caso de que desees hacer tu res
 - https://www.regalodelalma.com.mx/
 
 Saludos
-    """
-            
-                response.message(respuesta)
+    """         
+                media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
+                content_variables = json.dumps({"1":respuesta}) # msg_std
+                response.message(send_response(messaging_service_sid, content_SID_texto_media, content_variables, media_url))
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
 
                 conversation_state['current_question_index'] = current_question_index
+                
 
             else:
                 response.message('Muchas gracias por tu respuesta, que tengas un lindo día')
