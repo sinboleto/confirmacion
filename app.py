@@ -341,14 +341,36 @@ def webhook():
 
     if current_question_index == 0:
         if len(user_answer) < limite_msg:  # Verifica si hay choro
+            if user_answer == 'si, confirmo' or user_answer == 'si':
 
-            time.sleep(lag_msg)
-            response.message('Muchas gracias por tu respuesta, que tengas un lindo día')
+                time.sleep(lag_msg)
+                link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NWJkbmtyZjdpdGlnYWRibmpoaHVpY2J2cmcgc2FudGlhZ29Ac2luYm9sZXRvLmNvbS5teA&tmsrc=santiago%40sinboleto.com.mx'
+                
+                respuesta = f"""Muchas gracias por tu respuesta. Da click en el link para agregarlo a tu calendario:
+                Google Calendar: {link_gc}
 
-            current_question_index += 1
-            conversation_state['current_question_index'] = current_question_index
+    También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
 
-            conversation_state['current_question_index'] = current_question_index
+    https://www.hotelsancarlostx.com/
+    https://www.regalodelalma.com.mx/
+
+    Saludos
+    """
+            
+                response.message(respuesta)
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+
+                conversation_state['current_question_index'] = current_question_index
+
+            else:
+                response.message('Muchas gracias por tu respuesta, que tengas un lindo día')
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+
+                conversation_state['current_question_index'] = current_question_index
 
         else:
             # Si hay choro, manda el mensaje de revisión para referir al cliente a un operador
