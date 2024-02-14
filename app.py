@@ -347,14 +347,15 @@ def webhook():
                 link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NWJkbmtyZjdpdGlnYWRibmpoaHVpY2J2cmcgc2FudGlhZ29Ac2luYm9sZXRvLmNvbS5teA&tmsrc=santiago%40sinboleto.com.mx'
                 
                 respuesta = f"""Muchas gracias por tu respuesta. Da click en el link para agregarlo a tu calendario:
-                Google Calendar: {link_gc}
+Google Calendar: {link_gc}
+iCal (Apple): Próximamente
 
-    También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
+También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
 
-    https://www.hotelsancarlostx.com/
-    https://www.regalodelalma.com.mx/
+- https://www.hotelsancarlostx.com/
+- https://www.regalodelalma.com.mx/
 
-    Saludos
+Saludos
     """
             
                 response.message(respuesta)
