@@ -200,7 +200,7 @@ def inicio_conversacion():
 
                     else:
 
-                        content_variables = json.dumps({"1":nom_invitado,"2":fecha_evento,"3":nom_novia,"4":nom_novio,"5":lugar_evento}) # msg_std
+                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                         app.logger.info(json.dumps(content_variables))
 
                         message = client.messages.create(
@@ -216,7 +216,7 @@ def inicio_conversacion():
                     
                     # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
                     # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
-                    content_variables = json.dumps({"1":nom_invitado,"2":fecha_evento,"3":nom_novia,"4":nom_novio,"5":lugar_evento}) # msg_std
+                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                     app.logger.info(json.dumps(content_variables))
 
                     message = client.messages.create(
