@@ -380,13 +380,23 @@ Saludos
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
 
-                contenido_respuesta = {
-                    'content_sid': content_SID_texto_media,
-                    'content_variables': content_variables,
-                    'media_url': media_url,
-                }
+                # contenido_respuesta = {
+                #     'content_sid': content_SID_texto_media,
+                #     'content_variables': content_variables,
+                #     'media_url': media_url,
+                # }
 
-                response.message(str(jsonify(contenido_respuesta)))
+                message = client.messages.create(
+                        messaging_service_sid=messaging_service_sid,
+                        from_=f'whatsapp:{twilio_phone_number}',
+                        body='',
+                        content_sid=content_SID_texto_media,
+                        content_variables=content_variables,
+                        media_url=media_url,
+                        to=request.values.get('From', '').lower(),
+                    )
+
+                # response.message(str(jsonify(contenido_respuesta)))
 
                 # response.message(f'content_sid: {content_SID_texto_media}')
                 # response.message(f'content_variables: {content_variables}')
