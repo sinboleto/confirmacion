@@ -374,7 +374,7 @@ Saludos
                 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                 filename = 'boda_A&P.ics'
-                url_archivo = render_file()
+                url_archivo = render_file(filename)
 
                 # app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
