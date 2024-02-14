@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ical.marudot.com//iCal Event Maker
+X-WR-CALNAME:Boda Alejandra García y Pedro Vaca
+NAME:Boda Alejandra García y Pedro Vaca
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:America/Mexico_City
+LAST-MODIFIED:20231222T233358Z
+TZURL:https://www.tzurl.org/zoneinfo-outlook/America/Mexico_City
+X-LIC-LOCATION:America/Mexico_City
+BEGIN:STANDARD
+TZNAME:CST
+TZOFFSETFROM:-0600
+TZOFFSETTO:-0600
+DTSTART:19700101T000000
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTAMP:20240214T034701Z
+UID:1707882341192-47053@ical.marudot.com
+DTSTART;TZID=America/Mexico_City:20240907T130000
+DTEND;TZID=America/Mexico_City:20240908T010000
+SUMMARY:Boda Alejandra García y Pedro Vaca
+URL:https://maps.app.goo.gl/BcfhfmrGMJuLKKrz8
+LOCATION:Hacienda Grande\, Tequisquiapan\, Querétaro
+END:VEVENT
+END:VCALENDAR

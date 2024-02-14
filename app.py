@@ -370,9 +370,23 @@ También, te sugerimos los siguientes hoteles en caso de que desees hacer tu res
 
 Saludos
     """         
+                UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
+                app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+                filename = 'boda_A&P.ics'
+                app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                # Generating URL for the uploaded text file
+                url_invitacion = url_for('get_uploaded_file', filename=filename) # Ver si esto es necesario
+                app.logger.info(url_invitacion)
+
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
-                response.message(send_response(messaging_service_sid, content_SID_texto_media, content_variables, media_url))
+
+                response.message(f'content_sid: {content_SID_texto_media}')
+                response.message(f'content_variables: {content_variables}')
+                response.message(f'media_url: {media_url}')
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
