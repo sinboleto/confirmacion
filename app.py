@@ -344,11 +344,10 @@ def webhook():
             if user_answer == 'si, confirmo' or user_answer == 'si':
 
                 time.sleep(lag_msg)
-                link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NWJkbmtyZjdpdGlnYWRibmpoaHVpY2J2cmcgc2FudGlhZ29Ac2luYm9sZXRvLmNvbS5teA&tmsrc=santiago%40sinboleto.com.mx'
+                link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MDFmcWtiODFqNmNpZ3JrNXFmdmpuZjBzcmQgY181ZjQ1NTlhMjk1ZTIyNjAyNmQ5NzhjMzQzZmRkMWI4ZTVjYTBjODk5MjhhN2JlYjJjNzg2ZDNmN2E2MDA4ZTFkQGc&tmsrc=c_5f4559a295e226026d978c343fdd1b8e5ca0c89928a7beb2c786d3f7a6008e1d%40group.calendar.google.com'
                 
                 respuesta = f"""Muchas gracias por tu respuesta. Da click en el link para agregarlo a tu calendario:
 Google Calendar: {link_gc}
-iCal (Apple): Próximamente
 
 También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
 
