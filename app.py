@@ -370,7 +370,7 @@ También, te sugerimos los siguientes hoteles en caso de que desees hacer tu res
 
 Saludos
     """         
-                UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
+                UPLOAD_FOLDER = 'files'  # Folder where uploaded  files will be stored
                 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                 filename = 'boda_A&P.ics'
