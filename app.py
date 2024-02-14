@@ -380,9 +380,17 @@ Saludos
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
 
-                response.message(f'content_sid: {content_SID_texto_media}')
-                response.message(f'content_variables: {content_variables}')
-                response.message(f'media_url: {media_url}')
+                contenido_respuesta = {
+                    'content_sid': content_SID_texto_media,
+                    'content_variables': {content_variables},
+                    'media_url': {media_url}
+                }
+
+                response.message(contenido_respuesta)
+
+                # response.message(f'content_sid: {content_SID_texto_media}')
+                # response.message(f'content_variables: {content_variables}')
+                # response.message(f'media_url: {media_url}')
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
