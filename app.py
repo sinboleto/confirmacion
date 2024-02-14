@@ -323,6 +323,7 @@ def send_response(messaging_service_sid, content_sid, content_variables, media_u
 
 @app.route('/', methods=['POST'])
 def webhook():
+    global url_invitacion
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
@@ -374,11 +375,12 @@ Saludos
                 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                 filename = 'boda_A&P.ics'
-                url_archivo = render_file(filename)
+                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-                # app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # url_archivo = render_file(filename)
+                # app.logger.info(url_archivo)
 
-                # media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
+                media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
 
                 # contenido_respuesta = {
@@ -393,7 +395,7 @@ Saludos
                         body='',
                         content_sid=content_SID_texto_media,
                         content_variables=content_variables,
-                        media_url=url_archivo,
+                        media_url=media_url,
                         to=request.values.get('From', '').lower(),
                     )
 
