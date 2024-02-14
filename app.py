@@ -374,7 +374,8 @@ Saludos
                 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                 filename = 'boda_A&P.ics'
-                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                url_invitacion = url_for('get_uploaded_file', filename=filename)
                 app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
