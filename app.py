@@ -81,7 +81,7 @@ lag_msg = 0.2
 # Variables del evento
 # content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
 # content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
-content_SID_std = 'HX8279b10bb743761de7fb57963c9dd826'  # Save the date
+content_SID_std = 'HX973fe6a8e3741bf1d85209b5d16fb2f7'  # Save the date
 content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
 
 # nom_novia = 'Sofía'
@@ -178,7 +178,7 @@ def inicio_conversacion():
 
                         # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
                         # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
-                        content_variables = json.dumps({"1":nom_invitado,"2":fecha_evento,"3":nom_novia,"4":nom_novio,"5":lugar_evento}) # msg_std
+                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                         app.logger.info(json.dumps(content_variables))
 
                         UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
