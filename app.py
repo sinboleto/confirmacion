@@ -374,11 +374,11 @@ Saludos
                 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
                 filename = 'boda_A&P.ics'
-                # url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                url_invitacion = url_for('get_uploaded_file', filename=filename)
-                app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                url_archivo = render_file()
 
-                media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
+                # app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                # media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
 
                 # contenido_respuesta = {
@@ -393,7 +393,7 @@ Saludos
                         body='',
                         content_sid=content_SID_texto_media,
                         content_variables=content_variables,
-                        media_url=media_url,
+                        media_url=url_archivo,
                         to=request.values.get('From', '').lower(),
                     )
 
@@ -633,6 +633,16 @@ def render_invitation():
     
     # Send the file from the directory to the client
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+def render_file(filename):
+    # Assuming 'UPLOAD_FOLDER' is the directory where the files are uploaded
+    # Assuming 'get_uploaded_file' is a valid route to serve the file
+    url_file = url_for('get_uploaded_file', filename=filename)
+    
+    # Send the file from the directory to the client
+    send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    
+    return url_file
 
 # Function to retrieve data from the database
 def get_data(query):
