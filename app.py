@@ -375,11 +375,7 @@ Saludos
 
                 filename = 'boda_A&P.ics'
                 app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                uploaded_invitation_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-                # Generating URL for the uploaded text file
-                url_invitacion = url_for('get_uploaded_file', filename=filename) # Ver si esto es necesario
-                app.logger.info(url_invitacion)
+                send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
                 media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
                 content_variables = json.dumps({"1":respuesta}) # msg_std
