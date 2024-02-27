@@ -140,6 +140,7 @@ def inicio_conversacion():
     telefono_invitado_demo = f"+521{request.form.get('telefono_invitado_demo')}"
     nom_invitado_demo = request.form.get('nom_invitado_demo')
     id_evento = 'DEMO'
+    demo_activado = True
 
     dict_info_invitados = {
         telefono_invitado_demo: {
@@ -148,7 +149,8 @@ def inicio_conversacion():
             }
         }
 
-    if uploaded_json_file.filename != '':
+
+    if uploaded_json_file.filename != '' or demo_activado:
         for telefono_invitado in dict_info_invitados:
 
             try:
@@ -310,7 +312,6 @@ def send_response(messaging_service_sid, content_sid, content_variables, media_u
 
 @app.route('/', methods=['POST'])
 def webhook():
-    global url_invitacion
 
     incoming_message_body = request.values.get('Body', '').lower()
     incoming_phone_number = request.values.get('From', '').lower()
@@ -339,76 +340,93 @@ def webhook():
     current_question_index = conversation_state['current_question_index']
     app.logger.info(current_question_index)
 
+    # Variables de user
+    nombre = conversation_states[incoming_phone_number]['nom_invitado']
+    boletos = conversation_states[incoming_phone_number]['boletos']
+
+    # Mensajes
+    # Reconfirmación de asistencia
+    msg_reconf = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
+
+Te agradeceríamos si nos pudieras confirmar tu asistencia *(favor de usar los botones)*"""
+
+    # Número de asistentes
+    # msg_conf_num = f"Gracias. Te recuerdo que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+    msg_conf_num = f"Gracias. Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"
+    msg_reconf_num = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
+
+Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
+
+    msg_error_num_conf = f"""El número de *invitados confirmados ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
+
+Vemos que tu invitación es para *{boletos} persona/s*. Te agradecería si me pudieras confirmar cuantas personas asistirán *(con número)*"""
+
+    # No confirma
+    msg_no_conf = f"{nombre}, agradecemos mucho tu tiempo y tu respuesta. Que tengas un buen día"
+
+    # Restricción alimentaria
+    msg_conf_rest = "De acuerdo. ¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"
+    msg_reconf_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. 
+
+¿Algún invitado tiene alguna *restricción alimentaria* (vegano, alérgico a algo, etc.)? *(favor de usar los botones)*"""
+
+    # Número de restricciones
+    msg_conf_num_rest = f"Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"
+    msg_reconf_num_rest = f"""*Disculpa, soy un chatbot* 🤖 y estoy programado únicamente para hacer confirmaciones y brindar información general de eventos. Te agradecería si pudieras contestar el cuestionario o en caso de tener *cualquier otra duda* haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje.
+
+Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
+
+    msg_error_num_rest = f"""El número de *invitados con restricciones ({num_user_answer})* no coincide con los *boletos de tu invitación ({boletos})*. Te agradeceríamos si lo pudieras modificar
+
+Por favor, señala *cuantas personas (con número) y que restricciones (vegano, alérgico a algo, etc.)* en el mismo mensaje *(por ejemplo, 2 veganos, 1 alérgico a los mariscos)*"""
+
+    # Información general
+    msg_info_general = f"""Agradecemos mucho tu respuesta y te compartimos información adicional del evento:
+- La *ceremonia religiosa* se llevará a cabo *en punto de las {hora_inicio}. en {lugar_ceremonia}*. Después de la ceremonia los esperamos en *la recepción* que se realizará *{lugar_recepcion}*
+
+- El *código de vestimenta* es {codigo_vestimenta}
+
+- *Mesas de regalos*: {link_mesa_regalos}
+
+Para más información, te compartimos la página web del evento: {pagina_web}
+
+*Confirmamos su asistencia* y estamos emocionados por verte el próximo {fecha_evento}. ¡Saludos!
+
+*Soy un chatbot* 🤖. Si necesitas más información, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje"""
+
     msg_default = f'*Hola, soy un chatbot* 🤖 y estoy programado para hacer confirmaciones y brindar información general de eventos. *Cualquier otra duda*, haz click en el siguiente enlace: {link_soporte} y mandanos un mensaje. Gracias'
 
     if current_question_index == 0:
         if len(user_answer) < limite_msg:  # Verifica si hay choro
             if user_answer == 'si, confirmo' or user_answer == 'si':
-                
-
                 time.sleep(lag_msg)
-                link_gc = 'https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MDFmcWtiODFqNmNpZ3JrNXFmdmpuZjBzcmQgY181ZjQ1NTlhMjk1ZTIyNjAyNmQ5NzhjMzQzZmRkMWI4ZTVjYTBjODk5MjhhN2JlYjJjNzg2ZDNmN2E2MDA4ZTFkQGc&tmsrc=c_5f4559a295e226026d978c343fdd1b8e5ca0c89928a7beb2c786d3f7a6008e1d%40group.calendar.google.com'
-                
-                respuesta = f"""Muchas gracias por tu respuesta. Da click en el archivo enviado para agregarlo a tu calendario
-
-También, te sugerimos los siguientes hoteles en caso de que desees hacer tu reservación:
-
-- https://www.hotelsancarlostx.com/
-- https://www.regalodelalma.com.mx/
-
-Saludos
-    """         
-                UPLOAD_FOLDER = 'files'  # Folder where uploaded  files will be stored
-                app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-                filename = 'boda_A&P.ics'
-                url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-                # url_archivo = render_file(filename)
-                # app.logger.info(url_archivo)
-
-                media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
-                content_variables = json.dumps({"1":respuesta}) # msg_std
-
-                # contenido_respuesta = {
-                #     'content_sid': content_SID_texto_media,
-                #     'content_variables': content_variables,
-                #     'media_url': media_url,
-                # }
-
-                message = client.messages.create(
-                        messaging_service_sid=messaging_service_sid,
-                        from_=f'whatsapp:{twilio_phone_number}',
-                        body='',
-                        content_sid=content_SID_texto_media,
-                        content_variables=content_variables,
-                        media_url=media_url,
-                        to=request.values.get('From', '').lower(),
-                    )
-                
-                # Ejemplo:
-                # msg = response.message("Thanks for the image. Here's one for you!")
-                # msg.media(GOOD_BOY_URL)
-
-                # response.message(str(jsonify(contenido_respuesta)))
-
-                # response.message(f'content_sid: {content_SID_texto_media}')
-                # response.message(f'content_variables: {content_variables}')
-                # response.message(f'media_url: {media_url}')
+                response.message(msg_conf_num)
 
                 current_question_index += 1
                 conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][0] = 'Si'
 
+            elif user_answer == 'no':
+                time.sleep(lag_msg)
+                response.message(msg_no_conf)
+
+                current_question_index = -2
                 conversation_state['current_question_index'] = current_question_index
-                
+                conversation_state['respuestas'][0] = 'No'
+
+                # Cargar datos en SQL
+                carga_SQL_confirmaciones(conversation_state)
 
             else:
-                response.message('Muchas gracias por tu respuesta, que tengas un lindo día')
+                time.sleep(lag_msg)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_reconf,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
 
-                current_question_index += 1
-                conversation_state['current_question_index'] = current_question_index
-
-                conversation_state['current_question_index'] = current_question_index
+            conversation_state['current_question_index'] = current_question_index
 
         else:
             # Si hay choro, manda el mensaje de revisión para referir al cliente a un operador
@@ -416,10 +434,107 @@ Saludos
             message = client.messages.create(
                 messaging_service_sid=messaging_service_sid,
                 from_=f'whatsapp:{twilio_phone_number}',
-                body=msg_default,
+                body=msg_reconf,
                 to=f'whatsapp:{incoming_phone_number}'
             )
 
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 1:
+        if len(user_answer) < limite_msg:  # Verifica si hay choro
+            if user_answer.isnumeric() and num_user_answer != 'sin número' and num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+                time.sleep(lag_msg)
+                response.message(msg_conf_rest)
+                conversation_state['respuestas'][1] = user_answer
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+
+            else:
+                time.sleep(lag_msg)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_error_num_conf,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
+                conversation_state['current_question_index'] = current_question_index
+
+        else:
+            time.sleep(lag_msg)
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_reconf_num,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
+
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 2:
+        if len(user_answer) < limite_msg:  # Verifica si hay choro
+            if user_answer == 'si':
+                time.sleep(lag_msg)
+                response.message(msg_conf_num_rest)
+
+                current_question_index += 1
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][2] = 'Si'
+
+            elif user_answer == 'no':
+                time.sleep(lag_msg)
+                response.message(msg_info_general)
+
+                current_question_index = -2
+                conversation_state['current_question_index'] = current_question_index
+                conversation_state['respuestas'][2] = 'No'
+
+                # Cargar datos en SQL
+                carga_SQL_confirmaciones(conversation_state)
+
+            else:
+                time.sleep(lag_msg)
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body=msg_reconf_rest,
+                    to=f'whatsapp:{incoming_phone_number}'
+                )
+
+                conversation_state['current_question_index'] = current_question_index
+
+        else:
+            time.sleep(lag_msg)
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_reconf_rest,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
+
+            conversation_state['current_question_index'] = current_question_index
+
+    elif current_question_index == 3:
+        if num_user_answer == 'sin número' or num_user_answer <= conversation_states[incoming_phone_number]['boletos']:
+            time.sleep(lag_msg)
+            response.message(msg_info_general)
+
+            current_question_index = -2
+            conversation_state['current_question_index'] = current_question_index
+            conversation_state['respuestas'][3] = user_answer.replace(',',';')
+
+            # Cargar datos en SQL
+            carga_SQL_confirmaciones(conversation_state)
+
+        else:
+            time.sleep(lag_msg)
+            boletos = conversation_states[incoming_phone_number]['boletos']
+            message = client.messages.create(
+                messaging_service_sid=messaging_service_sid,
+                from_=f'whatsapp:{twilio_phone_number}',
+                body=msg_error_num_rest,
+                to=f'whatsapp:{incoming_phone_number}'
+            )
             conversation_state['current_question_index'] = current_question_index
 
     else:
