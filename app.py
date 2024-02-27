@@ -134,11 +134,11 @@ def inicio_conversacion():
     global dict_info_invitados
     global url_invitacion
     global invitacion_carpeta
+    global telefono_invitado_demo
+    global nom_invitado_demo
 
     media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
-    telefono_invitado_demo = f"+521{request.form.get('telefono_invitado_demo')}"
-    nom_invitado_demo = request.form.get('nom_invitado_demo')
     id_evento = 'DEMO'
     demo_activado = True
 
@@ -1062,7 +1062,22 @@ def dashboard_eventos(id_evento):
 
 @app.route('/demo_chatbot', methods=['GET'])
 def demo_register():
+    global telefono_invitado_demo
+    global nom_invitado_demo
+
+    telefono_invitado_demo = f"+521{request.args.get('telefono_invitado_demo')}"
+    nom_invitado_demo = request.args.get('nom_invitado_demo')
+
+    # Assuming you want to render the 'demo.html' template after processing the form
     return render_template('demo.html')
+
+@app.route('/process_demo', methods=['GET'])
+def process_demo():
+    # Call the demo_register function to retrieve variables
+    demo_register()
+
+    # Now call the inicio_conversacion function
+    return inicio_conversacion()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
