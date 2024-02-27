@@ -150,63 +150,31 @@ def inicio_conversacion():
         }
 
 
-    if uploaded_json_file.filename != '' or demo_activado:
-        for telefono_invitado in dict_info_invitados:
+    for telefono_invitado in dict_info_invitados:
 
-            try:
+        try:
 
-                conversation = conversations_client.conversations.create()
-                # https://www.twilio.com/docs/conversations/api/conversation-message-resource asociar mensajes a conversaciones
+            conversation = conversations_client.conversations.create()
+            # https://www.twilio.com/docs/conversations/api/conversation-message-resource asociar mensajes a conversaciones
 
-                # Get the recipient_name dynamically for each recipient_phone_number
-                nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
-                boletos = dict_info_invitados[telefono_invitado]['num_boletos']
+            # Get the recipient_name dynamically for each recipient_phone_number
+            nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
+            boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
-                if uploaded_invitation_file.filename == '':
+            if uploaded_invitation_file.filename == '':
 
-                    if invitacion_carpeta == 'si':
+                if invitacion_carpeta == 'si':
 
-                        content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion    
-                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
-                        app.logger.info(json.dumps(content_variables))
-
-                        UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
-                        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-                        url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
-                        app.logger.info(url_invitacion)
-
-                        message = client.messages.create(
-                            messaging_service_sid=messaging_service_sid,
-                            from_=f'whatsapp:{twilio_phone_number}',
-                            body='',
-                            content_sid=content_SID_std,
-                            content_variables=content_variables,
-                            media_url=media_url,
-                            to=f'whatsapp:{telefono_invitado}',
-                        )
-
-                    else:
-
-                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
-                        app.logger.info(json.dumps(content_variables))
-
-                        message = client.messages.create(
-                            messaging_service_sid=messaging_service_sid,
-                            from_=f'whatsapp:{twilio_phone_number}',
-                            body='',
-                            content_sid=content_SID_std,
-                            content_variables=content_variables,
-                            to=f'whatsapp:{telefono_invitado}',
-                        )
-
-                else:
-                    
                     content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion    
                     # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                     app.logger.info(json.dumps(content_variables))
+
+                    UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
+                    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+                    url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
+                    app.logger.info(url_invitacion)
 
                     message = client.messages.create(
                         messaging_service_sid=messaging_service_sid,
@@ -218,33 +186,62 @@ def inicio_conversacion():
                         to=f'whatsapp:{telefono_invitado}',
                     )
 
-            except TwilioRestException as e:
-                carga_SQL_errores(id_evento, nom_invitado, telefono_invitado)
-                app.logger.error(f"Failed to send message to {telefono_invitado}: {str(e)}")
-                # Continue the loop if sending the message fails for any specific recipient
-                continue
+                else:
 
-            # Store the conversation SID and initial state for each recipient
-            conversation_states[telefono_invitado] = {
-                'id_evento': id_evento,
-                'sid': conversation.sid,
-                'nom_invitado': nom_invitado,
-                'telefono': telefono_invitado,
-                'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
-                'current_question_index': 0,
-                'respuestas': ['No', 0, 'No', 'Ninguna']
-            }
+                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                    app.logger.info(json.dumps(content_variables))
 
-            time.sleep(lag_msg)
+                    message = client.messages.create(
+                        messaging_service_sid=messaging_service_sid,
+                        from_=f'whatsapp:{twilio_phone_number}',
+                        body='',
+                        content_sid=content_SID_std,
+                        content_variables=content_variables,
+                        to=f'whatsapp:{telefono_invitado}',
+                    )
 
-        uploaded_json_file = ''
-        uploaded_invitation_file = ''
-        dict_info_invitados = {}
-        invitacion_carpeta = 'no'
+            else:
+                
+                content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
+                # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
+                # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                app.logger.info(json.dumps(content_variables))
 
-        return 'Confirmación enviada'
-    else:
-        return 'Subir archivo de base de datos'
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body='',
+                    content_sid=content_SID_std,
+                    content_variables=content_variables,
+                    media_url=media_url,
+                    to=f'whatsapp:{telefono_invitado}',
+                )
+
+        except TwilioRestException as e:
+            carga_SQL_errores(id_evento, nom_invitado, telefono_invitado)
+            app.logger.error(f"Failed to send message to {telefono_invitado}: {str(e)}")
+            # Continue the loop if sending the message fails for any specific recipient
+            continue
+
+        # Store the conversation SID and initial state for each recipient
+        conversation_states[telefono_invitado] = {
+            'id_evento': id_evento,
+            'sid': conversation.sid,
+            'nom_invitado': nom_invitado,
+            'telefono': telefono_invitado,
+            'boletos': dict_info_invitados[telefono_invitado]['num_boletos'],
+            'current_question_index': 0,
+            'respuestas': ['No', 0, 'No', 'Ninguna']
+        }
+
+        time.sleep(lag_msg)
+
+    uploaded_json_file = ''
+    uploaded_invitation_file = ''
+    dict_info_invitados = {}
+    invitacion_carpeta = 'no'
+
+    return 'Confirmación enviada'
 
 
 def carga_SQL_confirmaciones(conversation_state):
