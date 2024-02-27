@@ -137,7 +137,7 @@ def inicio_conversacion():
 
     media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
-    telefono_invitado_demo = f'+521{request.form.get('telefono_invitado_demo')}'
+    telefono_invitado_demo = f"+521{request.form.get('telefono_invitado_demo')}"
     nom_invitado_demo = request.form.get('nom_invitado_demo')
     id_evento = 'DEMO'
 
@@ -947,6 +947,10 @@ def dashboard_eventos(id_evento):
     plot3_base64 = visualize_summary(summary)
 
     return render_template('dashboard_eventos.html', data=data, plot1_base64=plot1_base64, plot2_base64=plot2_base64, plot3_base64=plot3_base64)
+
+@app.route('/demo_chatbot', methods=['GET'])
+def demo_register():
+    return render_template('demo.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
