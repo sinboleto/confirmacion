@@ -218,7 +218,7 @@ def inicio_conversacion():
     dict_info_invitados = {}
     invitacion_carpeta = 'no'
 
-    return redirect(url_for('upload_form'))
+    return redirect(url_for('upload_webpage'))
 
 
 def carga_SQL_confirmaciones(conversation_state):
@@ -1013,6 +1013,10 @@ def process_demo():
 
     # Now call the inicio_conversacion function
     return inicio_conversacion()
+
+@app.route('/upload_webpage', methods=['GET'])
+def upload_webpage():
+    return render_template('https://www.sinboleto.com.mx/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
