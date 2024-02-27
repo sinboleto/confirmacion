@@ -666,6 +666,9 @@ def render_invitation():
     # Assuming 'UPLOAD_FOLDER' is the directory where the files are uploaded
     # Extracting the filename from the URL (assuming it's the last part of the URL)
     filename = url_invitacion.rsplit('/', 1)[-1]
+
+    UPLOAD_FOLDER = 'files'  # Folder where uploaded files will be stored
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     # Send the file from the directory to the client
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
