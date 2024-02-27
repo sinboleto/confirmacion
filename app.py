@@ -162,7 +162,7 @@ def inicio_conversacion():
             nom_invitado = dict_info_invitados[telefono_invitado]['nom_invitado']
             boletos = dict_info_invitados[telefono_invitado]['num_boletos']
 
-            if uploaded_invitation_file is None or uploaded_invitation_file.filename == '':
+            if uploaded_invitation_file is None or uploaded_invitation_file == '':
 
                 content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                 app.logger.info(json.dumps(content_variables))
