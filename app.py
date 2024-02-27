@@ -69,10 +69,12 @@ global info_plantillas
 global url_invitacion
 global invitacion_carpeta
 
+# Variables default
 dict_info_invitados = {}
 conversation_states = {}
 info_plantillas = {}
 url_invitacion = ''
+uploaded_invitation_file = ''
 
 connection = psycopg2.connect(POSTGRESQL_URI)
 limite_msg = 17
@@ -140,7 +142,6 @@ def inicio_conversacion():
     media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
     id_evento = 'DEMO'
-    demo_activado = True
 
     dict_info_invitados = {
         telefono_invitado_demo: {
@@ -163,42 +164,17 @@ def inicio_conversacion():
 
             if uploaded_invitation_file.filename == '':
 
-                if invitacion_carpeta == 'si':
+                content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                app.logger.info(json.dumps(content_variables))
 
-                    content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion    
-                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
-                    app.logger.info(json.dumps(content_variables))
-
-                    UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
-                    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-                    url_invitacion = os.path.join(app.config['UPLOAD_FOLDER'], f'{nom_invitado}.pdf')
-                    app.logger.info(url_invitacion)
-
-                    message = client.messages.create(
-                        messaging_service_sid=messaging_service_sid,
-                        from_=f'whatsapp:{twilio_phone_number}',
-                        body='',
-                        content_sid=content_SID_std,
-                        content_variables=content_variables,
-                        media_url=media_url,
-                        to=f'whatsapp:{telefono_invitado}',
-                    )
-
-                else:
-
-                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
-                    app.logger.info(json.dumps(content_variables))
-
-                    message = client.messages.create(
-                        messaging_service_sid=messaging_service_sid,
-                        from_=f'whatsapp:{twilio_phone_number}',
-                        body='',
-                        content_sid=content_SID_std,
-                        content_variables=content_variables,
-                        to=f'whatsapp:{telefono_invitado}',
-                    )
+                message = client.messages.create(
+                    messaging_service_sid=messaging_service_sid,
+                    from_=f'whatsapp:{twilio_phone_number}',
+                    body='',
+                    content_sid=content_SID_std,
+                    content_variables=content_variables,
+                    to=f'whatsapp:{telefono_invitado}',
+                )
 
             else:
                 
@@ -293,19 +269,6 @@ def carga_SQL_info_eventos(id_evento, nom_novia, nom_novio, fecha_evento, hora_i
                         )
                        )
         connection.commit()
-
-def send_response(messaging_service_sid, content_sid, content_variables, media_url):
-
-    # Create a response message
-    response_message = {
-        'messaging_service_sid': messaging_service_sid,
-        'content_sid': content_sid,
-        'content_variables': content_variables,
-        'media_url': media_url
-    }
-
-    # Return the response as JSON
-    return jsonify(response_message)
 
 @app.route('/', methods=['POST'])
 def webhook():
@@ -642,38 +605,6 @@ def upload_files():
     global invitacion_carpeta
 
     id_evento = request.form.get('id_evento')  # Get the id_evento input value
-
-    # if id_evento:
-    #     data_evento = get_data(f"SELECT * FROM confirmaciones WHERE id_evento = {id_evento};")
-
-    #     nom_novia = data_evento[0]
-    #     nom_novio = data_evento[1]
-    #     fecha_evento = data_evento[2]
-    #     hora_inicio = data_evento[3]
-    #     lugar_evento = data_evento[4]
-    #     lugar_ceremonia = data_evento[5]
-    #     lugar_recepcion = data_evento[6]
-    #     codigo_vestimenta = data_evento[7]
-    #     pagina_web = data_evento[8]
-    #     link_mesa_regalos = data_evento[9]
-    #     link_soporte = data_evento[10]
-
-    # else:
-
-    #     carga_SQL_info_eventos(id_evento, nom_novia, nom_novio, fecha_evento, hora_inicio, lugar_evento, lugar_ceremonia, lugar_recepcion, codigo_vestimenta, pagina_web, link_mesa_regalos, link_soporte)
-
-    #     id_evento = request.form.get('id_evento')
-    #     nom_novia = request.form.get('nom_novia_input')
-    #     nom_novio = request.form.get('nom_novio_input')
-    #     fecha_evento = request.form.get('fecha_evento_input')
-    #     hora_inicio = request.form.get('hora_inicio_input')
-    #     lugar_evento = request.form.get('lugar_evento_input')
-    #     lugar_ceremonia = request.form.get('lugar_ceremonia_input')
-    #     lugar_recepcion = request.form.get('lugar_recepcion_input')
-    #     codigo_vestimenta = request.form.get('codigo_vestimenta_input')
-    #     pagina_web = request.form.get('pagina_web_input')
-    #     link_mesa_regalos = request.form.get('link_mesa_regalos_input')
-    #     link_soporte = request.form.get('link_soporte_input')
 
     invitacion_carpeta = request.form.get('invitacion_carpeta')  # Get the id_evento input value
     app.logger.info(invitacion_carpeta)
