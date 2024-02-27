@@ -218,6 +218,8 @@ def inicio_conversacion():
     dict_info_invitados = {}
     invitacion_carpeta = 'no'
 
+    time.sleep(3)
+
     return redirect('https://www.sinboleto.com.mx/')
 
 

@@ -28,7 +28,7 @@
             <h4><b>Para recibir un demo por favor proporcionanos la siguiente información:</b></h4>
         </div>
 
-        <form method="GET" action="/process_demo" enctype="multipart/form-data">
+        <form method="GET" action="/process_demo" enctype="multipart/form-data" onsubmit="showPopup()">
 
             <label for="nom_invitado_demo">Nombre completo:</label>
             <input type="text" name="nom_invitado_demo" id="nom_invitado_demo" required>
@@ -52,6 +52,12 @@
         </div>
 
     </div>
+
+    <script>
+        function showPopup() {
+            alert("Saldrás de la página en 3 segundos");
+        }
+    </script>
 
 </body>
 
