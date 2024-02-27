@@ -85,41 +85,17 @@ content_SID_std = 'HX973fe6a8e3741bf1d85209b5d16fb2f7'  # Save the date
 content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
 content_SID_texto_media = 'HX36e96191c5cc3066a336e7449269b1d5'  # Save the date
 
-# nom_novia = 'Sofía'
-# nom_novio = 'Benito'
-# fecha_evento = '2 de diciembre de 2023'
-# hora_inicio = '13:00 hrs'
-# lugar_evento = 'Xochitepec, Morelos'
-# lugar_ceremonia = 'el Jardín Paraíso'
-# lugar_recepcion = 'en el mismo lugar'
-# codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
-# link_mesa_regalos = 'https://dagiftmx.com/'
-# link_soporte = 'https://wa.link/tsi7us'
-# pagina_web = 'https://www.sinboleto.com.mx'
-
-nom_novia = 'Alejandra García'
-nom_novio = 'Pedro Vaca'
-fecha_evento = '7 de septiembre de 2024'
+nom_novia = 'Sofía'
+nom_novio = 'Benito'
+fecha_evento = '2 de diciembre de 2023'
 hora_inicio = '13:00 hrs'
-lugar_evento = 'Tequisquiapan, Querétaro'
-lugar_ceremonia = 'Hacienda Grande (https://maps.app.goo.gl/BcfhfmrGMJuLKKrz8)'
+lugar_evento = 'Xochitepec, Morelos'
+lugar_ceremonia = 'el Jardín Paraíso'
 lugar_recepcion = 'en el mismo lugar'
-codigo_vestimenta = 'formal'
+codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
 link_mesa_regalos = 'https://dagiftmx.com/'
-link_soporte = 'https://wa.link/9ncc9w'
+link_soporte = 'https://wa.link/tsi7us'
 pagina_web = 'https://www.sinboleto.com.mx'
-
-# nom_novia = 'Julieta Rodríguez'
-# nom_novio = 'Daniel Rosado'
-# fecha_evento = '10 de febrero de 2024'
-# hora_inicio = '17:30 hrs'
-# lugar_evento = 'Mérida, Yucatán'
-# lugar_ceremonia = 'la Rectoría de Nuestra Señora de Líbano'
-# lugar_recepcion = 'en la Quinta Montes Molina'
-# codigo_vestimenta = 'Mujeres - Formal | Hombres - Guayabera formal'
-# link_mesa_regalos = 'https://dagiftmx.com/ver-evento?id=241&token'
-# link_soporte = 'https://wa.link/pmx35g' # Revisar link
-# pagina_web = 'https://www.theknot.com/us/julieta-rodriguez-and-daniel-rosado-feb-2024'
 
 dict_variables_evento = {}
 
@@ -161,6 +137,17 @@ def inicio_conversacion():
 
     media_url = 'https://confirmacion-app-ffd9bb8202ec.herokuapp.com/render_invitation'
 
+    telefono_invitado_demo = f'+521{request.form.get('telefono_invitado_demo')}'
+    nom_invitado_demo = request.form.get('nom_invitado_demo')
+    id_evento = 'DEMO'
+
+    dict_info_invitados = {
+        telefono_invitado_demo: {
+            "nom_invitado": f"{nom_invitado_demo}",
+            "num_boletos": 2
+            }
+        }
+
     if uploaded_json_file.filename != '':
         for telefono_invitado in dict_info_invitados:
 
@@ -177,9 +164,9 @@ def inicio_conversacion():
 
                     if invitacion_carpeta == 'si':
 
-                        # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
-                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
-                        content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                        content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
+                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion    
+                        # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                         app.logger.info(json.dumps(content_variables))
 
                         UPLOAD_FOLDER = f'files/{id_evento}'  # Folder where uploaded files will be stored
@@ -214,9 +201,9 @@ def inicio_conversacion():
 
                 else:
                     
-                    # content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
+                    content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
                     # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":hora_inicio,"6":lugar_evento,"7":str(boletos)}) # msg_invitacion
-                    content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                    # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                     app.logger.info(json.dumps(content_variables))
 
                     message = client.messages.create(
@@ -398,6 +385,10 @@ Saludos
                         media_url=media_url,
                         to=request.values.get('From', '').lower(),
                     )
+                
+                # Ejemplo:
+                # msg = response.message("Thanks for the image. Here's one for you!")
+                # msg.media(GOOD_BOY_URL)
 
                 # response.message(str(jsonify(contenido_respuesta)))
 
