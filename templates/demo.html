@@ -4,9 +4,10 @@
 <head>
     <title>Demo Sin Boleto</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<header><br></header>
+<header><br><br></header>
 
 <body>
     <div class="container">
@@ -14,42 +15,46 @@
         <br>
 
         <div>
-            <img alt=" sin boleto logo" src="/Imago_Degradado.png">
+            <img alt="sin boleto logo" src="/Imago_Degradado.png">
         </div>
 
         <br>
 
         <div>
-            <h1>¡Hola! Bienvenid@ al demo del Chatbot de Sin Boleto</h1>
+            <h1>¡Hola! Bienvenid@ al demo del chatbot de Sin Boleto</h1>
 
             <br>
 
-            <h2>Para recibir un demo por favor proporcionanos la siguiente información:</h2>
+            <p><b>Para recibir un demo por favor proporcionanos la siguiente información:</b></p>
         </div>
 
         <br>
 
         <form method="GET" action="/process_demo" enctype="multipart/form-data">
 
-            <div>
-                <label for="nom_invitado_demo">Nombre completo:</label>
-                <input type="text" name="nom_invitado_demo" id="nom_invitado_demo" required>
+            <label for="nom_invitado_demo">Nombre completo:</label>
+            <input type="text" name="nom_invitado_demo" id="nom_invitado_demo" required>
 
-                <br>
+            <br>
 
-                <label for="telefono_invitado_demo">Teléfono (10 dígitos):</label>
-                <input type="text" name="telefono_invitado_demo" id="telefono_invitado_demo" required>
+            <label for="telefono_invitado_demo">Teléfono (10 dígitos):</label>
+            <input type="text" name="telefono_invitado_demo" id="telefono_invitado_demo" required>
 
-                <br>
+            <br>
 
-                <button type="submit">Mandar demo</button>
-            </div>
+            <button type="submit">Mandar demo</button>
 
         </form>
 
         <br>
 
-        <h3 style="color: #9524D6">En breve recibirás una invitación. <b>Gracias por tu confianza</b></h2>
+        <div>
+            <h3 style="color: #9524D6">En breve recibirás una invitación. <b>Gracias por tu confianza</b></h3>
+
+            <br>
+
+            <p>Para más información sobre el chatbot, da click <a href="http://www.google.com">aquí</a></p>
+        </div>
 
     </div>
 

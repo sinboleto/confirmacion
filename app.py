@@ -218,7 +218,7 @@ def inicio_conversacion():
     dict_info_invitados = {}
     invitacion_carpeta = 'no'
 
-    return 'Confirmación enviada'
+    return redirect(url_for('upload_form'))
 
 
 def carga_SQL_confirmaciones(conversation_state):
