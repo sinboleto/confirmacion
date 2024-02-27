@@ -81,18 +81,18 @@ limite_msg = 17
 lag_msg = 0.2
 
 # Variables del evento
-# content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
+content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
 # content_SID = 'HXec089fa6d686d8fc5531a7383c242734'  # Invitación
-content_SID_std = 'HX973fe6a8e3741bf1d85209b5d16fb2f7'  # Save the date
-content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
-content_SID_texto_media = 'HX36e96191c5cc3066a336e7449269b1d5'  # Save the date
+# content_SID_std = 'HX973fe6a8e3741bf1d85209b5d16fb2f7'  # Save the date
+# content_SID_texto = 'HX1a0b4351bc03d158e998c95878d09761'  # Save the date
+# content_SID_texto_media = 'HX36e96191c5cc3066a336e7449269b1d5'  # Save the date
 
 nom_novia = 'Sofía'
 nom_novio = 'Benito'
 fecha_evento = '2 de diciembre de 2023'
 hora_inicio = '13:00 hrs'
 lugar_evento = 'Xochitepec, Morelos'
-lugar_ceremonia = 'el Jardín Paraíso'
+lugar_ceremonia = 'el Jardín Vista Luna'
 lugar_recepcion = 'en el mismo lugar'
 codigo_vestimenta = 'formal (guayabera blanca manga larga / vestido largo)'
 link_mesa_regalos = 'https://dagiftmx.com/'
@@ -164,14 +164,15 @@ def inicio_conversacion():
 
             if uploaded_invitation_file is None or uploaded_invitation_file == '':
 
-                content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
+                content_variables = json.dumps({"1":nom_invitado,"2":str(boletos),"3":nom_novia,"4":nom_novio,"5":fecha_evento,"6":hora_inicio,"7":lugar_evento}) # msg_conf
+                # content_variables = json.dumps({"1":nom_invitado,"2":nom_novia,"3":nom_novio,"4":fecha_evento,"5":lugar_evento}) # msg_std
                 app.logger.info(json.dumps(content_variables))
 
                 message = client.messages.create(
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
                     body='',
-                    content_sid=content_SID_std,
+                    content_sid=content_SID,
                     content_variables=content_variables,
                     to=f'whatsapp:{telefono_invitado}',
                 )
@@ -187,7 +188,7 @@ def inicio_conversacion():
                     messaging_service_sid=messaging_service_sid,
                     from_=f'whatsapp:{twilio_phone_number}',
                     body='',
-                    content_sid=content_SID_std,
+                    content_sid=content_SID,
                     content_variables=content_variables,
                     media_url=media_url,
                     to=f'whatsapp:{telefono_invitado}',
