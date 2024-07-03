@@ -101,7 +101,7 @@ content_SID = 'HX0a2d27a46cd78cb3b9534cad4fb9057d'  # Confirmación
 
 nom_novia = 'Pamela Salas'
 nom_novio = 'Diego Aturo Velarde'
-fecha_evento = '10 de mayo de 2024'
+fecha_evento = '05 de octubre de 2024'
 hora_inicio = '18:00 hrs'
 lugar_evento = 'Ciudad de México'
 lugar_ceremonia = 'el Templo de Santo Domingo de Guzmán'
